@@ -54,3 +54,12 @@ mongoose.connect(process.env.MONGO_URI)
     })
   })
   .catch((err) => console.log(err))
+
+// // MONGODB TRIAL
+// mongoose.connect(process.env.MONGO_URI_TRIAL)
+//   .then(() =>{
+//     app.listen(process.env.PORT, () => {
+//       console.log('Database connected successfully, listening on port', process.env.PORT)
+//     })
+//   })
+//   .catch((err) => console.log(err))
