@@ -37,43 +37,25 @@ router.post('/register', async (req, res) => {
     }
 });
 
-router.post('/login2', async (req, res) => {
+router.post('/login', async (req, res) => {
     const { email, password } = req.body;
 
 	const user = await User.findOne({ email });
 
-	if (user && (await user.matchPassword(password))) {
-		res.json({
-			_id: user._id,
-			name: user.name,
-			email: user.email
-		});
-	} else {
-		res.json({ msg: 'Invalid email or password' });
-	}
+    if (user) {
+        if (await user.password==password) {
+            res.json({msg: user});
+        } else {
+            res.json({msg: 'Incorrect password'});
+        }
+    } else {
+        res.json({msg: 'User does not exist'});
+    }
+
+
         
 });
 
-// POST: LOG IN a user
-router.post('/login', (req, res, next) => {
-    const { email, password} = req.body;
-
-    const exists = User.findOne({email: email});
-
-    if (!exists) {
-        res.json({msg: 'No such user'});
-    } else {
-        if (exists.password == password) {
-            res.json({msg: 'Successfully logged in!'});
-        } else {
-            res.json({msg: 'Incorrect password!'});
-        }
-    }
-
-    
-
-    // res.json({msg: 'LOG IN a user'})
-});
 
 // UPDATE an accommodation
 router.patch('/update-user', (req, res, next) => {
