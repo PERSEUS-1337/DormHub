@@ -5,56 +5,18 @@ const router = express.Router();
 const User = require('../models/User');
 
 // CONTROLLERS
-const {addUser, sample} = require('../controllers/userController');
+const {registerUser, loginUser, getAllUsers} = require('../controllers/userController');
 
 router.get('/hello', (req, res, next) => {
     res.json({msg: 'Hello World'})
 });
 
-router.get('/sample', sample);
-
-router.get('/all-users', async (req, res, next) => {
-    const all = await User.find({});
-    console.log(all);
-    res.json({msg: all})
-});
+router.get('/all-users', getAllUsers);
 
 // // POST: Register a user
-// router.post('/register', addUser);
+router.post('/register', registerUser);
 
-
-// POST: Register a user
-router.post('/register', async (req, res) => {
-    const {name, email, password} = req.body;
-
-    try {
-        User.create({name,email,password});
-        res.json({msg: "User saved"});
-
-    } catch (error) {
-        res.json({msg: "not saved"});
-        
-    }
-});
-
-router.post('/login', async (req, res) => {
-    const { email, password } = req.body;
-
-	const user = await User.findOne({ email });
-
-    if (user) {
-        if (await user.password==password) {
-            res.json({msg: user});
-        } else {
-            res.json({msg: 'Incorrect password'});
-        }
-    } else {
-        res.json({msg: 'User does not exist'});
-    }
-
-
-        
-});
+router.post('/login', loginUser);
 
 
 // UPDATE an accommodation

@@ -21,7 +21,8 @@ const userSchema = new Schema({
   bookmark: {
     type: [mongoose.Schema.Types.ObjectId],
     required: false,
-    ref: 'Listing'
+    ref: 'Listing', 
+    default: []
   }
 }, 
 

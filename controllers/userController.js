@@ -4,29 +4,7 @@ const mongoose = require('mongoose');
 const str = require('string-sanitizer');
 
 
-// TRIAL: use /GET to save a new data --- test if data can be saved in a db
-// POSTMAN : sample
-const sample = (req, res) => {
-    const user = new User({
-        name: 'RETURN Name',
-        email: 'sample@gmail.com',
-        password: 'saple123!',
-        bookmark: []
-      });
 
-      
-    // this doesn't work
-    let x = user.save()
-    .then(result => {
-        console.log('User saved successfully! -- NOT REFLECTED');
-    })
-    .catch(error => {
-        console.error(error);
-    });
-
-    res.json({user: x});
-    
-}
 
 async function validateUser (name, email, password) {
     
@@ -62,34 +40,42 @@ async function validateUser (name, email, password) {
   });
 }
 
-const addUser = async (req, res) => {
+const registerUser = async (req, res) => {
+
     const {name, email, password} = req.body;
 
     try {
-        // let user = validateUser(name, email, password);
-
-        const newUser = new User({
-            name: name,
-            email: email,
-            password: password
-        });
-    
-        // let x = await User.create(newUser);
-    
-        newUser.save(function(err){
-            if(err){
-                 console.log(err);
-                 return;
-            }
-        });
-
-        res.json({msg: "USER SAVED!"});
+        User.create({name,email,password});
+        res.json({msg: "User saved"});
 
     } catch (error) {
-        res.json({error: error.message});
+        res.json({msg: "not saved"});
     }
 
 };
 
-module.exports = {addUser, sample};
+const loginUser = async (req, res) => {
+    const { email, password } = req.body;
+
+	const user = await User.findOne({ email });
+
+    if (user) {
+        if (await user.password==password) {
+            res.json({msg: user});
+        } else {
+            res.json({msg: 'Incorrect password'});
+        }
+    } else {
+        res.json({msg: 'User does not exist'});
+    }
+        
+};
+
+
+const getAllUsers = async (req, res) => {
+    const all = await User.find({});
+    res.json({msg: all})
+};
+
+module.exports = {registerUser, loginUser, getAllUsers};
 
