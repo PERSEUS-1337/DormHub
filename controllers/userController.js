@@ -1,12 +1,15 @@
 const User = require('../models/User');
-const passport = require('passport');
-const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+
+
+const createToken = (_id) => {
+    return jwt.sign({_id}, process.env.PRIVATE_KEY);
+}
 
 
 const registerUser = async (req, res) => {
-
     const {name, email, password} = req.body;
 
     try {
@@ -31,9 +34,11 @@ const registerUser = async (req, res) => {
         const salt = await bcrypt.genSalt(10);
         const hash = await bcrypt.hash(password, salt);
         
-        let user = User.create({name,email,password: hash});
+        const user = User.create({name,email,password: hash});
 
-        res.json({msg: "User saved"});
+        const token = createToken(user._id);
+
+        res.json({msg: "User saved", email: user.email, token: token});
 
     } catch (error) {
         res.json({err: error.message});
@@ -44,20 +49,24 @@ const registerUser = async (req, res) => {
 const loginUser = async (req, res) => {
     const { email, password } = req.body;
 
-    const user = await User.findOne({ email });
-
-    if (!user) {
-        res.json({err: 'User does not exist'});
-    }
-
-    bcrypt.compare(password, user.password, function(err, result) {
-        if(result) {
-            res.json({user: user});
-        } else {
-            res.json({err: 'Incorrect password'});
+    try {
+        const user = await User.findOne({ email });
+        if (!user) {
+            throw Error('Incorrect email / User does not exist!');
         }
-    });
 
+        const matchPass = bcrypt.compare(password, user.password);
+
+        if (!matchPass) {
+            throw Error('Incorrect password');
+        }
+
+        const token = createToken(user._id);
+        res.json({msg: 'logged in successfully!', email: user.email, token: token});
+    } catch (error) {
+        res.json({err: error.message});
+    }
+    
 };
 
 
