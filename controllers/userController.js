@@ -1,74 +1,63 @@
 const User = require('../models/User');
 const passport = require('passport');
 const mongoose = require('mongoose');
-const str = require('string-sanitizer');
+const validator = require('validator');
+const bcrypt = require('bcrypt');
 
-
-
-
-async function validateUser (name, email, password) {
-    
-    if (!str.validate.isEmail(email)) {
-        throw Error('Invalid email');
-    }
-    
-    if (!str.validate.isPassword6to15(password)) {
-        throw Error('Invalid password');
-    }
-    
-    const exists = await User.collection.findOne({ email })
-    
-    if (exists) {
-        throw Error('Email already in use')
-    }
-    
-    const newUser = new User({
-        name: name,
-        email: email,
-        password: password
-    });
-
-    // let x = await User.create(newUser);
-
-
-
-    newUser.save(function(err){
-        if(err){
-             console.log(err);
-             return;
-        }
-  });
-}
 
 const registerUser = async (req, res) => {
 
     const {name, email, password} = req.body;
 
     try {
-        User.create({name,email,password});
+
+        const userExist = await User.findOne({email});
+        if (userExist) {
+            throw Error('User already exists');
+        }
+
+        if (!name || !email || !password) {
+            throw Error('All fields must be provided');
+        }
+    
+        if (!validator.default.isEmail(email)) {
+            throw Error('Invalid email');
+        }
+    
+        if (!validator.default.isStrongPassword(password)) {
+            throw Error('Password should be of length 8 or more and must contain an uppercase letter, a lowercase letter, a digit, and a symbol');
+        }
+        
+        const salt = await bcrypt.genSalt(10);
+        const hash = await bcrypt.hash(password, salt);
+        
+        let user = User.create({name,email,password: hash});
+
         res.json({msg: "User saved"});
 
     } catch (error) {
-        res.json({msg: "not saved"});
+        res.json({err: error.message});
     }
-
+    
 };
 
 const loginUser = async (req, res) => {
     const { email, password } = req.body;
 
-	const user = await User.findOne({ email });
+    const user = await User.findOne({ email });
 
-    if (user) {
-        if (await user.password==password) {
-            res.json({msg: user});
-        } else {
-            res.json({msg: 'Incorrect password'});
-        }
-    } else {
-        res.json({msg: 'User does not exist'});
+    if (!user) {
+        res.json({err: 'User does not exist'});
     }
-        
+
+    bcrypt.compare(password, user.password, function(err, result) {
+        if(result) {
+            res.json({user: user});
+        } else {
+            res.json({err: 'Incorrect password'});
+        }
+    });
+
 };
 
 
