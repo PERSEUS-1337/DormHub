@@ -17,6 +17,10 @@ const router = express.Router();
 
 const requireAuth = require('../middleware/requireAuth');
 
+// CONTROLLERS
+const {registerUser, loginUser, getAllUsers, getUserData} = require('../controllers/userController');
+
+
 router.use(requireAuth);
 
 router.get('/hello', (req, res, next) => {
@@ -27,6 +31,8 @@ router.get('/all-users', async (req, res) => {
     const all = await User.find({});
     res.json({msg: all})
 });
+
+router.get('/user-data', getUserData);
 
 module.exports = router;
 

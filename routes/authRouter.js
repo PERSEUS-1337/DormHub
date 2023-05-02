@@ -5,7 +5,7 @@ const router = express.Router();
 const User = require('../models/User');
 
 // CONTROLLERS
-const {registerUser, loginUser, getAllUsers} = require('../controllers/userController');
+const {registerUser, loginUser, getAllUsers, getUserData} = require('../controllers/userController');
 
 router.get('/hello', (req, res, next) => {
     res.json({msg: 'Hello World'})

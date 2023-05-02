@@ -77,5 +77,23 @@ const getAllUsers = async (req, res) => {
     res.json({msg: all})
 };
 
-module.exports = {registerUser, loginUser, getAllUsers};
+const getUserData = async (req, res) => {
+    const _id = req.query.id;
+
+    try {
+        const user = await User.findOne({_id});
+
+        if (!user) throw Error('User does not exist');
+
+        res.json({user: user});
+
+    } catch (error) {
+        res.json({err: error.message});
+    }
+    
+
+    
+}
+
+module.exports = {registerUser, loginUser, getAllUsers, getUserData};
 
