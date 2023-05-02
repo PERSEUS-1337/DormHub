@@ -36,9 +36,11 @@ const registerUser = async (req, res) => {
         
         const user = User.create({name,email,password: hash});
 
-        const token = createToken(user._id);
+        const userSaved = await User.findOne({email});
 
-        res.json({msg: "User saved", email: user.email, token: token});
+        const token = createToken(userSaved._id);
+
+        res.json({msg: "User saved", email: userSaved.email, token: token});
 
     } catch (error) {
         res.json({err: error.message});
