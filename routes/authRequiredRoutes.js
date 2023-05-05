@@ -18,7 +18,7 @@ const router = express.Router();
 const requireAuth = require('../middleware/requireAuth');
 
 // CONTROLLERS
-const {registerUser, loginUser, getAllUsers, getUserData} = require('../controllers/userController');
+const {registerUser, loginUser, getAllUsers, getUserData, editUserData} = require('../controllers/userController');
 
 
 router.use(requireAuth);
@@ -32,7 +32,12 @@ router.get('/all-users', async (req, res) => {
     res.json({msg: all})
 });
 
-router.get('/user-data', getUserData);
+
+router.get('/user-data/:id', getUserData);
+
+router.patch('/edit-user/:id', editUserData); 
+
+
 
 module.exports = router;
 

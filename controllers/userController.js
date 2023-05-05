@@ -2,6 +2,8 @@ const User = require('../models/User');
 const validator = require('validator');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const mongoose = require('mongoose');
+const express = require('express');
 
 
 const createToken = (_id) => {
@@ -77,23 +79,50 @@ const getAllUsers = async (req, res) => {
     res.json({msg: all})
 };
 
-const getUserData = async (req, res) => {
-    const _id = req.query.id;
 
-    try {
-        const user = await User.findOne({_id});
 
-        if (!user) throw Error('User does not exist');
+const editUserData = async (req, res) => {
 
-        res.json({user: user});
+    
 
-    } catch (error) {
-        res.json({err: error.message});
+    const { id } = req.params
+  
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.json({err: 'Not a valid userid'})
     }
-    
+  
+    const user = await User.findByIdAndUpdate(id, {
+        ...req.body
+    });
 
     
+  
+    if (!user) {
+      return res.json({err: 'User does not exist'})
+    }
+
+  
+    res.json({user: user})
+
 }
 
-module.exports = {registerUser, loginUser, getAllUsers, getUserData};
+// get UserData
+const getUserData = async (req, res) => {
+    const { id } = req.params;
+  
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.json({err: 'Not a valid userid'});
+    }
+  
+    const user = await User.findById(id);
+  
+    if (!user) {
+      return res.json({err: 'User does not exist'});
+    }
+  
+    res.json({user: user});
+}
+
+
+module.exports = {registerUser, loginUser, getAllUsers, getUserData, editUserData};
 
