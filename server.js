@@ -19,6 +19,8 @@ const bodyParser = require('body-parser');
 const accommodationRouter = require('./routes/accommodationRouter');
 const authRouter = require('./routes/authRouter');
 
+const authRequiredFunc = require('./routes/authRequiredRoutes');
+
 // Express application
 const app = express();
 
@@ -44,6 +46,9 @@ app.get('/api/v1', (req, res) => {
 });
 app.use('/api/v1/accommodation', accommodationRouter);
 app.use('/api/v1/auth', authRouter);
+
+app.use('/auth-required-func', authRequiredFunc);
+
 app.get('*', (req, res) => {
     res.json({ msg: 'Welcome to the Backend. All other routes not declared in the routes folder will be routed automatically to this message' });
 });
@@ -58,3 +63,12 @@ mongoose.connect(process.env.MONGO_URI)
     })
   })
   .catch((err) => console.log(err))
+
+// // MONGODB TRIAL
+// mongoose.connect(process.env.MONGO_URI_TRIAL)
+//   .then(() =>{
+//     app.listen(process.env.PORT, () => {
+//       console.log('Database connected successfully, listening on port', process.env.PORT)
+//     })
+//   })
+//   .catch((err) => console.log(err))

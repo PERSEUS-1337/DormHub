@@ -3,10 +3,9 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
-  _id: {
-    type: mongoose.Schema.Types.ObjectId,
-    required: true
-  },
+  // _id: {
+  //   type: mongoose.Schema.Types.ObjectId
+  // },
   name: {
     type: String,
     required: true
@@ -21,11 +20,15 @@ const userSchema = new Schema({
   },
   bookmark: {
     type: [mongoose.Schema.Types.ObjectId],
-    ref: 'Listing'
+    required: false,
+    ref: 'Listing', 
+    default: []
   }
-});
+}, 
 
-const User = mongoose.model('User', userSchema);
+);
+
+const User = mongoose.model('User', userSchema, 'users_be');
 
 module.exports = User;
 
