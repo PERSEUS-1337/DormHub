@@ -10,29 +10,25 @@ const createToken = (_id) => {
     return jwt.sign({_id}, process.env.PRIVATE_KEY);
 }
 
-
+// SIGNUP 
 const registerUser = async (req, res) => {
     const {name, email, password} = req.body;
 
     try {
-
         const userExist = await User.findOne({email});
-        if (userExist) {
-            throw Error('User already exists');
-        }
+        
+        // Validation
+        if (userExist) throw Error('User already exists');
 
-        if (!name || !email || !password) {
-            throw Error('All fields must be provided');
-        }
-    
-        if (!validator.default.isEmail(email)) {
-            throw Error('Invalid email');
-        }
-    
+        if (!name || !email || !password) throw Error('All fields must be provided');
+        
+        if (!validator.default.isEmail(email)) throw Error('Invalid email');
+        
         if (!validator.default.isStrongPassword(password)) {
             throw Error('Password should be of length 8 or more and must contain an uppercase letter, a lowercase letter, a digit, and a symbol');
         }
         
+        // Password encryption before storing in DB
         const salt = await bcrypt.genSalt(10);
         const hash = await bcrypt.hash(password, salt);
         
@@ -55,10 +51,9 @@ const loginUser = async (req, res) => {
 
     try {
         const user = await User.findOne({ email });
-        if (!user) {
-            throw Error('Incorrect email / User does not exist!');
-        }
+        if (!user) throw Error('Incorrect email / User does not exist!');
 
+        // checks password match
         const matchPass = bcrypt.compare(password, user.password);
 
         if (!matchPass) {
@@ -82,7 +77,6 @@ const getAllUsers = async (req, res) => {
 
 
 const editUserData = async (req, res) => {
-
     const { id } = req.params
   
     if (!mongooseObjectId.isValid(id)) {

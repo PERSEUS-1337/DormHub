@@ -5,23 +5,18 @@ const router = express.Router();
 const User = require('../models/User');
 
 // CONTROLLERS
-const {registerUser, loginUser, getAllUsers, getUserData} = require('../controllers/userController');
+const {registerUser, loginUser, getAllUsers} = require('../controllers/userController');
 
+// SAMPLES -- can be deleted
 router.get('/hello', (req, res, next) => {
     res.json({msg: 'Hello World'})
 });
 
-router.get('/all-users', getAllUsers);
-
-// // POST: Register a user
+// USER PRE-AUTH routes
+// POST: User Registration
 router.post('/register', registerUser);
-
+// POST: User Login
 router.post('/login', loginUser);
 
-
-// UPDATE an accommodation
-router.patch('/update-user', (req, res, next) => {
-    res.json({msg: 'UPDATE a user'})
-});
 
 module.exports = router;

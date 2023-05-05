@@ -1,56 +1,44 @@
-/**
- * 
- * This should contain routes that needed authorization or routes that can only
- * be accessed if the user is currently logged in in the system.
- * 
- * 
- * This is a TEMPORARY file.
- * 
- * 
- * -V (BE)
- */
+/*
+
+This should contain routes that needed authorization or routes that can only
+be accessed if the user is currently logged-in in the system.
 
 
-const User = require('../models/User');
+-V(BE)
+
+*/
+
 const express = require('express');
 const router = express.Router();
 
+// Authorization Checker
 const requireAuth = require('../middleware/requireAuth');
-const {
-    getAccommodation,
-    createAccommodation,
-    updateAccommodation,
-    deleteAccommodation
-} = require('../controllers/accommodationController');
 
 // CONTROLLERS
-const {registerUser, loginUser, getAllUsers, getUserData, editUserData} = require('../controllers/userController');
+const {getAllUsers, getUserData, editUserData} = require('../controllers/userController');
+const { getAccommodation, createAccommodation, updateAccommodation, deleteAccommodation} = require('../controllers/accommodationController');
 
 
 router.use(requireAuth);
 
-router.get('/hello', (req, res, next) => {
-    res.json({msg: 'AUTHORIZED Hello World'});
-});
+// SAMPLES
+router.get('/hello', (req, res, next) => {res.json({msg: 'AUTHORIZED Hello World'});});
+router.get('/all-users', getAllUsers);
 
-router.get('/all-users', async (req, res) => {
-    const all = await User.find({});
-    res.json({msg: all})
-});
-
-
-router.get('/user-data/:id', getUserData);
-
-router.patch('/edit-user/:id', editUserData); 
+// USER ROUTES
+// GET user data
+router.get('/user/:id', getUserData);
+// UPDATE user data
+router.patch('/user/:id', editUserData); 
 
 
+// ACCOMMODATION ROUTES
 // THIS CAN BE REMOVED
 router.get('/accommodation', getAccommodation);
 // POST a new accommodation
 router.post('/accommodation', createAccommodation);
 // UPDATE a single accommodation
 router.patch('/accommodation/:id/:uId',updateAccommodation);
-
 // DELETE a single accommodation
 router.delete('/accommodation/:id/:uId', deleteAccommodation);
 
