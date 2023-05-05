@@ -16,6 +16,12 @@ const express = require('express');
 const router = express.Router();
 
 const requireAuth = require('../middleware/requireAuth');
+const {
+    getAccommodation,
+    createAccommodation,
+    updateAccommodation,
+    deleteAccommodation
+} = require('../controllers/accommodationController');
 
 // CONTROLLERS
 const {registerUser, loginUser, getAllUsers, getUserData, editUserData} = require('../controllers/userController');
@@ -37,6 +43,16 @@ router.get('/user-data/:id', getUserData);
 
 router.patch('/edit-user/:id', editUserData); 
 
+
+// THIS CAN BE REMOVED
+router.get('/accommodation', getAccommodation);
+// POST a new accommodation
+router.post('/accommodation', createAccommodation);
+// UPDATE a single accommodation
+router.patch('/accommodation/:id/:uId',updateAccommodation);
+
+// DELETE a single accommodation
+router.delete('/accommodation/:id', deleteAccommodation);
 
 
 module.exports = router;

@@ -1,4 +1,7 @@
 const Accommodation = require('../models/Accommodation');
+const mongooseObjectId = require('mongoose').Types.ObjectId;
+
+
 
 // GET ALL ACCOMMODATIONS
 const getAccommodation = async (req, res) => {
@@ -35,9 +38,19 @@ const createAccommodation = async (req, res) => {
 
 // UPDATE ACCOMMODATION
 const updateAccommodation = async (req, res) => {
-    const { id } = req.params;
-    const update = req.body;
+
+    const { id,uId } = req.params;
+    const update = req.body; 
     try {
+
+        if (!mongooseObjectId.isValid(id) || !mongooseObjectId.isValid(uId)) {
+            throw Error('Invalid ObjectID');
+        }
+
+        const accommodation = await Accommodation.findById(id);
+        
+        if (accommodation.owner != uId) throw Error('Invalid Accommodation owner');
+
         const updatedAccommodation = await Accommodation.findByIdAndUpdate(id, update, { new: true });
         if (!updatedAccommodation) {
             return res.status(404).json({ error: "No Accommodation Exists" });
@@ -161,7 +174,7 @@ module.exports = {
     getAccommodationReview,
     // getAccommodationReviewByUserId,
     updateAccommodation,
-    deleteAccommodation,
+    deleteAccommodation
     // postReviewAccommodation,
     // deleteReviewAccommodation
 }
