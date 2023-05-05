@@ -2,7 +2,7 @@ const User = require('../models/User');
 const validator = require('validator');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const mongoose = require('mongoose');
+const mongooseObjectId = require('mongoose').Types.ObjectId;
 const express = require('express');
 
 
@@ -83,11 +83,9 @@ const getAllUsers = async (req, res) => {
 
 const editUserData = async (req, res) => {
 
-    
-
     const { id } = req.params
   
-    if (!mongoose.Types.ObjectId.isValid(id)) {
+    if (!mongooseObjectId.isValid(id)) {
       return res.json({err: 'Not a valid userid'})
     }
   
@@ -95,13 +93,10 @@ const editUserData = async (req, res) => {
         ...req.body
     });
 
-    
-  
     if (!user) {
       return res.json({err: 'User does not exist'})
     }
 
-  
     res.json({user: user})
 
 }
@@ -110,7 +105,7 @@ const editUserData = async (req, res) => {
 const getUserData = async (req, res) => {
     const { id } = req.params;
   
-    if (!mongoose.Types.ObjectId.isValid(id)) {
+    if (!mongooseObjectId.isValid(id)) {
       return res.json({err: 'Not a valid userid'});
     }
   
