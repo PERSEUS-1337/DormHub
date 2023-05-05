@@ -41,15 +41,17 @@ const updateAccommodation = async (req, res) => {
 
     const { id,uId } = req.params;
     const update = req.body; 
+    
+    if (!mongooseObjectId.isValid(id) || !mongooseObjectId.isValid(uId)) {
+        return res.json({error: 'Invalid ObjectID'});
+    }
+
     try {
-
-        if (!mongooseObjectId.isValid(id) || !mongooseObjectId.isValid(uId)) {
-            throw Error('Invalid ObjectID');
-        }
-
         const accommodation = await Accommodation.findById(id);
         
-        if (accommodation.owner != uId) throw Error('Invalid Accommodation owner');
+        if (accommodation.owner != uId || !accommodation) {
+            throw Error('Invalid Accommodation/owner');
+        }
 
         const updatedAccommodation = await Accommodation.findByIdAndUpdate(id, update, { new: true });
         if (!updatedAccommodation) {
@@ -63,9 +65,19 @@ const updateAccommodation = async (req, res) => {
 
 // DELETE ACCOMMODATION
 const deleteAccommodation = async (req, res) => {
-    const { id } = req.params;
+    const { id,uId } = req.params;
     
+    if (!mongooseObjectId.isValid(id) || !mongooseObjectId.isValid(uId)) {
+        return res.json({error: 'Invalid ObjectID'});
+    }
+
     try {
+
+        const accommodation = await Accommodation.findById(id);
+        if (accommodation.owner != uId || !accommodation) {
+            throw Error('Invalid Accommodation/owner');
+        }
+
         const deletedAccommodation = await Accommodation.findByIdAndDelete(id);
         
         if (!deletedAccommodation) {

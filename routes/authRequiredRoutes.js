@@ -52,7 +52,7 @@ router.post('/accommodation', createAccommodation);
 router.patch('/accommodation/:id/:uId',updateAccommodation);
 
 // DELETE a single accommodation
-router.delete('/accommodation/:id', deleteAccommodation);
+router.delete('/accommodation/:id/:uId', deleteAccommodation);
 
 
 module.exports = router;
