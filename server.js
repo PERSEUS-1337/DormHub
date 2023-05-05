@@ -13,10 +13,10 @@ require('dotenv').config();
 
 const express = require('express');
 const mongoose = require('mongoose');
-// const bodyParser = require('body-parser');
+const bodyParser = require('body-parser');
 
 // Import Routes
-const accomodationRouter = require('./routes/accomodationRouter');
+const accommodationRouter = require('./routes/accommodationRouter');
 const authRouter = require('./routes/authRouter');
 
 const authRequiredFunc = require('./routes/authRequiredRoutes');
@@ -30,9 +30,11 @@ app.use((req, res, next) => {
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
   next();
 });
-// app.use(bodyParser.json());
+
+app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json())
+
 app.use((err, req, res, next) => {
   console.log(err);
   next();
@@ -42,7 +44,7 @@ app.use((err, req, res, next) => {
 app.get('/api/v1', (req, res) => {
   res.json({ msg: 'This is the API route' });
 });
-app.use('/api/v1/accomodations', accomodationRouter);
+app.use('/api/v1/accommodation', accommodationRouter);
 app.use('/api/v1/auth', authRouter);
 
 app.use('/auth-required-func', authRequiredFunc);
@@ -52,6 +54,8 @@ app.get('*', (req, res) => {
 });
 
 // Connect to the database and listen for requests
+console.log('Awakening the server...');
+
 mongoose.connect(process.env.MONGO_URI)
   .then(() =>{
     app.listen(process.env.PORT, () => {
