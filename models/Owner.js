@@ -8,7 +8,17 @@ const ownerSchema
     type: mongoose.Schema.Types.ObjectId,
     required: true
   },
-  name: {
+  // separate fname and lname --
+  fname: {
+    type: String,
+    required: true
+  },
+  lname: {
+    type: String,
+    required: true
+  },
+  // add profile pic --
+  pfp: {
     type: String,
     required: true
   },
@@ -23,6 +33,20 @@ const ownerSchema
   phone: {
     type: [String],
     required: true
+  },
+  // add accommodations --
+  accommodation: {
+    type: [mongoose.Schema.Types.ObjectId],
+    required: false,
+    ref: 'Listing',
+    default: []
+  },
+  // add bookmark --
+  bookmark: {
+    type: [mongoose.Schema.Types.ObjectId],
+    required: false,
+    ref: 'Listing', 
+    default: []
   }
 });
 

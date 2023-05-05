@@ -6,7 +6,17 @@ const userSchema = new Schema({
   // _id: {
   //   type: mongoose.Schema.Types.ObjectId
   // },
-  name: {
+  // separate fname and lname --
+  fname: {
+    type: String,
+    required: true
+  },
+  lname: {
+    type: String,
+    required: true
+  },
+  // add pfp --
+  pfp: {
     type: String,
     required: true
   },
@@ -23,7 +33,7 @@ const userSchema = new Schema({
     required: false,
     ref: 'Listing', 
     default: []
-  }
+  },
 }, 
 
 );
