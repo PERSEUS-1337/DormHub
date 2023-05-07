@@ -2,12 +2,40 @@ const Accommodation = require('../models/Accommodation');
 
 // GET ALL ACCOMMODATIONS
 const getAccommodation = async (req, res) => {
-    const accommodation = await Accommodation.find({});
-    res.status(200).json(accommodation)
+    // Filters
+    const { search, sort } = req.query;
+
+    const queryObject = {};
+
+    if (search) {
+        queryObject.name = { $regex: search, $options: 'i' };
+    }
+
+    let accommodation = Accommodation.find(queryObject);
+
+    if (sort === 'a-z') accommodation = accommodation.sort('name');
+
+    if (sort === 'z-a') accommodation = accommodation.sort('-name');
+
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 5;
+    const skip = (page - 1) * limit;
 
     if (!accommodation) {
         return res.status(404).json({error: "No Accommodation Exists"})
     }
+
+    accommodation = accommodation.skip(skip).limit(limit);
+
+    const accommodations = await accommodation;
+    const totalAccommodations = await Accommodation.countDocuments(queryObject);
+    const numOfPages = Math.ceil(totalAccommodations / limit);
+
+    res.status(200).json({
+        accommodations,
+        totalAccommodations,
+        numOfPages
+    })
 }
 
 // GET SINGLE ACCOMMODATIONS
