@@ -12,7 +12,9 @@ const createToken = (_id) => {
 
 
 const registerUser = async (req, res) => {
-    const {name, email, password} = req.body;
+    const {fname, lname, email, password} = req.body;
+
+    const pfp = "null";
 
     try {
 
@@ -21,7 +23,7 @@ const registerUser = async (req, res) => {
             throw Error('User already exists');
         }
 
-        if (!name || !email || !password) {
+        if (!fname || !lname || !email || !password) {
             throw Error('All fields must be provided');
         }
     
@@ -36,16 +38,16 @@ const registerUser = async (req, res) => {
         const salt = await bcrypt.genSalt(10);
         const hash = await bcrypt.hash(password, salt);
         
-        const user = User.create({name,email,password: hash});
+        const user = User.create({fname,lname,pfp, email,password: hash});
 
         const userSaved = await User.findOne({email});
 
         const token = createToken(userSaved._id);
 
-        res.json({msg: "User saved", email: userSaved.email, token: token});
+        res.status(200).json({msg: "User saved", email: userSaved.email, token: token});
 
     } catch (error) {
-        res.json({err: error.message});
+        res.status(400).json({err: error.message});
     }
     
 };

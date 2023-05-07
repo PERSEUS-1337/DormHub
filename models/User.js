@@ -3,9 +3,6 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
-  // _id: {
-  //   type: mongoose.Schema.Types.ObjectId
-  // },
   // separate fname and lname --
   fname: {
     type: String,
@@ -35,7 +32,6 @@ const userSchema = new Schema({
     default: []
   },
 }, 
-
 );
 
 const User = mongoose.model('User', userSchema, 'users_be');
