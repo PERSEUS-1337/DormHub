@@ -68,9 +68,9 @@ const loginUser = async (req, res) => {
         }
 
         const token = createToken(user._id);
-        res.json({msg: 'logged in successfully!', email: user.email, token: token});
+        res.status(200).json({msg: 'logged in successfully!', email: user.email, token: token});
     } catch (error) {
-        res.json({err: error.message});
+        res.status(400).json({err: error.message});
     }
     
 };
