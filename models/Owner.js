@@ -33,6 +33,11 @@ const ownerSchema = new Schema({
     required: false,
     default: []
   },
+  pfp: {
+    type: String,
+    required: false,
+    default: "null"
+  }
 
 });
 

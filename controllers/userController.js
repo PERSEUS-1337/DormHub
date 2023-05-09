@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const Owner = require('../models/Owner');
 const validator = require('validator');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -10,40 +11,49 @@ const createToken = (_id) => {
     return jwt.sign({_id}, process.env.PRIVATE_KEY);
 }
 
-
 const registerUser = async (req, res) => {
-    const {name, email, password} = req.body;
+    
+    const {fname, lname, email, password,type} = req.body;
+   
 
     try {
-
         const userExist = await User.findOne({email});
-        if (userExist) {
-            throw Error('User already exists');
-        }
+        const ownerExist = await Owner.findOne({email});
 
-        if (!name || !email || !password) {
-            throw Error('All fields must be provided');
-        }
-    
-        if (!validator.default.isEmail(email)) {
-            throw Error('Invalid email');
-        }
+        if (type == "user" && userExist) throw Error('User already exists');
+        if (type == "owner" && ownerExist) throw Error('Owner already exists');
+
+        if (!fname || !lname || !email || !password || !type) throw Error('All fields must be provided');
+
+        if (!validator.default.isEmail(email)) throw Error('Invalid email');
     
         if (!validator.default.isStrongPassword(password)) {
             throw Error('Password should be of length 8 or more and must contain an uppercase letter, a lowercase letter, a digit, and a symbol');
         }
-        
+       
         const salt = await bcrypt.genSalt(10);
         const hash = await bcrypt.hash(password, salt);
         
-        const user = User.create({name,email,password: hash});
+        if (type == "owner") {
 
-        const userSaved = await User.findOne({email});
+            const {phone} = req.body;
+            if (!phone) throw Error('All fields must be provided');
+            if (!validator.default.isMobilePhone(phone)) throw Error('Invalid mobile number');
+ 
+            const owner = Owner.create({fname,lname,email,password: hash, phone:[phone]});
+            const ownerSaved = await Owner.findOne({email: email});
+            const token = createToken(ownerSaved._id);
+            res.json({msg: "Owner saved", email: ownerSaved.email, token: token})
+        }
 
-        const token = createToken(userSaved._id);
+        if (type == "user") {
+            const user = User.create({fname,lname,email,password: hash});
+            const userSaved = await User.findOne({email});
+            const token = createToken(userSaved._id);
+            res.json({msg: "User saved", email: userSaved.email, token: token})
+        }
 
-        res.json({msg: "User saved", email: userSaved.email, token: token});
-
+        res.json({err: "Invalid Type"})
     } catch (error) {
         res.json({err: error.message});
     }

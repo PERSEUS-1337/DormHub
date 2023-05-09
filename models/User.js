@@ -3,7 +3,11 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
-  name: {
+  fname: {
+    type: String,
+    required: true
+  },
+  lname: {
     type: String,
     required: true
   },
@@ -20,6 +24,11 @@ const userSchema = new Schema({
     required: false,
     ref: 'Listing', 
     default: []
+  },
+  pfp: {
+    type: String,
+    required: false,
+    default: "null"
   }
 }, 
 
