@@ -31,6 +31,8 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use(express.static('client/build'));
+
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json())
@@ -50,6 +52,7 @@ app.use('/api/v1/auth', authRouter);
 app.use('/auth-required-func', authRequiredFunc);
 
 app.get('*', (req, res) => {
+    return res.status(404).json({notFound: true});
     res.json({ msg: 'Welcome to the Backend. All other routes not declared in the routes folder will be routed automatically to this message' });
 });
 
