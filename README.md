@@ -94,7 +94,7 @@ module.exports = router;
 18. Start Developing!
 
 # How to run the app
-1. Make sure to `npm run install-dependencies` the first time you localize this repository.
+1. Make sure to `npm install` the first time you localize this repository., Do this command both inside the root folder, and the client folder, to make sure that the backend (root) and frontend (client) both have installed dependencies
 2. For back-end & database:
    1. Make sure you are in the root folder directory.
    2. `npm start`
