@@ -4,9 +4,12 @@
   "description": "This project aims to create a digital avenue for students, primarily of Los Baños, to search, view, and review available accommodations around the city. As of date, the face-to-face mode of learning is gradually being reinstated, and Los Baños would see an assumed increase in lodging from students. This leads to students discovering less options as others reserve the common dormitories and apartments. By implementing STALS, accommodation owners can showcase their available lodging units, and students can access their information quickly and easily, therefore hastening the process of tenancy. STALS also allows students to review accommodations, allowing for a social factor when deciding which units are suitable other than objective information.",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon server.js",
-    "dev": "concurrently \"npm run start\" \"cd client && npm start\""
+    "start": "concurrently \"npm run start-server\" \"npm run start-client\"",
+    "start-server": "nodemon server.js",
+    "start-client": "cd client && npm run start",
+    "build-client": "cd client && npm run build",
+    "install-dependencies": "cd client && npm install && cd .. && npm install",
+    "deploy": "cd client && npm run build && cd .. && npm run start-server"
   },
   "author": "CMSC 128 - E8L",
   "license": "ISC",

@@ -7,13 +7,14 @@ You can check what values or JSON responses it returns so you know where to star
 
 - Resty (BE)
 */
-
-
 require('dotenv').config();
 
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+
+const path = require('path');
+
 
 // Import Routes
 const accommodationRouter = require('./routes/accommodationRouter');
@@ -31,6 +32,10 @@ app.use((req, res, next) => {
   next();
 });
 
+// To serve the website directly
+app.use(express.static('client/build'));
+
+// For other express specific functions
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json())
@@ -46,12 +51,15 @@ app.get('/api/v1', (req, res) => {
 });
 app.use('/api/v1/accommodation', accommodationRouter);
 app.use('/api/v1/auth', authRouter);
-
 app.use('/auth-required-func', authRequiredFunc);
 
 app.get('*', (req, res) => {
-    res.json({ msg: 'Welcome to the Backend. All other routes not declared in the routes folder will be routed automatically to this message' });
+    res.sendFile(path.resolve('./client/build', 'index.html'));
 });
+
+// app.get('*', (req, res) => {
+//     res.json({ msg: 'Welcome to the Backend. All other routes not declared in the routes folder will be routed automatically to this message' });
+// });
 
 // Connect to the database and listen for requests
 console.log('Awakening the server...');
