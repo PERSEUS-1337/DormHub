@@ -1,6 +1,7 @@
 import { Container, Col, Row, Dropdown, DropdownButton, Form, Button, Card } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import './homepage-style.css';
+import StarRating from '../components/StarRating';
 
 const Search = () => {
     return (
@@ -48,13 +49,7 @@ const Search = () => {
                         </DropdownButton>
                     </Col>
                     <Col xs={2}>
-                        <div id="ratings">
-                            <img src='https://cdn-icons-png.flaticon.com/512/541/541415.png' alt="star" className="d-block"/>
-                            <img src='https://cdn-icons-png.flaticon.com/512/541/541415.png' alt="star" className="d-block"/>
-                            <img src='https://cdn-icons-png.flaticon.com/512/541/541415.png' alt="star" className="d-block"/>
-                            <img src='https://cdn-icons-png.flaticon.com/512/541/541415.png' alt="star" className="d-block"/>
-                            <img src='https://cdn-icons-png.flaticon.com/512/541/541415.png' alt="star" className="d-block"/>
-                        </div>
+                        <StarRating />
                     </Col>
                     <Col xs={3} className="text-end">
                         <p>1-50 of 137 accomodations</p> </Col>

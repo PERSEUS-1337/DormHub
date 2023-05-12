@@ -11,7 +11,7 @@ const UserPage = () => {
   MAKE SURE TO DELETE THE HARDCODED ID TO TEST FOR OTHER USERS
   */
   useEffect(() => {
-    fetch("/api/v1/auth/64574c0700efd602a52955f3")
+    fetch("/api/v1/auth/644b8da3b8d0cfef32d695a8")
       .then(res => res.json())
       .then(data => setUserData(data.user))
   }, []);
