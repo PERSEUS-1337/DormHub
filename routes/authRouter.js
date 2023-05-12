@@ -13,6 +13,8 @@ router.get('/hello', (req, res, next) => {
 
 router.get('/all-users', getAllUsers);
 
+router.get('/:id', getUserData);
+
 // // POST: Register a user
 router.post('/register', registerUser);
 

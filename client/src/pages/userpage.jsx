@@ -2,13 +2,12 @@ import { useState, useEffect } from "react";
 import { Container } from "react-bootstrap";
 
 const UserPage = () => {
-  const [userData, setUserData] = useState({});
-
   useEffect(() => {
-    fetch("/api/user")
-      .then((response) => response.json())
-      .then((data) => setUserData(data));
-  }, []);
+    fetch("/api/v1/accommodation/")
+      .then(response => response.json())
+      .then(data => console.log(data))
+      .catch(error => console.error(error));
+  });
 
   return (
     <>
@@ -18,7 +17,7 @@ const UserPage = () => {
           className="rounded-circle mb-4"
           style={{ width: "200px", height: "200px", objectFit: "cover" }}
         />
-        <h2>{userData.name}</h2>
+        <h2>{userData.fname} {userData.lname}</h2>
         <p className="lead">{userData.email}</p>
       </Container>
     </>
