@@ -1,4 +1,7 @@
 const Accommodation = require('../models/Accommodation');
+const mongooseObjectId = require('mongoose').Types.ObjectId;
+
+
 
 // GET ALL ACCOMMODATIONS
 const getAccommodation = async (req, res) => {
@@ -70,9 +73,21 @@ const createAccommodation = async (req, res) => {
 
 // UPDATE ACCOMMODATION
 const updateAccommodation = async (req, res) => {
-    const { id } = req.params;
-    const update = req.body;
+
+    const { id,uId } = req.params;
+    const update = req.body; 
+    
+    if (!mongooseObjectId.isValid(id) || !mongooseObjectId.isValid(uId)) {
+        return res.json({error: 'Invalid ObjectID'});
+    }
+
     try {
+        const accommodation = await Accommodation.findById(id);
+        
+        if (accommodation.owner != uId || !accommodation) {
+            throw Error('Invalid Accommodation/owner');
+        }
+
         const updatedAccommodation = await Accommodation.findByIdAndUpdate(id, update, { new: true });
         if (!updatedAccommodation) {
             return res.status(404).json({ error: "No Accommodation Exists" });
@@ -85,9 +100,19 @@ const updateAccommodation = async (req, res) => {
 
 // DELETE ACCOMMODATION
 const deleteAccommodation = async (req, res) => {
-    const { id } = req.params;
+    const { id,uId } = req.params;
     
+    if (!mongooseObjectId.isValid(id) || !mongooseObjectId.isValid(uId)) {
+        return res.json({error: 'Invalid ObjectID'});
+    }
+
     try {
+
+        const accommodation = await Accommodation.findById(id);
+        if (accommodation.owner != uId || !accommodation) {
+            throw Error('Invalid Accommodation/owner');
+        }
+
         const deletedAccommodation = await Accommodation.findByIdAndDelete(id);
         
         if (!deletedAccommodation) {
@@ -195,7 +220,7 @@ module.exports = {
     getAccommodationReview,
     // getAccommodationReviewByUserId,
     updateAccommodation,
-    deleteAccommodation,
+    deleteAccommodation
     // postReviewAccommodation,
     // deleteReviewAccommodation
 }

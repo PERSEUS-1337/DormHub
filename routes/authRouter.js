@@ -9,6 +9,7 @@ const {registerUser, loginUser, getAllUsers, getUserData} = require('../controll
 // const {register} = require('../controllers/genController');
 const {registerOwner, loginOwner} = require('../controllers/ownerController');
 
+// SAMPLES -- can be deleted
 router.get('/hello', (req, res, next) => {
     res.json({msg: 'Hello World'})
 });
