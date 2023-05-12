@@ -3,7 +3,7 @@ import './homepage-style.css';
 import { Link } from 'react-router-dom';
 import LodgingTileList from '../components/LodgingTileList';
 import { useState, useEffect } from 'react';
-import StarRating from '../components/StarRating';
+import { StarRating } from '../components/StarRating';
 //import Accommodation from './pages/accomodation';
 //todo: include button in form
 

@@ -1,5 +1,7 @@
 import './accom-style.css';
 import { Button, Row, Col, Carousel, Container } from 'react-bootstrap';
+import React, { useState, useEffect } from "react";
+import {ReadStarRating} from '../components/StarRating';
 
 const Slideshow = () => {
     return (
@@ -20,10 +22,11 @@ const Slideshow = () => {
     );
 }
 
-const Details = () => {
+const Details = (data) => {
+    console.log(data.accomData.name);
     return (
         <Container id="desc_accom">
-            <h3>Men's Dormitory</h3>
+            <h3>{data.accomData.name}</h3>
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
                 tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
                 quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
@@ -35,7 +38,7 @@ const Details = () => {
                     <img src="../../assets/icons/location.jpg" alt="test1" />
                 </Col>
                 <Col sm={9}>
-                    <p>Coubeilli Avenue, University of the Philippines Los Baños, College, Los Baños, Laguna</p>
+                    <p>{data.accomData.location}</p>
                 </Col>
                 <Col sm={2}>
                     <div className="map" style={{ margin: '0px', padding: '0px' }}>
@@ -48,7 +51,12 @@ const Details = () => {
                     <img src="../../assets/icons/price.jpg" alt="test2" />
                 </Col>
                 <Col sm={11}>
-                    <p >PhP 500.00 - PhP 1,000.00 per month</p>
+                    {
+                        data.accomData.price.length ? 
+                        <p >Php {data.accomData.price[0]} per month</p>
+                        :
+                        <p >Php {data.accomData.price[0]} - Php {data.accomData.price[1]} per month</p>
+                    }
                 </Col>
             </Row>
             <Row id="calendar" className="detail">
@@ -63,10 +71,46 @@ const Details = () => {
     );
 }
 
+const Reviews = () => {
+    return (
+        <Container style={{background: "#dddddd"}} className='d-flex justify-content-center py-2'>
+            <span>This is the Review Div</span>
+        </Container>
+    )
+}
+
+
 function Accommodation() {
+    const [data, setData] = useState(null);
+    const [loading, setLoading] = useState(true); 
+    const [error, setError] = useState(null); 
+    
+    useEffect(() => { fetch("http://localhost:3000/api/v1/accommodation")
+    .then((response) => {
+        if (response.ok) {
+            return response.json(); 
+        }
+        throw response; 
+    })
+    .then(data => {
+        setData(data);
+    })
+    .catch((error) => {
+        console.error("Error fetching data: ", error);
+        setError(error);
+    })
+    .finally(() => {
+        setLoading(false);
+    }); }, []);
+    
+    if (loading) return "Loading...";
+    if (error) return "Error!";
+
     return (<>
         <Slideshow />
-        <Details />
+        <ReadStarRating rate={data["accommodations"][2]} />
+        <Details accomData={data["accommodations"][1]}/>
+        <Reviews />
     </>
     );
 }
