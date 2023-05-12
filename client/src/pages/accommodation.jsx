@@ -22,7 +22,6 @@ const Slideshow = () => {
 }
 
 const Details = (data) => {
-    console.log(data.accomData.name);
     return (
         <Container id="desc_accom">
             <h3>{data.accomData.name}</h3>
@@ -51,7 +50,7 @@ const Details = (data) => {
                 </Col>
                 <Col sm={11}>
                     {
-                        data.accomData.price.length ? 
+                        data.accomData.price.length == 1 ? 
                         <p >Php {data.accomData.price[0]} per month</p>
                         :
                         <p >Php {data.accomData.price[0]} - Php {data.accomData.price[1]} per month</p>
@@ -71,6 +70,12 @@ const Details = (data) => {
 }
 
 function Accommodation() {
+    const location = {
+        address: '1600 Amphitheatre Parkway, Mountain View, california.',
+        lat: 37.42216,
+        lng: -122.08427,
+      }
+
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true); 
     const [error, setError] = useState(null); 
@@ -98,7 +103,7 @@ function Accommodation() {
 
     return (<>
         <Slideshow />
-        <Details accomData={data["accommodations"][1]}/>
+        <Details accomData={data["accommodations"][4]}/>
     </>
     );
 }
