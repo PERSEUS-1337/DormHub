@@ -6,6 +6,8 @@ const User = require('../models/User');
 
 // CONTROLLERS
 const {registerUser, loginUser, getAllUsers, getUserData} = require('../controllers/userController');
+const {register} = require('../controllers/genController');
+const {registerOwner} = require('../controllers/ownerController');
 
 router.get('/hello', (req, res, next) => {
     res.json({msg: 'Hello World'})
@@ -13,8 +15,13 @@ router.get('/hello', (req, res, next) => {
 
 router.get('/all-users', getAllUsers);
 
+// // POST: Register 
+router.post('/register', register);
+
 // // POST: Register a user
-router.post('/register', registerUser);
+router.post('/register/user', registerUser);
+// // POST: Register a user
+router.post('/register/owner', registerOwner);
 
 router.post('/login', loginUser);
 
