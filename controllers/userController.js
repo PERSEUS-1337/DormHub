@@ -85,26 +85,17 @@ const getAllUsers = async(req, res) => {
 
 // EDIT USER'S FIRST AND LAST NAME AND PFP
 const editUserData = async(req, res) => {
-    const updated = req.body;
-    const { id } = req.params;
-
-    if (!mongooseObjectId.isValid(id)) {
-        return res.json({ err: 'Not a valid userid' })
+       const { id } = req.params;
+    const update = req.body;
+    try {
+        const updatedUser = await User.findByIdAndUpdate(id, update, { new: true });
+        if (!updatedUser) {
+            return res.status(404).json({ error: "No User Exists" });
+        }
+        res.status(200).json(updatedUser);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
     }
-
-    const user = await User.findById(id);
-
-    if (!user) {
-        return res.json({ err: 'User does not exist' })
-    }
-
-    user.fname = updated.fname;
-    user.lname = updated.lname;
-    user.pfp = updated.pfp;
-
-    await user.save();
-
-    res.json({ user: user })
 }
 
 

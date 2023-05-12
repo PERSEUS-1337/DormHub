@@ -23,7 +23,7 @@ router.get('/:id', getUserData);
 
 
 // edit user data
-router.put('/edit-user/:id', editUserData);
+router.patch('/edit-user/:id', editUserData);
 
 
 // UPDATE an accommodation
