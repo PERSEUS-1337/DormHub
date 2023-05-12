@@ -19,10 +19,10 @@ const ownerSchema = new Schema({
     type: String,
     required: true
   },
-  phone: {
-    type: [String],
-    required: true
-  },
+  // phone: {
+  //   type: [String],
+  //   required: true
+  // },
   accommodations: {
     type: [mongoose.Schema.Types.ObjectId],
     required: false,

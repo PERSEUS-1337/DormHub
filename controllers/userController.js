@@ -36,14 +36,15 @@ const registerUser = async (req, res) => {
         
         if (type == "owner") {
 
-            const {phone} = req.body;
-            if (!phone) throw Error('All fields must be provided');
-            if (!validator.default.isMobilePhone(phone)) throw Error('Invalid mobile number');
+            // const {phone} = req.body;
+            // if (!phone) throw Error('All fields must be provided');
+            // if (!validator.default.isMobilePhone(phone)) throw Error('Invalid mobile number');
  
-            const owner = Owner.create({fname,lname,email,password: hash, phone:[phone]});
-            const ownerSaved = await Owner.findOne({email: email});
+            // const owner = Owner.create({fname,lname,email,password: hash, phone:[phone]});
+            const owner = Owner.create({fname,lname,email,password: hash});
+            const ownerSaved = await Owner.findOne({email});
             const token = createToken(ownerSaved._id);
-            res.json({msg: "Owner saved", email: ownerSaved.email, token: token})
+            res.json({msg: "Owner saved", email: ownerSaved.email, token: token? token : null})
         }
 
         if (type == "user") {
