@@ -57,10 +57,6 @@ app.get('*', (req, res) => {
     res.sendFile(path.resolve('./client/build', 'index.html'));
 });
 
-// app.get('*', (req, res) => {
-//     res.json({ msg: 'Welcome to the Backend. All other routes not declared in the routes folder will be routed automatically to this message' });
-// });
-
 // Connect to the database and listen for requests
 console.log('Awakening the server...');
 
@@ -71,12 +67,3 @@ mongoose.connect(process.env.MONGO_URI)
     })
   })
   .catch((err) => console.log(err))
-
-// // MONGODB TRIAL
-// mongoose.connect(process.env.MONGO_URI_TRIAL)
-//   .then(() =>{
-//     app.listen(process.env.PORT, () => {
-//       console.log('Database connected successfully, listening on port', process.env.PORT)
-//     })
-//   })
-//   .catch((err) => console.log(err))

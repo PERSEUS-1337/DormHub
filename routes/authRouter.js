@@ -13,6 +13,9 @@ router.get('/hello', (req, res, next) => {
 
 router.get('/all-users', getAllUsers);
 
+// Get specific user details
+router.get('/:id', getUserData);
+
 // // POST: Register a user
 router.post('/register', registerUser);
 
