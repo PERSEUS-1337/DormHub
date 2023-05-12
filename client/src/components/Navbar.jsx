@@ -5,16 +5,11 @@ import NavItem from './NavItem'
 
 
 const NavBar = () => {
-    const [isVisible, setIsVisible] = useState(false)
-    const toggleVisible = () => {
-        setIsVisible(!isVisible)
-    }
+    // const [isVisible, setIsVisible] = useState(false)
+    // const toggleVisible = () => {
+    //     setIsVisible(!isVisible)
+    // }
     const nav_items = [
-        {
-            id: 1,
-            name: "Favorites",
-            href: "/user/favorites",
-        },
         {
             id: 2,
             name: "Login",
@@ -56,7 +51,7 @@ const NavBar = () => {
                     </Dropdown>
                 </Nav> */}
                 <Nav className="ms-auto">
-                    <Button>set visibility</Button>
+                    {/* <Button>set visibility</Button> */}
                     {navList}
                 </Nav>
                 </Navbar.Collapse>

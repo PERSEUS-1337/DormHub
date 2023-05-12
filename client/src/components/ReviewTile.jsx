@@ -2,7 +2,7 @@ import React from 'react'
 import { Container, Row, Col, Button, Image } from 'react-bootstrap'
 import { useNavigate, Link } from 'react-router-dom'
 
-const LodgingTileItem = ({ data }) => {
+const ReviewTileitem = ({ data }) => {
     const navigate = useNavigate()
 
     const navigateToLodge = () => {
@@ -13,7 +13,7 @@ const LodgingTileItem = ({ data }) => {
         <Container className='border rounded mb-3'>
             <Row>
                 <Col>
-                    <Image className='img-thumbnail border-0' src={data.img_src} alt='Lodge Photo' rounded />
+                    <Image className='img-thumbnail border-0' src={data.img_src} alt='Photo' rounded />
                 </Col>
                 <Col className='border'>
                     <h2 className='my-4'>{data.name}</h2>
@@ -36,4 +36,19 @@ const LodgingTileItem = ({ data }) => {
     )
 }
 
-export default LodgingTileItem
+// TODO: (Jemu) - fix style
+const ReviewList = () => {
+
+    temp_data.map(data => <LodgingTileItem key={data.id} data={data} />)
+
+    return (
+        <>
+            {LodgingList}
+        </>
+    )
+
+}
+
+
+
+export default ReviewTileList

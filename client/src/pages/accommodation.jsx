@@ -1,6 +1,7 @@
 import './accom-style.css';
 import { Button, Row, Col, Carousel, Container } from 'react-bootstrap';
 import React, { useState, useEffect } from "react";
+import {ReadStarRating} from '../components/StarRating';
 
 const Slideshow = () => {
     return (
@@ -70,6 +71,15 @@ const Details = (data) => {
     );
 }
 
+const Reviews = () => {
+    return (
+        <Container style={{background: "#dddddd"}} className='d-flex justify-content-center py-2'>
+            <span>This is the Review Div</span>
+        </Container>
+    )
+}
+
+
 function Accommodation() {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true); 
@@ -98,7 +108,9 @@ function Accommodation() {
 
     return (<>
         <Slideshow />
+        <ReadStarRating rate={data["accommodations"][2]} />
         <Details accomData={data["accommodations"][1]}/>
+        <Reviews />
     </>
     );
 }
