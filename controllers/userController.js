@@ -7,18 +7,18 @@ const express = require('express');
 
 
 const createToken = (_id) => {
-    return jwt.sign({_id}, process.env.PRIVATE_KEY);
+    return jwt.sign({ _id }, process.env.PRIVATE_KEY);
 }
 
 
-const registerUser = async (req, res) => {
-    const {fname, lname, email, password} = req.body;
+const registerUser = async(req, res) => {
+    const { fname, lname, email, password } = req.body;
 
     const pfp = "null";
 
     try {
 
-        const userExist = await User.findOne({email});
+        const userExist = await User.findOne({ email });
         if (userExist) {
             throw Error('User already exists');
         }
@@ -26,33 +26,33 @@ const registerUser = async (req, res) => {
         if (!fname || !lname || !email || !password) {
             throw Error('All fields must be provided');
         }
-    
+
         if (!validator.default.isEmail(email)) {
             throw Error('Invalid email');
         }
-    
+
         if (!validator.default.isStrongPassword(password)) {
             throw Error('Password should be of length 8 or more and must contain an uppercase letter, a lowercase letter, a digit, and a symbol');
         }
-        
+
         const salt = await bcrypt.genSalt(10);
         const hash = await bcrypt.hash(password, salt);
-        
-        const user = User.create({fname,lname,pfp, email,password: hash});
 
-        const userSaved = await User.findOne({email});
+        const user = User.create({ fname, lname, pfp, email, password: hash });
+
+        const userSaved = await User.findOne({ email });
 
         const token = createToken(userSaved._id);
 
-        res.status(200).json({msg: "User saved", email: userSaved.email, token: token});
+        res.status(200).json({ msg: "User saved", email: userSaved.email, token: token });
 
     } catch (error) {
-        res.status(400).json({err: error.message});
+        res.status(400).json({ err: error.message });
     }
-    
+
 };
 
-const loginUser = async (req, res) => {
+const loginUser = async(req, res) => {
     const { email, password } = req.body;
 
     try {
@@ -68,58 +68,63 @@ const loginUser = async (req, res) => {
         }
 
         const token = createToken(user._id);
-        res.status(200).json({msg: 'logged in successfully!', email: user.email, token: token});
+        res.status(200).json({ msg: 'logged in successfully!', email: user.email, token: token });
     } catch (error) {
-        res.status(400).json({err: error.message});
+        res.status(400).json({ err: error.message });
     }
-    
+
 };
 
 
-const getAllUsers = async (req, res) => {
+
+const getAllUsers = async(req, res) => {
     const all = await User.find({});
-    res.json({msg: all})
+    res.json({ msg: all })
 };
 
 
+// EDIT USER'S FIRST AND LAST NAME AND PFP
+const editUserData = async(req, res) => {
+    const updated = req.body;
+    const { id } = req.params;
 
-const editUserData = async (req, res) => {
-
-    const { id } = req.params
-  
     if (!mongooseObjectId.isValid(id)) {
-      return res.json({err: 'Not a valid userid'})
+        return res.json({ err: 'Not a valid userid' })
     }
-  
-    const user = await User.findByIdAndUpdate(id, {
-        ...req.body
-    });
+
+    const user = await User.findById(id);
 
     if (!user) {
-      return res.json({err: 'User does not exist'})
+        return res.json({ err: 'User does not exist' })
     }
 
-    res.json({user: user})
+    user.fname = updated.fname;
+    user.lname = updated.lname;
+    user.pfp = updated.pfp;
 
+    await user.save();
+
+    res.json({ user: user })
 }
+
 
 // get UserData
-const getUserData = async (req, res) => {
+const getUserData = async(req, res) => {
+    console.log("User data");
     const { id } = req.params;
-  
+
     if (!mongooseObjectId.isValid(id)) {
-      return res.json({err: 'Not a valid userid'});
+        return res.json({ err: 'Not a valid userid' });
     }
-  
+
     const user = await User.findById(id);
-  
+
     if (!user) {
-      return res.json({err: 'User does not exist'});
+        return res.json({ err: 'User does not exist' });
     }
-  
-    res.json({user: user});
+
+    res.json({ user: user });
 }
 
 
-module.exports = {registerUser, loginUser, getAllUsers, getUserData, editUserData};
-
+module.exports = { registerUser, loginUser, getAllUsers, getUserData, editUserData };
