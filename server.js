@@ -28,8 +28,10 @@ const app = express();
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-  next();
+  next(); 
 });
+
+app.use(express.static('client/build'));
 
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
@@ -50,6 +52,7 @@ app.use('/api/v1/auth', authRouter);
 app.use('/auth-required-func', authRequiredFunc);
 
 app.get('*', (req, res) => {
+    return res.status(404).json({notFound: true});
     res.json({ msg: 'Welcome to the Backend. All other routes not declared in the routes folder will be routed automatically to this message' });
 });
 

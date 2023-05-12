@@ -3,7 +3,6 @@
 This should contain routes that needed authorization or routes that can only
 be accessed if the user is currently logged-in in the system.
 
-
 -V(BE)
 
 */
@@ -15,8 +14,9 @@ const router = express.Router();
 const requireAuth = require('../middleware/requireAuth');
 
 // CONTROLLERS
-const {getAllUsers, getUserData, editUserData} = require('../controllers/userController');
+const {registerUser, loginUser, getAllUsers, getUserData, editUserData} = require('../controllers/userController');
 const { getAccommodation, createAccommodation, updateAccommodation, deleteAccommodation} = require('../controllers/accommodationController');
+const {getAllOwners, getOwner} = require('../controllers/ownerController')
 
 
 router.use(requireAuth);
@@ -42,6 +42,9 @@ router.patch('/accommodation/:id/:uId',updateAccommodation);
 // DELETE a single accommodation
 router.delete('/accommodation/:id/:uId', deleteAccommodation);
 
+// OWNER
+router.get('/owner/:id', getOwner);
+router.get('/owners', getAllOwners);
 
 module.exports = router;
 

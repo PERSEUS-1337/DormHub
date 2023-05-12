@@ -5,12 +5,47 @@ const mongooseObjectId = require('mongoose').Types.ObjectId;
 
 // GET ALL ACCOMMODATIONS
 const getAccommodation = async (req, res) => {
-    const accommodation = await Accommodation.find({});
-    res.status(200).json(accommodation)
+    // Filters
+    const { search, sort, location } = req.query;
 
-    if (!accommodation) {
-        return res.status(404).json({error: "No Accommodation Exists"})
+    // Object for the filters
+    const queryObject = {};
+
+    // Filter for the keyword
+    if (search) {
+        queryObject.name = { $regex: search, $options: 'i' };
     }
+
+    // Find the actual accommodations that fit the keyword
+    let accommodation = Accommodation.find(queryObject);
+
+    // Sorting of accommodations
+    if (sort === 'a-z') accommodation = accommodation.sort('name');
+    if (sort === 'z-a') accommodation = accommodation.sort('-name');
+    if (sort === 'low-high') accommodation = accommodation.sort('price');
+    if (sort === 'high-low') accommodation = accommodation.sort('-price');
+
+    // Setting of pages of accomodation, this is the limiter
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 5;
+    const skip = (page - 1) * limit;
+
+    // Filter returns to comply with paging style and limiters
+    accommodation = accommodation.skip(skip).limit(limit);
+
+    const accommodations = await accommodation;
+    const totalAccommodations = await Accommodation.countDocuments(queryObject);
+    const numOfPages = Math.ceil(totalAccommodations / limit);
+
+    if (!totalAccommodations) {
+        return res.status(404).json({error: "No Accommodation Exists"});
+    } 
+
+    res.status(200).json({
+        accommodations,
+        totalAccommodations,
+        numOfPages
+    })
 }
 
 // GET SINGLE ACCOMMODATIONS
@@ -176,7 +211,6 @@ const deleteReviewAccommodation = async (req, res) => {
         res.status(500).json({ error: "Server error" });
     }
 }
-
 
 
 module.exports = {

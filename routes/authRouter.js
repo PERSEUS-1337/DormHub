@@ -5,18 +5,32 @@ const router = express.Router();
 const User = require('../models/User');
 
 // CONTROLLERS
-const {registerUser, loginUser, getAllUsers} = require('../controllers/userController');
+const {registerUser, loginUser, getAllUsers, getUserData} = require('../controllers/userController');
+// const {register} = require('../controllers/genController');
+const {registerOwner, loginOwner} = require('../controllers/ownerController');
 
 // SAMPLES -- can be deleted
 router.get('/hello', (req, res, next) => {
     res.json({msg: 'Hello World'})
 });
 
-// USER PRE-AUTH routes
-// POST: User Registration
-router.post('/register', registerUser);
-// POST: User Login
-router.post('/login', loginUser);
+router.get('/all-users', getAllUsers);
+
+// // POST: Register 
+// router.post('/register', register);
+
+// // POST: Register a user
+router.post('/register/user', registerUser);
+// // POST: Register a user
+router.post('/register/owner', registerOwner);
+
+router.post('/login/user', loginUser);
+router.post('/login/owner', loginOwner);
 
 
-module.exports = router;
+// UPDATE an accommodation
+router.patch('/update-user', (req, res, next) => {
+    res.json({msg: 'UPDATE a user'})
+});
+
+module.exports = router; 

@@ -2,13 +2,12 @@ const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 
-const ownerSchema
- = new Schema({
-  _id: {
-    type: mongoose.Schema.Types.ObjectId,
+const ownerSchema = new Schema({
+  fname: {
+    type: String,
     required: true
   },
-  name: {
+  lname: {
     type: String,
     required: true
   },
@@ -22,12 +21,28 @@ const ownerSchema
   },
   phone: {
     type: [String],
-    required: true
+    required: false,
+    default: []
+  },
+  accommodations: {
+    type: [mongoose.Schema.Types.ObjectId],
+    required: false,
+    default: []
+  },
+  bookmark: {
+    type: [mongoose.Schema.Types.ObjectId],
+    required: false,
+    default: []
+  },
+  pfp: {
+    type: String,
+    required: false,
+    default: "null"
   }
+
 });
 
-const Owner = mongoose.model('Owner', ownerSchema
-);
+const Owner = mongoose.model('Owner', ownerSchema, 'owner_be');
 
 module.exports = Owner;
 
