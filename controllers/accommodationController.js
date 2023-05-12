@@ -48,7 +48,9 @@ const getAccommodation = async(req, res) => {
 // GET SINGLE ACCOMMODATIONS
 const getAccommodationById = async(req, res) => {
     const { id } = req.params;
-    const accommodation = await Accommodation.findById(id);
+    const accommodation = await Accommodation.findById(id)
+        .where('archived')
+        .equals(false);
 
     if (!accommodation) {
         return res.status(404).json({ error: "No Accommodation Exists" })
@@ -59,9 +61,9 @@ const getAccommodationById = async(req, res) => {
 
 // POST ACCOMMODATION
 const createAccommodation = async(req, res) => {
-    const { name, price, location, type, rating, amenity, owner, user, review, report } = req.body; // Destructure the required fields from the request body
+    const { name, price, location, type, rating, archived, amenity, owner, user, review, report } = req.body; // Destructure the required fields from the request body
     try {
-        const accommodation = await Accommodation.create({ name, price, location, type, rating, amenity, owner, user, review, report })
+        const accommodation = await Accommodation.create({ name, price, location, type, rating, archived, amenity, owner, user, review, report })
         res.status(201).json(accommodation)
     } catch (error) {
         res.status(400).json({ error: error.message })
