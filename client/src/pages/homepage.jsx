@@ -2,7 +2,7 @@ import { Container, Col, Row, Dropdown, DropdownButton, Form, Button, Card } fro
 import './homepage-style.css';
 import { Link } from 'react-router-dom';
 import LodgingTileList from '../components/LodgingTileList';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import StarRating from '../components/StarRating';
 //import Accommodation from './pages/accomodation';
 //todo: include button in form
@@ -10,30 +10,42 @@ import StarRating from '../components/StarRating';
 
 
 const AccomCards = () => {
-    const temp_data = [
-        {
-            id: 1,
-            name: "TENA'S RESIDENCES",
-            img_src: "https://cdn.houseplansservices.com/product/tahbfmakhok6k787jtmjm3ecgt/w620x413.png?v=9",
-            price: 3000
-        },
-        {
-            id: 2,
-            name: "DORMIFY",
-            img_src: "https://cf.bstatic.com/xdata/images/hotel/max1024x768/315663049.jpg?k=bfa63b17927cc47fbeece382d0f520052eaefc592601ec7a9555685c01803949&o=&hp=1",
-            price: 3500
-        },
-        {
-            id: 3,
-            name: "DWELLO",
-            img_src: "https://media-cdn.tripadvisor.com/media/photo-s/0a/22/d6/51/peredo-s-loding-house.jpg",
-            price: 7000
-        }
-    ]
+    // const temp_data = [
+    //     {
+    //         id: 1,
+    //         name: "TENA'S RESIDENCES",
+    //         img_src: "https://cdn.houseplansservices.com/product/tahbfmakhok6k787jtmjm3ecgt/w620x413.png?v=9",
+    //         price: 3000
+    //     },
+    //     {
+    //         id: 2,
+    //         name: "DORMIFY",
+    //         img_src: "https://cf.bstatic.com/xdata/images/hotel/max1024x768/315663049.jpg?k=bfa63b17927cc47fbeece382d0f520052eaefc592601ec7a9555685c01803949&o=&hp=1",
+    //         price: 3500
+    //     },
+    //     {
+    //         id: 3,
+    //         name: "DWELLO",
+    //         img_src: "https://media-cdn.tripadvisor.com/media/photo-s/0a/22/d6/51/peredo-s-loding-house.jpg",
+    //         price: 7000
+    //     }
+    // ]
+
+    const [accommData, setAccommData] = useState({});
+
+    
+    useEffect(() => {
+        fetch("/api/v1/accommodation")
+        .then(res =>res.json())
+        .then(data => {
+            setAccommData(data);
+            console.log(data["accommodations"][2]);
+        })
+    }, []);
 
     return (
       <Row xs={2} md={4} className="g-5">
-        {temp_data.map(data => (
+        {accommData.accommodations && accommData.accommodations.map( data => (
             <Col key={data.id} className="col mx-auto">
             <Card>
             <Link to='/accommodation'>
@@ -41,7 +53,12 @@ const AccomCards = () => {
             </Link>
               <Card.Body>
                     <Card.Title>{data.name}</Card.Title>
-                    <Card.Text className="text-muted">PHP {data.price}</Card.Text>
+                    {
+                            data.price.length ==1? 
+                            <Card.Text className="text-muted">PHP {data.price[0]}</Card.Text>
+                            :
+                            <Card.Text className="text-muted">PHP {data.price[0]} - {data.price[1]}</Card.Text>
+                    }
               </Card.Body>
             </Card>
           </Col>
@@ -58,7 +75,6 @@ const toggleVisible = () => {
 
     return(
         <>
-        <StarRating />
         <Container className="mt-5 ms-5" id="search-container2">
                 <Row>
                     <Col xs={2} ></Col>
@@ -104,13 +120,7 @@ const toggleVisible = () => {
                     </Col>
 
                     <Col xs={2}>
-                        <div id="ratings">
-                            <img src='https://cdn-icons-png.flaticon.com/512/541/541415.png' alt="star" className="d-block"/>
-                            <img src='https://cdn-icons-png.flaticon.com/512/541/541415.png' alt="star" className="d-block"/>
-                            <img src='https://cdn-icons-png.flaticon.com/512/541/541415.png' alt="star" className="d-block"/>
-                            <img src='https://cdn-icons-png.flaticon.com/512/541/541415.png' alt="star" className="d-block"/>
-                            <img src='https://cdn-icons-png.flaticon.com/512/541/541415.png' alt="star" className="d-block"/>
-                        </div>
+                        <StarRating />
                     </Col>
                     <Col xs={3} className="text-end">
                         <p className="invisible">1-50 of 137 accomodations</p> </Col>

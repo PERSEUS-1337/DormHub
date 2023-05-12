@@ -21,13 +21,15 @@ const LodgingTileItem = ({ data }) => {
                 </Col>
                 <Col>
                     <Row>
-                        <h3 className='my-4'>PHP {data.price}</h3>
-                        
+                        {
+                            data.price.length ==1? 
+                            <h3 className='my-4'>PHP {data.price[0]}</h3>
+                            :
+                            <h3 className='my-4'>PHP {data.price[0]} - {data.price[1]}</h3>
+                        }
                         <div className="justify-content-end mt-2">
                             <Button onClick={navigateToLodge}>check</Button>
                         </div>
-                        
-
                     </Row>
                     
                 </Col>
