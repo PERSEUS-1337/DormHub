@@ -3,7 +3,6 @@ const Owner = require('../models/Owner');
 const validator = require('validator');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const mongooseObjectId = require('validator').default.isMongoId;
 const express = require('express');
 
 
@@ -96,7 +95,7 @@ const editUserData = async (req, res) => {
 const getUserData = async (req, res) => {
     const { id } = req.params;
   
-    if (!mongooseObjectId.isValid(id)) {
+    if (!validator.default.isMongoId(id)) {
       return res.json({err: 'Not a valid userid'});
     }
   

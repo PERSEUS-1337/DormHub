@@ -19,7 +19,7 @@ const requireAuth = require('../middleware/requireAuth');
 
 // CONTROLLERS
 const {registerUser, loginUser, getAllUsers, getUserData, editUserData} = require('../controllers/userController');
-
+const {getAllOwners, getOwner} = require('../controllers/ownerController')
 
 router.use(requireAuth);
 
@@ -38,6 +38,9 @@ router.get('/user-data/:id', getUserData);
 router.patch('/edit-user/:id', editUserData); 
 
 
+// OWNER
+router.get('/owner/:id', getOwner);
+router.get('/owners', getAllOwners);
 
 module.exports = router;
 

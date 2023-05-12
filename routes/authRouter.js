@@ -7,7 +7,7 @@ const User = require('../models/User');
 // CONTROLLERS
 const {registerUser, loginUser, getAllUsers, getUserData} = require('../controllers/userController');
 const {register} = require('../controllers/genController');
-const {registerOwner} = require('../controllers/ownerController');
+const {registerOwner, loginOwner} = require('../controllers/ownerController');
 
 router.get('/hello', (req, res, next) => {
     res.json({msg: 'Hello World'})
@@ -23,7 +23,8 @@ router.post('/register/user', registerUser);
 // // POST: Register a user
 router.post('/register/owner', registerOwner);
 
-router.post('/login', loginUser);
+router.post('/login/user', loginUser);
+router.post('/login/owner', loginOwner);
 
 
 // UPDATE an accommodation

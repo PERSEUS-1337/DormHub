@@ -41,28 +41,51 @@ const registerOwner = async (req, res) => {
 
 
 
-// const loginUser = async (req, res) => {
-//     const { email, password } = req.body;
+const loginOwner = async (req, res) => {
+    const { email, password } = req.body;
 
-//     try {
-//         const user = await User.findOne({ email });
-//         if (!user) {
-//             throw Error('Incorrect email / User does not exist!');
-//         }
+    try {
+        const owner = await Owner.findOne({ email });
+        if (!owner) {
+            throw Error('Incorrect email / Owner does not exist!');
+        }
 
-//         const matchPass = bcrypt.compare(password, user.password);
+        const matchPass = bcrypt.compare(password, owner.password);
 
-//         if (!matchPass) {
-//             throw Error('Incorrect password');
-//         }
+        if (!matchPass) {
+            throw Error('Incorrect password');
+        }
 
-//         const token = createToken(user._id);
-//         res.json({msg: 'logged in successfully!', email: user.email, token: token});
-//     } catch (error) {
-//         res.json({err: error.message});
-//     }
+        const token = createToken(owner._id);
+        res.json({msg: 'logged in successfully!', email: owner.email, token: token});
+    } catch (error) {
+        res.json({err: error.message});
+    }
     
-// };
+};
+
+const getAllOwners = async (req, res) => {
+    const all = await Owner.find({});
+    res.json({msg: all})
+};
+
+const getOwner = async (req, res) => {
+    const { id } = req.params;
+  
+    if (!validator.default.isMongoId(id)) {
+      return res.json({err: 'Not a valid userid'});
+    }
+  
+    const owner = await Owner.findById(id);
+  
+    if (!owner) {
+      return res.json({err: 'User does not exist'});
+    }
+  
+    res.json({owner: owner});
+};
 
 
-module.exports = {registerOwner}
+
+
+module.exports = {registerOwner, loginOwner, getAllOwners, getOwner}
