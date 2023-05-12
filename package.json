@@ -23,6 +23,7 @@
     "mongodb": "^5.3.0",
     "mongoose": "^7.0.3",
     "passport": "^0.6.0",
+    "sass": "^1.62.1",
     "string-sanitizer": "^2.0.2",
     "validator": "^13.9.0"
   },
