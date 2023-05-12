@@ -22,7 +22,7 @@ const StarRating = () => {
                         />
                         <FaStar
                             size={40}
-                            color={ratingValue <= (hover || rating) ? "#ffc107" : "#e4e5e9"}
+                            color={ratingValue <= (hover || rating) ? "#ffc107" : "#b8bac2"}
                             style={{ cursor: 'pointer' }}
                             onMouseEnter={() => setHover(ratingValue)}
                             onMouseLeave={() => setHover(null)}
