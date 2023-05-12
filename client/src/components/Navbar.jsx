@@ -41,7 +41,7 @@ const NavBar = () => {
     return (
         <Navbar bg="primary" expand="lg">
             <Container>
-                <Navbar.Brand style={{color:"white"}} href="/">STALS</Navbar.Brand>
+                <Navbar.Brand style={{color:"white"}} href="/">Dormhub</Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
                 {/* <Nav>
