@@ -30,9 +30,11 @@ const registerUser = async (req, res) => {
         const hash = await bcrypt.hash(password, salt);
         
         const user = User.create({fname,lname,email,password: hash});
-        const userSaved = await User.findOne({email});
-        const token = createToken(userSaved._id);
-        res.json({msg: "User saved", email: userSaved.email, token: token})
+        
+        res.redirect(307, '/api/v1/auth/login/user');
+        // const userSaved = await User.findOne({email});
+        // const token = createToken(userSaved._id);
+        // res.json({msg: "User saved", email: userSaved.email, token: token})
 
     } catch (error) {
         res.json({err: error.message});
