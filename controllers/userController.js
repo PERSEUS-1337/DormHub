@@ -1,8 +1,8 @@
 const User = require('../models/User');
+const Owner = require('../models/Owner');
 const validator = require('validator');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const mongooseObjectId = require('mongoose').Types.ObjectId;
 const express = require('express');
 
 
@@ -11,38 +11,34 @@ const createToken = (_id) => {
 }
 
 
+// SIGNUP 
 const registerUser = async (req, res) => {
-    const {name, email, password} = req.body;
+    const {fname, lname, email, password} = req.body;
 
     try {
-
         const userExist = await User.findOne({email});
-        if (userExist) {
-            throw Error('User already exists');
-        }
+        
+        // Validation
+        if (userExist) throw Error('User already exists');
 
-        if (!name || !email || !password) {
-            throw Error('All fields must be provided');
-        }
-    
-        if (!validator.default.isEmail(email)) {
-            throw Error('Invalid email');
-        }
+        if (!fname || !lname || !email || !password) throw Error('All fields must be provided');
+
+        if (!validator.default.isEmail(email)) throw Error('Invalid email');
     
         if (!validator.default.isStrongPassword(password)) {
             throw Error('Password should be of length 8 or more and must contain an uppercase letter, a lowercase letter, a digit, and a symbol');
         }
-        
+      
+        // Password encryption before storing in DB
         const salt = await bcrypt.genSalt(10);
         const hash = await bcrypt.hash(password, salt);
         
-        const user = User.create({name,email,password: hash});
-
-        const userSaved = await User.findOne({email});
-
-        const token = createToken(userSaved._id);
-
-        res.json({msg: "User saved", email: userSaved.email, token: token});
+        const user = User.create({fname,lname,email,password: hash});
+        
+        res.redirect(307, '/api/v1/auth/login/user');
+        // const userSaved = await User.findOne({email});
+        // const token = createToken(userSaved._id);
+        // res.json({msg: "User saved", email: userSaved.email, token: token})
 
     } catch (error) {
         res.json({err: error.message});
@@ -55,10 +51,9 @@ const loginUser = async (req, res) => {
 
     try {
         const user = await User.findOne({ email });
-        if (!user) {
-            throw Error('Incorrect email / User does not exist!');
-        }
+        if (!user) throw Error('Incorrect email / User does not exist!');
 
+        // checks password match
         const matchPass = bcrypt.compare(password, user.password);
 
         if (!matchPass) {
@@ -82,7 +77,6 @@ const getAllUsers = async (req, res) => {
 
 
 const editUserData = async (req, res) => {
-
     const { id } = req.params
   
     if (!mongooseObjectId.isValid(id)) {
@@ -105,7 +99,7 @@ const editUserData = async (req, res) => {
 const getUserData = async (req, res) => {
     const { id } = req.params;
   
-    if (!mongooseObjectId.isValid(id)) {
+    if (!validator.default.isMongoId(id)) {
       return res.json({err: 'Not a valid userid'});
     }
   

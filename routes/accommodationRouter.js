@@ -19,12 +19,12 @@ const router = express.Router();
 router.get('/', getAccommodation);
 // GET single accommodation
 router.get('/:id', getAccommodationById);
-// POST a new accommodation
-router.post('/', createAccommodation);
-// UPDATE a single accommodation
-router.patch('/:id',updateAccommodation);
-// DELETE a single accommodation
-router.delete('/:id', deleteAccommodation);
+// // POST a new accommodation
+// router.post('/', createAccommodation);
+// // UPDATE a single accommodation
+// router.patch('/:id',updateAccommodation);
+// // DELETE a single accommodation
+// router.delete('/:id', deleteAccommodation);
 
 // Accommodation Reviews
 

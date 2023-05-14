@@ -15,7 +15,6 @@ const bodyParser = require('body-parser');
 
 const path = require('path');
 
-
 // Import Routes
 const accommodationRouter = require('./routes/accommodationRouter');
 const authRouter = require('./routes/authRouter');
@@ -29,13 +28,12 @@ const app = express();
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-  next();
+  next(); 
 });
 
 // To serve the website directly
 app.use(express.static('client/build'));
 
-// For other express specific functions
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json())

@@ -18,4 +18,4 @@
     3. For the combination:
         1. Make sure you are in the client folder directory.
         2. `npm run start`
-        3. You should see your development server in `localhost:5000`.
+        3. You should see your development server in `localhost:5000.

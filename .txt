@@ -1,0 +1,6 @@
+/api/v1/accomodatiom
+
+URL = "/api/v1"
+URL = "www.locah`l;```
+
+env.URL/accomodation
