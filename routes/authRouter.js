@@ -21,12 +21,12 @@ router.get('/all-users', getAllUsers);
 
 // // POST: Register a user
 router.post('/register/user', registerUser);
-// // POST: Register a user
+
+// // POST: Register an owner
 router.post('/register/owner', registerOwner);
 
 router.post('/login/user', loginUser);
 router.post('/login/owner', loginOwner);
-
 
 // UPDATE an accommodation
 router.patch('/update-user', (req, res, next) => {
