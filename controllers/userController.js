@@ -38,7 +38,7 @@ const registerUser = async (req, res) => {
         res.redirect(307, '/api/v1/auth/login/user');
 
     } catch (error) {
-        res.json({err: error.message});
+        res.status(400).json({err: error.message});
     }
     
 };
@@ -58,9 +58,9 @@ const loginUser = async (req, res) => {
         }
 
         const token = createToken(user._id);
-        res.json({msg: 'logged in successfully!', _id: user._id, token: token});
+        res.status(200).json({msg: 'logged in successfully!', _id: user._id, token: token});
     } catch (error) {
-        res.json({err: error.message});
+        res.status(400).json({err: error.message});
     }
     
 };
@@ -68,7 +68,7 @@ const loginUser = async (req, res) => {
 
 const getAllUsers = async (req, res) => {
     const all = await User.find({});
-    res.json({msg: all})
+    res.status(200).json({msg: all})
 };
 
 
@@ -77,7 +77,7 @@ const editUserData = async (req, res) => {
     const { id } = req.params
   
     if (!mongooseObjectId.isValid(id)) {
-      return res.json({err: 'Not a valid userid'})
+      return res.status(400).json({err: 'Not a valid userid'})
     }
   
     const user = await User.findByIdAndUpdate(id, {
@@ -85,10 +85,10 @@ const editUserData = async (req, res) => {
     });
 
     if (!user) {
-      return res.json({err: 'User does not exist'})
+      return res.status(400).json({err: 'User does not exist'})
     }
-    
-    res.json(user);
+
+    res.status(200).json(user);
 
 }
 
@@ -97,18 +97,18 @@ const getUserData = async (req, res) => {
     const { id } = req.params;
   
     if (!validator.default.isMongoId(id)) {
-      return res.json({err: 'Not a valid userid'});
+      return res.status(400).json({err: 'Not a valid userid'});
     }
   
     const user = await User.findById(id);
   
     if (!user) {
-      return res.json({err: 'User does not exist'});
+      return res.status(400).json({err: 'User does not exist'});
     }
 
     const {fname,lname,email,bookmark,pfp} = user;
     const retUser = {fname,lname,email,bookmark,pfp};
-    res.json(retUser);
+    res.status(200).json(retUser);
 }
 
 

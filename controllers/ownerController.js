@@ -36,7 +36,7 @@ const registerOwner = async (req, res) => {
         // res.json({msg: "Owner saved", email: ownerSaved.email, token: token})
 
     } catch (error) {
-        res.json({err: error.message});
+        res.status(400).json({err: error.message});
     }
     
 };
@@ -59,34 +59,34 @@ const loginOwner = async (req, res) => {
         }
 
         const token = createToken(owner._id);
-        res.json({msg: 'logged in successfully!', _id: owner._id, token: token});
+        res.status(200).json({msg: 'logged in successfully!', _id: owner._id, token: token});
     } catch (error) {
-        res.json({err: error.message});
+        res.status(400).json({err: error.message});
     }
     
 };
 
 const getAllOwners = async (req, res) => {
     const all = await Owner.find({});
-    res.json({msg: all})
+    res.status(200).json({msg: all})
 };
 
 const getOwner = async (req, res) => {
     const { id } = req.params;
   
     if (!validator.default.isMongoId(id)) {
-      return res.json({err: 'Not a valid userid'});
+      return res.status(400).json({err: 'Not a valid userid'});
     }
   
     const owner = await Owner.findById(id);
   
     if (!owner) {
-      return res.json({err: 'User does not exist'});
+      return res.status(400).json({err: 'User does not exist'});
     }
 
     const {fname,lname,email,phone,bookmark,accommodations,pfp}= owner;
     const retOwner = {fname,lname,email,phone,bookmark,accommodations,pfp};
-    res.json(retOwner);
+    res.status(200).json(retOwner);
 };
 
 
