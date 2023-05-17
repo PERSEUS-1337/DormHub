@@ -14,7 +14,7 @@ const router = express.Router();
 const requireAuth = require('../middleware/requireAuth');
 
 // CONTROLLERS
-const {registerUser, loginUser, getAllUsers, getUserData, editUserData} = require('../controllers/userController');
+const {getAllUsers, getUserData, editUserData} = require('../controllers/userController');
 const { getAccommodation, createAccommodation, updateAccommodation, deleteAccommodation} = require('../controllers/accommodationController');
 const {getAllOwners, getOwner} = require('../controllers/ownerController')
 

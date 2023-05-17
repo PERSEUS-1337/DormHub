@@ -7,7 +7,7 @@ const express = require('express');
 
 
 const createToken = (_id) => {
-    return jwt.sign({_id}, process.env.PRIVATE_KEY);
+    return jwt.sign({_id}, process.env.PRIVATE_KEY, {expiresIn: '1d' });
 }
 
 
@@ -36,9 +36,6 @@ const registerUser = async (req, res) => {
         const user = User.create({fname,lname,email,password: hash});
         
         res.redirect(307, '/api/v1/auth/login/user');
-        // const userSaved = await User.findOne({email});
-        // const token = createToken(userSaved._id);
-        // res.json({msg: "User saved", email: userSaved.email, token: token})
 
     } catch (error) {
         res.json({err: error.message});
@@ -61,7 +58,7 @@ const loginUser = async (req, res) => {
         }
 
         const token = createToken(user._id);
-        res.json({msg: 'logged in successfully!', email: user.email, token: token});
+        res.json({msg: 'logged in successfully!', _id: user._id, token: token});
     } catch (error) {
         res.json({err: error.message});
     }
@@ -90,8 +87,8 @@ const editUserData = async (req, res) => {
     if (!user) {
       return res.json({err: 'User does not exist'})
     }
-
-    res.json({user: user})
+    
+    res.json(user);
 
 }
 
@@ -108,8 +105,10 @@ const getUserData = async (req, res) => {
     if (!user) {
       return res.json({err: 'User does not exist'});
     }
-  
-    res.json({user: user});
+
+    const {fname,lname,email,bookmark,pfp} = user;
+    const retUser = {fname,lname,email,bookmark,pfp};
+    res.json(retUser);
 }
 
 

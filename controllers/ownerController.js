@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 const express = require('express');
 
 const createToken = (_id) => {
-    return jwt.sign({_id}, process.env.PRIVATE_KEY);
+    return jwt.sign({_id}, process.env.PRIVATE_KEY, {expiresIn: '1d' });
 }
 
 const registerOwner = async (req, res) => {
@@ -59,7 +59,7 @@ const loginOwner = async (req, res) => {
         }
 
         const token = createToken(owner._id);
-        res.json({msg: 'logged in successfully!', email: owner.email, token: token});
+        res.json({msg: 'logged in successfully!', _id: owner._id, token: token});
     } catch (error) {
         res.json({err: error.message});
     }
@@ -83,8 +83,10 @@ const getOwner = async (req, res) => {
     if (!owner) {
       return res.json({err: 'User does not exist'});
     }
-  
-    res.json({owner: owner});
+
+    const {fname,lname,email,phone,bookmark,accommodations,pfp}= owner;
+    const retOwner = {fname,lname,email,phone,bookmark,accommodations,pfp};
+    res.json(retOwner);
 };
 
 
