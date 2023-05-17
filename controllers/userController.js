@@ -76,13 +76,13 @@ const getAllUsers = async (req, res) => {
 
 // UPDATE USER
 const editUserData = async (req, res) => {
-    const { id } = req.params
+    const { uId } = req.params
   
-    if (!mongooseObjectId.isValid(id)) {
+    if (!mongooseObjectId.isValid(uId)) {
       return res.json({err: 'Not a valid userid'})
     }
   
-    const user = await User.findByIdAndUpdate(id, {
+    const user = await User.findByIdAndUpdate(uId, {
         ...req.body
     });
 
@@ -96,13 +96,13 @@ const editUserData = async (req, res) => {
 
 // GET USER
 const getUserData = async (req, res) => {
-    const { id } = req.params;
+    const { uId } = req.params;
   
-    if (!validator.default.isMongoId(id)) {
+    if (!validator.default.isMongoId(uId)) {
       return res.json({err: 'Not a valid userid'});
     }
   
-    const user = await User.findById(id);
+    const user = await User.findById(uId);
   
     if (!user) {
       return res.json({err: 'User does not exist'});
