@@ -1,7 +1,6 @@
-const User = require('../models/User');
+const Owner = require('../models/Owner');
 const Accommodation = require('../models/Accommodation');
 const mongooseObjectId = require('mongoose').Types.ObjectId;
-
 
 
 // GET ALL ACCOMMODATIONS
@@ -75,17 +74,17 @@ const createAccommodation = async (req, res) => {
 // UPDATE ACCOMMODATION
 const updateAccommodation = async (req, res) => {
 
-    const { id,uId } = req.params;
+    const { id,oId } = req.params;
     const update = req.body; 
     
-    if (!mongooseObjectId.isValid(id) || !mongooseObjectId.isValid(uId)) {
+    if (!mongooseObjectId.isValid(id) || !mongooseObjectId.isValid(oId)) {
         return res.json({error: 'Invalid ObjectID'});
     }
 
     try {
         const accommodation = await Accommodation.findById(id);
         
-        if (accommodation.owner != uId || !accommodation) {
+        if (accommodation.owner != oId || !accommodation) {
             throw Error('Invalid Accommodation/owner');
         }
 
@@ -101,16 +100,16 @@ const updateAccommodation = async (req, res) => {
 
 // DELETE ACCOMMODATION
 const deleteAccommodation = async (req, res) => {
-    const { id,uId } = req.params;
+    const { id,oId } = req.params;
     
-    if (!mongooseObjectId.isValid(id) || !mongooseObjectId.isValid(uId)) {
+    if (!mongooseObjectId.isValid(id) || !mongooseObjectId.isValid(oId)) {
         return res.json({error: 'Invalid ObjectID'});
     }
 
     try {
 
         const accommodation = await Accommodation.findById(id);
-        if (accommodation.owner != uId || !accommodation) {
+        if (accommodation.owner != oId || !accommodation) {
             throw Error('Invalid Accommodation/owner');
         }
 
@@ -187,7 +186,7 @@ const postReviewAccommodation = async (req, res) => {
 
 // DELETE REVIEW OF ACCOMMODATOION
 const deleteReviewAccommodation = async (req, res) => {
-    const { id, userId } = req.params;
+    const { id, uId } = req.params;
     
     try {
         const accommodation = await Accommodation.findById(id);
@@ -196,7 +195,7 @@ const deleteReviewAccommodation = async (req, res) => {
             return res.status(404).json({ error: "Accommodation not found" });
         }
         
-        const reviewIndex = accommodation.review.findIndex((review) => review.user.toString() === userId);
+        const reviewIndex = accommodation.review.findIndex((review) => review.user.toString() === uId);
         
         if (reviewIndex === -1) {
             return res.status(404).json({ error: "Review not found" });

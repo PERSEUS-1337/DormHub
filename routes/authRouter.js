@@ -1,23 +1,13 @@
 const express = require('express');
 const router = express.Router();
 
-// MODEL
-const User = require('../models/User');
-
 // CONTROLLERS
 const {registerUser, loginUser, getAllUsers, getUserData} = require('../controllers/userController');
-// const {register} = require('../controllers/genController');
-const {registerOwner, loginOwner} = require('../controllers/ownerController');
+const {registerOwner, loginOwner, getAllOwners} = require('../controllers/ownerController');
 
-// SAMPLES -- can be deleted
-router.get('/hello', (req, res, next) => {
-    res.json({msg: 'Hello World'})
-});
 
-router.get('/all-users', getAllUsers);
-
-// // POST: Register 
-// router.post('/register', register);
+router.get('/users', getAllUsers);
+router.get('/owners', getAllOwners);
 
 // // POST: Register a user
 router.post('/register/user', registerUser);
