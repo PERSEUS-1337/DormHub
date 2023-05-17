@@ -64,11 +64,13 @@ router.patch('/user/bookmark/:id/:uId', addToBookmarkUser);
 // DELETE bookmark
 router.delete('/user/bookmark/:id/:uId', deleteBookmarkUser); 
 
-
 // OWNER
+// GET owner data
 router.get('/owner/:oId', getOwner);
 // GET bookmarks
 router.get('/owner/bookmark/:oId', getBookmarkOwner)
+// UPDATE user data
+router.patch('/user/:uId', editUserData); 
 // ADD a bookmark
 router.patch('/owner/bookmark/:id/:oId', addToBookmarkOwner); 
 // DELETE bookmark

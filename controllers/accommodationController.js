@@ -186,7 +186,7 @@ const postReviewAccommodation = async (req, res) => {
 
 // DELETE REVIEW OF ACCOMMODATOION
 const deleteReviewAccommodation = async (req, res) => {
-    const { id, uId } = req.params;
+    const { id, oId } = req.params;
     
     try {
         const accommodation = await Accommodation.findById(id);
@@ -195,7 +195,7 @@ const deleteReviewAccommodation = async (req, res) => {
             return res.status(404).json({ error: "Accommodation not found" });
         }
         
-        const reviewIndex = accommodation.review.findIndex((review) => review.user.toString() === uId);
+        const reviewIndex = accommodation.review.findIndex((review) => review.user.toString() === oId);
         
         if (reviewIndex === -1) {
             return res.status(404).json({ error: "Review not found" });
