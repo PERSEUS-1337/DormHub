@@ -15,7 +15,7 @@ const requireAuth = require('../middleware/requireAuth');
 
 // CONTROLLERS
 const {registerUser, loginUser, getAllUsers, getUserData, editUserData} = require('../controllers/userController');
-const { getAccommodation, createAccommodation, updateAccommodation, deleteAccommodation} = require('../controllers/accommodationController');
+const { getAccommodation, createAccommodation, updateAccommodation, deleteAccommodation, addAccommodationToBookmark, deleteAccommodationOnBookmark} = require('../controllers/accommodationController');
 const {getAllOwners, getOwner} = require('../controllers/ownerController')
 
 
@@ -33,14 +33,16 @@ router.patch('/user/:id', editUserData);
 
 
 // ACCOMMODATION ROUTES
-// THIS CAN BE REMOVED
-router.get('/accommodation', getAccommodation);
-// POST a new accommodation
+// POST a new ACCOMMODATION
 router.post('/accommodation', createAccommodation);
-// UPDATE a single accommodation
+// UPDATE a single ACCOMMODATION
 router.patch('/accommodation/:id/:uId',updateAccommodation);
-// DELETE a single accommodation
+// DELETE a single ACCOMMODATION
 router.delete('/accommodation/:id/:uId', deleteAccommodation);
+// ADD ACCOMMODATION to BOOKMARK
+router.patch('/accommodation/bookmark/:id/:uId', addAccommodationToBookmark); 
+// DELETE ACCOMMODATION from BOOKMARK
+router.delete('/accommodation/bookmark/:id/:uId', deleteAccommodationOnBookmark); 
 
 // OWNER
 router.get('/owner/:id', getOwner);

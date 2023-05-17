@@ -5,13 +5,12 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const express = require('express');
 
-
+// JWT
 const createToken = (_id) => {
     return jwt.sign({_id}, process.env.PRIVATE_KEY);
 }
 
-
-// SIGNUP 
+// POST SIGNUP USER 
 const registerUser = async (req, res) => {
     const {fname, lname, email, password} = req.body;
 
@@ -46,6 +45,7 @@ const registerUser = async (req, res) => {
     
 };
 
+// POST LOGIN USER
 const loginUser = async (req, res) => {
     const { email, password } = req.body;
 
@@ -68,14 +68,13 @@ const loginUser = async (req, res) => {
     
 };
 
-
+// GET ALL USER
 const getAllUsers = async (req, res) => {
     const all = await User.find({});
     res.json({msg: all})
 };
 
-
-
+// UPDATE USER
 const editUserData = async (req, res) => {
     const { id } = req.params
   
@@ -95,7 +94,7 @@ const editUserData = async (req, res) => {
 
 }
 
-// get UserData
+// GET USER
 const getUserData = async (req, res) => {
     const { id } = req.params;
   
@@ -112,6 +111,4 @@ const getUserData = async (req, res) => {
     res.json({user: user});
 }
 
-
 module.exports = {registerUser, loginUser, getAllUsers, getUserData, editUserData};
-
