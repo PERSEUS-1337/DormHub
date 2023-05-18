@@ -1,27 +1,21 @@
 const express = require('express');
 const router = express.Router();
 
-// MODEL
-const User = require('../models/User');
-
 // CONTROLLERS
 const {registerUser, loginUser, getAllUsers, getUserData} = require('../controllers/userController');
+const {registerOwner, loginOwner, getAllOwners} = require('../controllers/ownerController');
 
-router.get('/hello', (req, res, next) => {
-    res.json({msg: 'Hello World'})
-});
+// SAMPLE: Get data to test
+router.get('/users', getAllUsers);
+router.get('/owners', getAllOwners);
 
-router.get('/all-users', getAllUsers);
+// POST: Register a user
+router.post('/register/user', registerUser);
 
-// // POST: Register a user
-router.post('/register', registerUser);
+// POST: Register an owner
+router.post('/register/owner', registerOwner);
 
-router.post('/login', loginUser);
+router.post('/login/user', loginUser);
+router.post('/login/owner', loginOwner);
 
-
-// UPDATE an accommodation
-router.patch('/update-user', (req, res, next) => {
-    res.json({msg: 'UPDATE a user'})
-});
-
-module.exports = router;
+module.exports = router; 
