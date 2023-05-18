@@ -1,6 +1,7 @@
 const Owner = require('../models/Owner');
 const Accommodation = require('../models/Accommodation');
 const mongooseObjectId = require('mongoose').Types.ObjectId;
+const validator = require('validator');
 
 
 // GET ALL ACCOMMODATIONS
@@ -63,13 +64,53 @@ const getAccommodationById = async (req, res) => {
 }
 
 // POST ACCOMMODATION
-const createAccommodation = async(req, res) => {
-    const { name, price, location, type, rating, archived, amenity, owner, user, review, report } = req.body; // Destructure the required fields from the request body
+const createAccommodation = async (req, res) => {
+    const { oId, name, price, location, type, rating, amenity } = req.body;
+
+    if (!validator.default.isMongoId(oId)) {
+      return res.status(400).json({err: 'Not a valid ownerId'});
+    }
+
+    // Check if the owner exists
+    const owner = await Owner.findById(oId);
+    if (!owner) {
+        return res.status(404).json({ error: 'OWNER: NOT FOUND' });
+    }
+
+    const accommodationExist = await Accommodation.findOne({name});
+    if (accommodationExist) {
+        return res.status(400).json({ error: 'ACCOMMODATION: ALREADY EXISTS' });
+    }
+
+    if (!name || !price || !location || !type || !rating || !amenity)  {
+        return res.status(400).json({ error: 'All fields must be provided' });
+    }
+
+    // Create the accommodation with default or empty values
+    const accommodation = new Accommodation({
+        name: name,
+        price: price,
+        location: location,
+        type: type,
+        rating: rating,
+        amenity: amenity,
+        owner: oId,
+        user: [], // Set default value to empty
+        review: [],
+        report: [],
+    });
+
     try {
-        const accommodation = await Accommodation.create({ name, price, location, type, rating, archived, amenity, owner, user, review, report })
-        res.status(201).json(accommodation)
+        // Save the accommodation
+        const savedAccommodation = await accommodation.save();
+
+        // Update the owner's accommodations
+        owner.accommodations.push(savedAccommodation._id);
+        await owner.save();
+
+        res.status(201).json({msg: "ACCOMMODATION: CREATED"});
     } catch (error) {
-        res.status(400).json({ error: error.message })
+        res.status(500).json({ error: 'ACCOMMODATION: CREATE FAILED' });
     }
 };
 
@@ -218,7 +259,7 @@ module.exports = {
     createAccommodation,
     getAccommodation,
     getAccommodationById,
-    getAccommodationReview,
+    // getAccommodationReview,
     // getAccommodationReviewByUserId,
     updateAccommodation,
     deleteAccommodation
