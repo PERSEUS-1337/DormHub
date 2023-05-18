@@ -30,6 +30,8 @@ const Signup = () => {
       });
 
       if (res.ok) {
+        console.log('Registration Successful');
+        console.log(`/api/v1/auth/register/${userType}`)
         navigateTo('/');
       } else {
         console.error('Registration failed');
