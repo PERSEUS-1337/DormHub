@@ -11,6 +11,7 @@ import { StarRating } from '../components/StarRating';
 
 const AccomCards = () => {
 
+
     const [accommData, setAccommData] = useState({});
 
     

@@ -113,8 +113,8 @@ function Accommodation() {
 
     return (<>
         <Slideshow />
-        <ReadStarRating rate={data["accommodations"][3]} />
-        <Details accomData={data["accommodations"][3]}/>
+        <ReadStarRating rate={data["accommodations"][2]} />
+        <Details accomData={data["accommodations"][1]}/>
         <Reviews />
     </>
     );
