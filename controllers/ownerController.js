@@ -73,6 +73,7 @@ const getAllOwners = async (req, res) => {
     res.status(200).json({msg: all})
 };
 
+// GET OWNER DATA
 const getOwner = async (req, res) => {
     const { oId } = req.params;
   
@@ -108,6 +109,27 @@ const editOwnerData = async (req, res) => {
     }
 
     res.status(200).json({msg: "EDIT: SUCCESSFUL", owner: owner})
+}
+
+// GET ACCOMMODATIONS OF OWNER
+const getAccommodationOwner = async (req, res) => {
+    const { oId } = req.params;
+
+    if (!validator.default.isMongoId(oId)) {
+      return res.status(400).json({err: 'Not a valid ownerId'});
+    }
+
+    const owner = await Owner.findById(oId);
+    if (!owner) {
+        return res.status(404).json({ error: 'OWNER: NOT FOUND' });
+    }
+
+    const accommodations = await Accommodation.find({owner: oId});
+    if (!accommodations) {
+        return res.status(404).json({ error: 'ACCOMMODATIONS: NOT FOUND' });
+    }
+
+    return res.status(200).json({accommodations})
 }
 
 // GET ALL BOOKMARKS COMPLETE with INFO
@@ -215,14 +237,13 @@ const checkBookmarkExists = async (id, oId) => {
     }
 }
 
-
-
-
 module.exports = {
     registerOwner, 
     loginOwner,
+    editOwnerData,
     getAllOwners,
     getOwner,
+    getAccommodationOwner,
     getBookmarkOwner,
     addToBookmarkOwner,
     deleteBookmarkOwner

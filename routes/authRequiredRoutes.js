@@ -15,8 +15,6 @@ const requireAuth = require('../middleware/requireAuth');
 
 // CONTROLLERS
 const {
-    registerUser,
-    loginUser,
     getAllUsers,
     getUserData,
     editUserData,
@@ -30,7 +28,9 @@ const {
     getOwner,
     getBookmarkOwner,
     addToBookmarkOwner,
-    deleteBookmarkOwner
+    deleteBookmarkOwner,
+    editOwnerData,
+    getAccommodationOwner
 } = require('../controllers/ownerController');
 
 const {
@@ -69,10 +69,12 @@ router.delete('/user/bookmark/:id/:uId', deleteBookmarkUser);
 // OWNER
 // GET owner data
 router.get('/owner/:oId', getOwner);
+// GET owner accommodation
+router.get('/owner/accommodation/:oId', getAccommodationOwner);
 // GET bookmarks
 router.get('/owner/bookmark/:oId', getBookmarkOwner)
-// UPDATE user data
-router.patch('/user/:uId', editUserData); 
+// UPDATE owner data
+router.patch('/owner/:uId', editOwnerData); 
 // ADD a bookmark
 router.patch('/owner/bookmark/:id/:oId', addToBookmarkOwner); 
 // DELETE bookmark
