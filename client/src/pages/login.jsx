@@ -57,7 +57,7 @@ const Login = () => {
         if (body.token) {
           localStorage.setItem("token", body.token);
           localStorage.setItem("userType", userType);
-          localStorage.setItem("userId", body.userId);
+          localStorage.setItem("_id", body._id);
           setAuthenticated(true);
         } else {
           alert("Failed to log in");
