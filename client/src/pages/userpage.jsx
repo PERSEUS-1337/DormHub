@@ -3,31 +3,11 @@ import FaveTileList from '../components/FaveTileList';
 import LodgingTileList from "../components/LodgingTileList";
 import { Container, Col, Row, Image } from "react-bootstrap";
 
-{/*  DELETE to be transferred to FaveTileItem when functional */}
-
 const ProfilePic = () => {
   return (
     <Image className="rounded-circle w-100 h-100" src="https://i.pinimg.com/222x/57/70/f0/5770f01a32c3c53e90ecda61483ccb08.jpg" />
   );
 }
-
-const DeleteBookmark = () => {
-    fetch('api/v1/auth/user/bookmark/:id/:uId', { // api endpoint to be modified
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-      .then(response => {
-        if (response.ok) {
-          return response.json();
-        } 
-        throw response;
-      })
-      .catch(error => {
-        console.error("Error fetching data: ", error);
-      });
-};
 
 const UserPage = () => {
   const [userData, setUserData] = useState({});
@@ -47,6 +27,7 @@ const UserPage = () => {
       }) 
 
   }, []);
+
   const type = localStorage.getItem('userType');
 
   if (type === 'owner') {
