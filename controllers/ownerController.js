@@ -8,7 +8,7 @@ const jwt = require('jsonwebtoken');
 
 // JWT
 const createToken = (_id) => {
-    return jwt.sign({_id}, process.env.PRIVATE_KEY);
+    return jwt.sign({_id}, process.env.PRIVATE_KEY, {expiresIn: '1d' });
 }
 
 // POST SIGNUP OWNER
@@ -39,7 +39,7 @@ const registerOwner = async (req, res) => {
         // res.json({msg: "Owner saved", email: ownerSaved.email, token: token})
 
     } catch (error) {
-        res.json({err: error.message});
+        res.status(400).json({err: error.message});
     }
 };
 
@@ -60,9 +60,9 @@ const loginOwner = async (req, res) => {
         }
 
         const token = createToken(owner._id);
-        res.json({msg: 'logged in successfully!', email: owner.email, token: token});
+        res.status(200).json({msg: 'logged in successfully!', _id: owner._id, token: token});
     } catch (error) {
-        res.json({err: error.message});
+        res.status(400).json({err: error.message});
     }
     
 };
@@ -70,23 +70,25 @@ const loginOwner = async (req, res) => {
 // GET ALL OWNER
 const getAllOwners = async (req, res) => {
     const all = await Owner.find({});
-    res.json(all)
+    res.status(200).json({msg: all})
 };
 
 const getOwner = async (req, res) => {
     const { oId } = req.params;
   
     if (!validator.default.isMongoId(oId)) {
-      return res.json({err: 'Not a valid ownerId'});
+      return res.status(400).json({err: 'Not a valid ownerId'});
     }
   
     const owner = await Owner.findById(oId);
   
     if (!owner) {
-      return res.json({err: 'Owner does not exist'});
+      return res.status(400).json({err: 'Owner does not exist'});
     }
-  
-    res.json({owner: owner});
+
+    const {fname,lname,email,phone,bookmark,accommodations,pfp}= owner;
+    const retOwner = {fname,lname,email,phone,bookmark,accommodations,pfp};
+    res.status(200).json(retOwner);
 };
 
 // UPDATE OWNER

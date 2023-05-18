@@ -8,7 +8,7 @@ const jwt = require('jsonwebtoken');
 
 // JWT
 const createToken = (_id) => {
-    return jwt.sign({_id}, process.env.PRIVATE_KEY);
+    return jwt.sign({_id}, process.env.PRIVATE_KEY, {expiresIn: '1d' });
 }
 
 // POST SIGNUP USER 
@@ -36,12 +36,9 @@ const registerUser = async (req, res) => {
         const user = User.create({fname,lname,email,password: hash});
         
         res.redirect(307, '/api/v1/auth/login/user');
-        // const userSaved = await User.findOne({email});
-        // const token = createToken(userSaved._id);
-        // res.json({msg: "User saved", email: userSaved.email, token: token})
 
     } catch (error) {
-        res.json({err: error.message});
+        res.status(400).json({err: error.message});
     }
     
 };
@@ -62,9 +59,9 @@ const loginUser = async (req, res) => {
         }
 
         const token = createToken(user._id);
-        res.json({msg: 'logged in successfully!', email: user.email, token: token});
+        res.status(200).json({msg: 'logged in successfully!', _id: user._id, token: token});
     } catch (error) {
-        res.json({err: error.message});
+        res.status(400).json({err: error.message});
     }
     
 };
@@ -72,7 +69,7 @@ const loginUser = async (req, res) => {
 // GET ALL USER
 const getAllUsers = async (req, res) => {
     const all = await User.find({});
-    res.json({msg: all})
+    res.status(200).json({msg: all})
 };
 
 // UPDATE USER
@@ -80,7 +77,7 @@ const editUserData = async (req, res) => {
     const { uId } = req.params
   
     if (!mongooseObjectId.isValid(uId)) {
-      return res.json({err: 'Not a valid userid'})
+      return res.status(400).json({err: 'Not a valid userid'})
     }
   
     const user = await User.findByIdAndUpdate(uId, {
@@ -88,7 +85,7 @@ const editUserData = async (req, res) => {
     });
 
     if (!user) {
-      return res.json({err: 'User does not exist'})
+      return res.status(400).json({err: 'User does not exist'})
     }
 
     res.status(200).json({msg: "EDIT: SUCCESSFUL", user: user})
@@ -99,16 +96,18 @@ const getUserData = async (req, res) => {
     const { uId } = req.params;
   
     if (!validator.default.isMongoId(uId)) {
-      return res.json({err: 'Not a valid userid'});
+      return res.status(400).json({err: 'Not a valid userid'});
     }
   
     const user = await User.findById(uId);
   
     if (!user) {
-      return res.json({err: 'User does not exist'});
+      return res.status(400).json({err: 'User does not exist'});
     }
-  
-    res.json({user: user});
+
+    const {fname,lname,email,bookmark,pfp} = user;
+    const retUser = {fname,lname,email,bookmark,pfp};
+    res.status(200).json(retUser);
 }
 
 // GET ALL BOOKMARKS COMPLETE with INFO
