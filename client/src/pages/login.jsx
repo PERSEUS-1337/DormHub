@@ -57,6 +57,7 @@ const Login = () => {
         if (body.token) {
           localStorage.setItem("token", body.token);
           localStorage.setItem("userType", userType);
+          console.log(userType);
           localStorage.setItem("_id", body._id);
           setAuthenticated(true);
         } else {
@@ -88,6 +89,7 @@ const Login = () => {
               <Form.Label className="input-label">Password</Form.Label>
               <InputGroup>
                 <Form.Control
+                type="password"
                   title="Enter password"
                   placeholder="Enter password"
                   value={form.password || ""}

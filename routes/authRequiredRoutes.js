@@ -46,10 +46,12 @@ router.use(requireAuth);
 router.get('/hello', (req, res, next) => {res.json({msg: 'AUTHORIZED Hello World'});});
 router.get('/users', getAllUsers);
 router.get('/owners', getAllOwners);
+router.get('/accommodation', getAccommodation);
 
 /*
     uId = userId
     id = accommodationId
+    oId = ownerId
 */
 
 // USER ROUTES

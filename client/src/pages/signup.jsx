@@ -1,37 +1,37 @@
 import React, { useState } from 'react';
 import { Form, Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import "./style.css";
+import './style.css';
 
 const Signup = () => {
-  const [fName, setfName] = useState('');
-  const [lName, setlName] = useState('');
+  const [fname, setfName] = useState('');
+  const [lname, setlName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [userType, setUserType] = useState('user');
   const navigateTo = useNavigate();
 
   const handleLoginClick = () => {
-    navigateTo("/login");
+    navigateTo('/login');
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const formData = { fName, lName, email, password };
-
+  
+    const formData = { fname, lname, email, password };
+  
     try {
       const res = await fetch(`/api/v1/auth/register/${userType}`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(formData),
       });
-
+  
       if (res.ok) {
         console.log('Registration Successful');
-        console.log(`/api/v1/auth/register/${userType}`)
+        console.log(`/api/v1/auth/register/${userType}`);
         navigateTo('/');
       } else {
         console.error('Registration failed');
@@ -43,7 +43,7 @@ const Signup = () => {
 
   return (
     <>
-      <div className='signup-container'>
+      <div className="signup-container">
         <h2>Create an account</h2>
         <Form onSubmit={handleSubmit}>
           <Form.Group controlId="formFirstName">
@@ -51,7 +51,7 @@ const Signup = () => {
             <Form.Control
               type="text"
               placeholder="Enter first name"
-              value={fName}
+              value={fname}
               onChange={(e) => setfName(e.target.value)}
             />
           </Form.Group>
@@ -60,7 +60,7 @@ const Signup = () => {
             <Form.Control
               type="text"
               placeholder="Enter last name"
-              value={lName}
+              value={lname}
               onChange={(e) => setlName(e.target.value)}
             />
           </Form.Group>
