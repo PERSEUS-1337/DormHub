@@ -43,7 +43,7 @@ const Login = () => {
       password: form.password,
     };
 
-    fetch(`/api/v1/login/${userType}`, {
+    fetch(`/api/v1/auth/login/${userType}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
