@@ -8,7 +8,7 @@ const Signup = () => {
   const [lName, setlName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [userType, setUserType] = useState('user'); 
+  const [userType, setUserType] = useState('user');
   const navigateTo = useNavigate();
 
   const handleLoginClick = () => {
@@ -81,7 +81,8 @@ const Signup = () => {
             />
           </Form.Group>
           <Form.Group controlId="formUserType">
-            <Form.Label>User Type</Form.Label>
+            <Form.Label>User Type:</Form.Label>
+            <br />
             <Form.Check
               inline
               type="radio"
@@ -101,7 +102,9 @@ const Signup = () => {
               onChange={() => setUserType('owner')}
             />
           </Form.Group>
+          <br />
           <Button type="submit">Create Account</Button>
+          <br />
           <Button onClick={handleLoginClick}>Go to Login</Button>
         </Form>
       </div>

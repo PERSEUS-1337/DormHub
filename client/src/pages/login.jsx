@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button, Container, Form, InputGroup, Alert } from "react-bootstrap";
+import { Button, Container, Form, InputGroup } from "react-bootstrap";
 import "./style.css";
 
 const Login = () => {
   const [form, setForm] = useState({});
   const [errors, setErrors] = useState({});
   const [authentication, setAuthenticated] = useState(false);
-  const [userType, setUserType] = useState("user"); // "user" or "owner"
+  const [userType, setUserType] = useState("user");
   const setField = (field, value) => {
     setForm({
       ...form,
@@ -22,21 +22,6 @@ const Login = () => {
     }
   };
 
-  const validateForm = () => {
-    const { email, password } = form;
-    const blankFields = {};
-
-    if (!email || email === "") {
-      blankFields.email = "Please enter your email address!";
-    }
-
-    if (!password || password === "") {
-      blankFields.password = "Please enter your password!";
-    }
-
-    return blankFields;
-  };
-
   const navigateTo = useNavigate();
   const handleSignupClick = () => {
     navigateTo("/signup");
@@ -47,18 +32,8 @@ const Login = () => {
     }
   }, [authentication]);
 
-  const handleUserTypeChange = (type) => {
-    setUserType(type);
-  };
-
   function login(e) {
     e.preventDefault();
-
-    const formErrors = validateForm();
-    if (Object.keys(formErrors).length > 0) {
-      setErrors(formErrors);
-      return;
-    }
 
     console.log("form submitted");
     console.log(form);
@@ -80,6 +55,7 @@ const Login = () => {
         console.log(body);
 
         if (body.token) {
+          alert("success");
           setAuthenticated(true);
         } else {
           alert("Failed to log in");
@@ -89,10 +65,9 @@ const Login = () => {
 
   return (
     <>
-      <div className="login-container">
-        <Container className="form-control">
+      <div className="signup-container">
+        <Container>
           <h2>Login</h2>
-          <br />
           <Form onSubmit={login}>
             <Form.Group controlId="form-control">
               <Form.Label className="input-label">Email</Form.Label>
@@ -107,7 +82,6 @@ const Login = () => {
                 {errors.email}
               </Form.Control.Feedback>
             </Form.Group>
-            <br />
             <Form.Group controlId="form-control">
               <Form.Label className="input-label">Password</Form.Label>
               <InputGroup>
@@ -123,27 +97,33 @@ const Login = () => {
                 </Form.Control.Feedback>
               </InputGroup>
             </Form.Group>
-            <br />
-            <Form.Group controlId="formradio">
+           
+            <Form.Group controlId="formUserType">
+              <Form.Label>User Type:</Form.Label>
+              <br />
               <Form.Check
+                inline
                 type="radio"
-                name="userType"
-                id="user"
                 label="User"
-                checked={userType === "user"}
-                onChange={() => handleUserTypeChange("user")}
+                name="userType"
+                value="user"
+                checked={userType === 'user'}
+                onChange={() => setUserType('user')}
               />
               <Form.Check
+                inline
                 type="radio"
-                name="userType"
-                id="owner"
                 label="Owner"
-                checked={userType === "owner"}
-                onChange={() => handleUserTypeChange("owner")}
+                name="userType"
+                value="owner"
+                checked={userType === 'owner'}
+                onChange={() => setUserType('owner')}
               />
             </Form.Group>
             <br />
             <Button type="submit">Login</Button>
+            <br />
+
             <Button onClick={handleSignupClick}>Go to Signup</Button>
           </Form>
         </Container>
