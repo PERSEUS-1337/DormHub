@@ -33,6 +33,11 @@
     margin: auto;
 }
 
+#accommDetail{
+    margin-top: 0;
+    margin-bottom: 30px;
+}
+
 .detail p{
     margin: auto 0px;
 }
@@ -76,4 +81,8 @@
         margin: 10px auto 0px auto !important;
         text-align: center;
     }
+}
+
+h3{
+    margin: 20px auto;
 }
