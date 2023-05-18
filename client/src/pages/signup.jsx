@@ -31,7 +31,7 @@ const Signup = () => {
   
       if (res.ok) {
         console.log('Registration Successful');
-        console.log(`/api/v1/auth/register/${userType}`);
+        console.log(fname, lname, email, password, userType);
         navigateTo('/');
       } else {
         console.error('Registration failed');
