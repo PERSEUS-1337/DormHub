@@ -25,11 +25,11 @@ const accommodationSchema = new Schema({
   },
   amenity: {
     type: [String],
-    required: false
+    required: true
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
-    required: false
+    required: true
   },
   user: {
     type: [mongoose.Schema.Types.ObjectId],
