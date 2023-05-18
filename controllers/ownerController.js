@@ -1,14 +1,17 @@
 const Owner = require('../models/Owner');
+const Accommodation = require('../models/Accommodation');
+const mongooseObjectId = require('mongoose').Types.ObjectId;
+
 const validator = require('validator');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-const express = require('express');
-
+// JWT
 const createToken = (_id) => {
     return jwt.sign({_id}, process.env.PRIVATE_KEY, {expiresIn: '1d' });
 }
 
+// POST SIGNUP OWNER
 const registerOwner = async (req, res) => {
     const {fname, lname, email, password} = req.body;
 
@@ -38,11 +41,9 @@ const registerOwner = async (req, res) => {
     } catch (error) {
         res.status(400).json({err: error.message});
     }
-    
 };
 
-
-
+// POST LOGIN OWNER
 const loginOwner = async (req, res) => {
     const { email, password } = req.body;
 
@@ -66,22 +67,23 @@ const loginOwner = async (req, res) => {
     
 };
 
+// GET ALL OWNER
 const getAllOwners = async (req, res) => {
     const all = await Owner.find({});
     res.status(200).json({msg: all})
 };
 
 const getOwner = async (req, res) => {
-    const { id } = req.params;
+    const { oId } = req.params;
   
-    if (!validator.default.isMongoId(id)) {
-      return res.status(400).json({err: 'Not a valid userid'});
+    if (!validator.default.isMongoId(oId)) {
+      return res.status(400).json({err: 'Not a valid ownerId'});
     }
   
-    const owner = await Owner.findById(id);
+    const owner = await Owner.findById(oId);
   
     if (!owner) {
-      return res.status(400).json({err: 'User does not exist'});
+      return res.status(400).json({err: 'Owner does not exist'});
     }
 
     const {fname,lname,email,phone,bookmark,accommodations,pfp}= owner;
@@ -89,7 +91,139 @@ const getOwner = async (req, res) => {
     res.status(200).json(retOwner);
 };
 
+// UPDATE OWNER
+const editOwnerData = async (req, res) => {
+    const { oId } = req.params
+  
+    if (!mongooseObjectId.isValid(oId)) {
+      return res.json({err: 'Not a valid ownerId'})
+    }
+  
+    const owner = await Owner.findByIdAndUpdate(oId, {
+        ...req.body
+    });
+
+    if (!owner) {
+      return res.json({err: 'Owner does not exist'})
+    }
+
+    res.status(200).json({msg: "EDIT: SUCCESSFUL", owner: owner})
+}
+
+// GET ALL BOOKMARKS COMPLETE with INFO
+const getBookmarkOwner = async (req, res)  => {
+    const { oId } = req.params
+
+     if (!mongooseObjectId.isValid(oId)) {
+        return res.json({error: 'Invalid ObjectID'});
+    }
+
+    const owner = await Owner.findById(oId);
+
+    if (!owner) {
+      return res.status(404).json({err: 'USER: NON EXISTENT'});
+    }
+
+    const bookmarks = owner.bookmark
+
+
+    if (bookmarks.length===0) {
+        res.json({error: 'BOOKMARKS: NONE'})
+    } else {
+        const list = await Accommodation.find({ _id: { $in: bookmarks } })
+        res.json(list)
+    }
+}
+
+// ADD ACCOMMODATION TO BOOKMARK
+const addToBookmarkOwner = async (req, res) => {
+    const { id,oId } = req.params;
+    
+    if (!mongooseObjectId.isValid(id) || !mongooseObjectId.isValid(oId)) {
+        return res.json({error: 'Invalid ObjectID'});
+    }
+    const owner = await Owner.findById(oId);
+    const accommodation = await Accommodation.findById(id);
+
+    if (!owner) {
+      return res.status(404).json({err: 'USER: NON EXISTENT'});
+    }
+
+    if (!accommodation) {
+      return res.status(404).json({err: 'ACCOMMODATION: NON EXISTENT'});
+    }
+    const status = await checkBookmarkExists(id, oId);
+
+    if (!status) {
+        try {
+            await Owner.findByIdAndUpdate(oId, {$push:{bookmark: id}})
+            res.status(200).json({ message: 'BOOKMARK: ADD SUCCESS' });
+        } catch (error) {
+            res.status(500).json({ error: 'BOOKMARK: ADD FAILED' });
+        }
+    } else {
+        res.status(200).json({ message: 'BOOKMARK: ALREADY EXISTS' });
+    }
+}
+
+// DELETE ACCOMMODATION FROM BOOKMARK
+const deleteBookmarkOwner = async (req, res) => {
+    const { id,oId } = req.params;
+    
+    if (!mongooseObjectId.isValid(id) || !mongooseObjectId.isValid(oId)) {
+        return res.json({error: 'Invalid ObjectID'});
+    }
+    const owner = await Owner.findById(oId);
+    const accommodation = await Accommodation.findById(id);
+
+    if (!owner) {
+      return res.status(404).json({err: 'USER: NON EXISTENT'});
+    }
+
+    if (!accommodation) {
+      return res.status(404).json({err: 'ACCOMMODATION: NON EXISTENT'});
+    }
+    const status = await checkBookmarkExists(id, oId);
+
+    if (status) {
+        try {
+            await Owner.findByIdAndUpdate(oId, {$pull:{bookmark: id}})
+            res.status(200).json({ message: 'Bookmark: REMOVE SUCCESS' });
+        } catch (error) {
+            res.status(500).json({ error: 'Bookmark: REMOVE FAILED' });
+        }
+    } else {
+        res.status(200).json({ message: 'Bookmark: ALREADY REMOVED' });
+    }
+}
+
+// HELPER FUNCTION for BOOKMARK
+const checkBookmarkExists = async (id, oId) => {
+    const owner = await Owner.findOne({
+        _id: oId,
+        bookmark: { $elemMatch: { $eq: id } }
+    });
+
+    if (owner) {
+        // The bookmark already exists in the bookmark array
+        console.log('Bookmark already exists');
+        return true
+    } else {
+        // The bookmark does not exist in the bookmark array
+        console.log('Bookmark does not exist');
+        return false;
+    }
+}
 
 
 
-module.exports = {registerOwner, loginOwner, getAllOwners, getOwner}
+
+module.exports = {
+    registerOwner, 
+    loginOwner,
+    getAllOwners,
+    getOwner,
+    getBookmarkOwner,
+    addToBookmarkOwner,
+    deleteBookmarkOwner
+}
