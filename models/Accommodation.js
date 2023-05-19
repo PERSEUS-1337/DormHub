@@ -23,13 +23,17 @@ const accommodationSchema = new Schema({
     type: Number,
     required: true
   },
+  archived: {
+    type: Boolean,
+    required: true
+  },
   amenity: {
     type: [String],
-    required: false
+    required: true
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
-    required: false
+    required: true
   },
   user: {
     type: [mongoose.Schema.Types.ObjectId],
