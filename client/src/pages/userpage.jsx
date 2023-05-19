@@ -18,10 +18,17 @@ const UserPage = () => {
   Updated proxy with proxy overrideing (only a problem in development)
   MAKE SURE TO DELETE THE HARDCODED ID TO TEST FOR OTHER USERS
   */
+  const jwt = localStorage.getItem("token");
+  const uid = localStorage.getItem("_id");
+
   useEffect(() => {
-    fetch("/api/v1/auth/644b8da3b8d0cfef32d695a8")
+    fetch(`/api/v1/auth/${uid}`, {
+      headers: {
+        "Authorization": `Bearer ${jwt}`,
+      },
+    })
       .then(res => res.json())
-      .then(data => setUserData(data.user))
+      .then(data => setUserData(data))
       .catch(error => {
         console.error('User fetching error.', error);
       }) 
@@ -35,10 +42,18 @@ const UserPage = () => {
       <>
         {/* When userType is owner, this component appears */}
         <Container className="mt-5 d-flex flex-column align-items-center">
-          <div>
-            <h3> {`${userData.fname} ${userData.lname}`}</h3>
-            <p className="text-center text-muted">@{`${userData.email}`}</p>
-          </div>
+          <Row>
+            <Col xs={2}>
+              <ProfilePic />
+            </Col>
+            <Col xs={7}>
+              <h2>{`${userData.fname} ${userData.lname}`}</h2>
+              {/* <h2> Juan Dela Cruz </h2> */}
+              <h5 className="lead">From Manila, Philippines</h5>
+              <h5 className="lead">Email: {`${userData.email}`}</h5>
+              <h5 className="lead">Contact Number: 09950055973 </h5>
+            </Col>
+          </Row>
         </Container>
         <Container>
           <h3>Accommodations:</h3>
@@ -57,8 +72,8 @@ const UserPage = () => {
               <ProfilePic />
             </Col>
             <Col xs={7}>
-              {/* <h3>{`${userData.fname} ${userData.lname}`}</h3> */}
-              <h2> Juan Dela Cruz </h2>
+              <h2>{`${userData.fname} ${userData.lname}`}</h2>
+              {/* <h2> Juan Dela Cruz </h2> */}
               <h5 className="lead">From Manila, Philippines</h5>
               <h5 className="lead">Email: {`${userData.email}`}</h5>
               <h5 className="lead">Contact Number: 09950055973 </h5>
