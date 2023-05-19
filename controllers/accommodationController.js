@@ -23,8 +23,10 @@ const getAccommodation = async(req, res) => {
     // Sorting of accommodations
     if (sort === 'a-z') accommodation = accommodation.sort('name');
     if (sort === 'z-a') accommodation = accommodation.sort('-name');
-    if (sort === 'low-high') accommodation = accommodation.sort('price');
-    if (sort === 'high-low') accommodation = accommodation.sort('-price');
+    if (sort === 'price-high') accommodation = accommodation.sort('price');
+    if (sort === 'price-low') accommodation = accommodation.sort('-price');
+    if (sort === 'rate-high') accommodation = accommodation.sort('-rating');
+    if (sort === 'rate-low') accommodation = accommodation.sort('rating');
 
     // Setting of pages of accomodation, this is the limiter
     const page = Number(req.query.page) || 1;
