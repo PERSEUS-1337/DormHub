@@ -1,7 +1,8 @@
 import './accom-style.css';
 import { Button, Row, Col, Carousel, Container } from 'react-bootstrap';
 import React, { useState, useEffect } from "react";
-import {ReadStarRating} from '../components/StarRating';
+import { ReadStarRating, StarRating } from '../components/StarRating';
+import { useLocation } from 'react-router-dom';
 
 const Slideshow = () => {
     return (
@@ -25,8 +26,15 @@ const Slideshow = () => {
 const Details = (data) => {
     return (
         <Container id="desc_accom">
-            <h3>{data.accomData.name}</h3>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+            <Row>
+                <Col lg={4} md={5} sm={6} xs={7}>
+                    <h3>{data.accomData.name}</h3>
+                </Col>
+                <Col lg={6} md={7} sm={6} xs={5}>
+                    <ReadStarRating rate={data.accomData} />
+                </Col>
+            </Row>
+            <p id="accommDetail">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
                 tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
                 quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
                 Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
@@ -51,10 +59,10 @@ const Details = (data) => {
                 </Col>
                 <Col sm={11}>
                     {
-                        data.accomData.price.length == 1 ? 
-                        <p >Php {data.accomData.price[0]} per month</p>
-                        :
-                        <p >Php {data.accomData.price[0]} - Php {data.accomData.price[1]} per month</p>
+                        data.accomData.price.length == 1 ?
+                            <p >Php {data.accomData.price[0]} per month</p>
+                            :
+                            <p >Php {data.accomData.price[0]} - Php {data.accomData.price[1]} per month</p>
                     }
                 </Col>
             </Row>
@@ -72,49 +80,20 @@ const Details = (data) => {
 
 const Reviews = () => {
     return (
-        <Container style={{background: "#dddddd"}} className='d-flex justify-content-center py-2'>
+        <Container style={{ background: "#dddddd" }} className='d-flex justify-content-center py-2'>
             <span>This is the Review Div</span>
         </Container>
     )
 }
 
 
-function Accommodation() {
-    const location = {
-        address: '1600 Amphitheatre Parkway, Mountain View, california.',
-        lat: 37.42216,
-        lng: -122.08427,
-      }
-
-    const [data, setData] = useState(null);
-    const [loading, setLoading] = useState(true); 
-    const [error, setError] = useState(null); 
-    
-    useEffect(() => { fetch("http://localhost:3000/api/v1/accommodation")
-    .then((response) => {
-        if (response.ok) {
-            return response.json(); 
-        }
-        throw response; 
-    })
-    .then(data => {
-        setData(data);
-    })
-    .catch((error) => {
-        console.error("Error fetching data: ", error);
-        setError(error);
-    })
-    .finally(() => {
-        setLoading(false);
-    }); }, []);
-    
-    if (loading) return "Loading...";
-    if (error) return "Error!";
+function Accommodation(props) {
+    const location = useLocation()
 
     return (<>
         <Slideshow />
-        <ReadStarRating rate={data["accommodations"][2]} />
-        <Details accomData={data["accommodations"][1]}/>
+        {/* <ReadStarRating rate={location.state.data} /> */}
+        <Details accomData={location.state.data} />
         <Reviews />
     </>
     );

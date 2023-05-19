@@ -1,6 +1,6 @@
 import { Container, Col, Row, Dropdown, DropdownButton, Form, Button, Card } from 'react-bootstrap';
 import './homepage-style.css';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import LodgingTileList from '../components/LodgingTileList';
 import { useState, useEffect } from 'react';
 import { StarRating } from '../components/StarRating';
@@ -12,9 +12,15 @@ import { StarRating } from '../components/StarRating';
 const AccomCards = () => {
 
 
+    const navigate = useNavigate();
+
+    const toAccomm = (data) => {
+        navigate("/accommodation", {state: {data}})
+    }
+
     const [accommData, setAccommData] = useState({});
 
-    
+
     useEffect(() => {
         fetch("/api/v1/accommodation")
         .then(res =>res.json())
@@ -28,10 +34,8 @@ const AccomCards = () => {
       <Row xs={2} md={4} className="g-5">
         {accommData.accommodations && accommData.accommodations.map( data => (
             <Col key={data.id} className="col mx-auto">
-            <Card>
-            <Link to='/accommodation'>
+            <Card onClick={() => toAccomm(data)}>
                 <Card.Img variant="top" src={ data.img_src } />
-            </Link>
               <Card.Body>
                     <Card.Title>{data.name}</Card.Title>
                     {
