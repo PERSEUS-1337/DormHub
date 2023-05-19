@@ -170,6 +170,37 @@ const deleteAccommodation = async (req, res) => {
     }
 };
 
+const archiveAccommodation = async (req, res) => {
+    const { id,oId } = req.params;
+    
+    if (!mongooseObjectId.isValid(id) || !mongooseObjectId.isValid(oId)) {
+        return res.json({error: 'Invalid ObjectID'});
+    }
+
+    try {
+
+        const accommodation = await Accommodation.findById(id);
+        if (accommodation.owner != oId || !accommodation) {
+            throw Error('Invalid Accommodation/owner');
+        }
+
+        const archiveAccommodation = await Accommodation.findOneAndUpdate(
+            { _id: id, owner: oId },
+            { archived: true },
+            { new: true }
+        );
+
+        if (!archiveAccommodation) {
+            return res.status(404).json({ error: 'Accommodation not found' });
+        }
+
+        res.status(200).json({ message: 'Accommodation archived successfully' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Server error' });
+    }
+};
+
 // GET REVIEWS OF ACOMMODATION
 const getAccommodationReview = async(req, res) => {
     try {
@@ -263,7 +294,8 @@ module.exports = {
     // getAccommodationReview,
     // getAccommodationReviewByUserId,
     updateAccommodation,
-    deleteAccommodation
+    deleteAccommodation,
+    archiveAccommodation
     // postReviewAccommodation,
     // deleteReviewAccommodation
 }
