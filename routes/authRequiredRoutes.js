@@ -37,7 +37,8 @@ const {
     getAccommodation,
     createAccommodation,
     updateAccommodation,
-    deleteAccommodation
+    deleteAccommodation,
+    archiveAccommodation
 } = require('../controllers/accommodationController');
 
 router.use(requireAuth);
@@ -84,7 +85,9 @@ router.delete('/owner/bookmark/:id/:oId', deleteBookmarkOwner);
 // POST a new ACCOMMODATION
 router.post('/accommodation', createAccommodation);
 // UPDATE a single ACCOMMODATION
-router.patch('/accommodation/:id/:oId',updateAccommodation);
+router.patch('/accommodation/:id/:oId', updateAccommodation);
+// UPDATE a single ACCOMMODATION
+router.patch('/accommodation/archive/:id/:oId', archiveAccommodation);
 // DELETE a single ACCOMMODATION
 router.delete('/accommodation/:id/:oId', deleteAccommodation);
 

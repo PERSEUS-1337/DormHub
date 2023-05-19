@@ -23,8 +23,10 @@ const getAccommodation = async(req, res) => {
     // Sorting of accommodations
     if (sort === 'a-z') accommodation = accommodation.sort('name');
     if (sort === 'z-a') accommodation = accommodation.sort('-name');
-    if (sort === 'low-high') accommodation = accommodation.sort('price');
-    if (sort === 'high-low') accommodation = accommodation.sort('-price');
+    if (sort === 'price-high') accommodation = accommodation.sort('price');
+    if (sort === 'price-low') accommodation = accommodation.sort('-price');
+    if (sort === 'rate-high') accommodation = accommodation.sort('-rating');
+    if (sort === 'rate-low') accommodation = accommodation.sort('rating');
 
     // Setting of pages of accomodation, this is the limiter
     const page = Number(req.query.page) || 1;
@@ -93,6 +95,7 @@ const createAccommodation = async (req, res) => {
         location: location,
         type: type,
         rating: rating,
+        archived: false,
         amenity: amenity,
         owner: oId,
         user: [], // Set default value to empty
@@ -163,6 +166,37 @@ const deleteAccommodation = async (req, res) => {
         }
 
         res.status(200).json({ message: 'Accommodation deleted successfully' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Server error' });
+    }
+};
+
+const archiveAccommodation = async (req, res) => {
+    const { id,oId } = req.params;
+    
+    if (!mongooseObjectId.isValid(id) || !mongooseObjectId.isValid(oId)) {
+        return res.json({error: 'Invalid ObjectID'});
+    }
+
+    try {
+
+        const accommodation = await Accommodation.findById(id);
+        if (accommodation.owner != oId || !accommodation) {
+            throw Error('Invalid Accommodation/owner');
+        }
+
+        const archiveAccommodation = await Accommodation.findOneAndUpdate(
+            { _id: id, owner: oId },
+            { archived: true },
+            { new: true }
+        );
+
+        if (!archiveAccommodation) {
+            return res.status(404).json({ error: 'Accommodation not found' });
+        }
+
+        res.status(200).json({ message: 'Accommodation archived successfully' });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Server error' });
@@ -262,7 +296,8 @@ module.exports = {
     // getAccommodationReview,
     // getAccommodationReviewByUserId,
     updateAccommodation,
-    deleteAccommodation
+    deleteAccommodation,
+    archiveAccommodation
     // postReviewAccommodation,
     // deleteReviewAccommodation
 }
