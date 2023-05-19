@@ -38,20 +38,6 @@ border-radius: 5px;
 border: 2px solid #ddd;
 }
 
-button[type="submit"] {
-background-color: black;
-color: #fff;
-padding: 10px 20px;
-font-size: 16px;
-font-weight: bold;
-border: none;
-border-radius: 5px;
-cursor: pointer;
-}
-
-button[type="submit"]:hover {
-background-color:gray;
-}
 
 p {
 margin-top: 20px;
