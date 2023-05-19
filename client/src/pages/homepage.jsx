@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import LodgingTileList from '../components/LodgingTileList';
 import { useState, useEffect } from 'react';
 import { StarRating } from '../components/StarRating';
+import SearchBar from '../components/SearchBar';
 //import Accommodation from './pages/accomodation';
 //todo: include button in form
 
@@ -79,7 +80,10 @@ const toggleVisible = () => {
 
     return(
         <>
-        <Container className="mt-5 ms-5" id="search-container2">
+            <SearchBar />
+            {/* commented the lines below this comment to test the search function */}
+            {/* also moved the code to its own file for reusability in the future */}
+        {/* <Container className="mt-5 ms-5" id="search-container2">
                 <Row>
                     <Col xs={2} ></Col>
                     <Col xs={8} >
@@ -137,8 +141,8 @@ const toggleVisible = () => {
                         </Button>
                     </Col>
                 </Row>
-            </Container>
-        <LodgingTileList />
+            </Container> */}
+        {/* <LodgingTileList /> */}
 
         <Container className = "recomms">
             <h5 className="header">
