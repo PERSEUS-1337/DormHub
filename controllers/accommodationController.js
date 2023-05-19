@@ -93,6 +93,7 @@ const createAccommodation = async (req, res) => {
         location: location,
         type: type,
         rating: rating,
+        archived: false,
         amenity: amenity,
         owner: oId,
         user: [], // Set default value to empty

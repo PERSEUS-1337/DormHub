@@ -23,6 +23,10 @@ const accommodationSchema = new Schema({
     type: Number,
     required: true
   },
+  archived: {
+    type: Boolean,
+    required: true
+  },
   amenity: {
     type: [String],
     required: true
