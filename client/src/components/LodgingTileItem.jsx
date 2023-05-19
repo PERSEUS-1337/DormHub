@@ -6,7 +6,7 @@ const LodgingTileItem = ({ data }) => {
     const navigate = useNavigate()
 
     const navigateToLodge = () => {
-        navigate('/accommodation')
+        navigate('/accommodation', {state: {data}})
     }
 
     return (
