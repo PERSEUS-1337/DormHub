@@ -70,7 +70,7 @@ const SearchBar = ({ data }) => {
                 </Row> */}
                 {/* Initial state of results when user inputs is the LodgingTileList, will change later */}
                 {filteredData.length != 0 && (
-                    <Container className='rounded-3' style={{background: "red"}}>
+                    <Container className='rounded-3' style={{background: "#ffffff"}}>
                         {filteredData.slice(0, 10).map((value, key) => {
                             return (
                                 <LodgingTileItem key={value.id} data={value} />

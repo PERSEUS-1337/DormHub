@@ -54,14 +54,26 @@ const AccomCards = () => {
 }
 
 const HomePage = () => {
-const [isInvisible, setIsInvisible] = useState("rounded-0 border border-dark invisible");
-const toggleVisible = () => {
-  setIsInvisible("rounded-0 border border-dark");
-} 
+    const [isInvisible, setIsInvisible] = useState("rounded-0 border border-dark invisible");
+    const toggleVisible = () => {
+    setIsInvisible("rounded-0 border border-dark");
+    } 
 
+    const [accommData, setAccommData] = useState({});
+
+
+    useEffect(() => {
+        fetch("/api/v1/accommodation")
+        .then(res =>res.json())
+        .then(data => {
+            setAccommData(data);
+            console.log(data["accommodations"][2]);
+        })
+    }, []); 
+    
     return(
         <>
-            <SearchBar />
+            <SearchBar data={ accommData.accommodations } />
             {/* commented the lines below this comment to test the search function */}
             {/* also moved the code to its own file for reusability in the future */}
         {/* <Container className="mt-5 ms-5" id="search-container2">

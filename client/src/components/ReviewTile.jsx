@@ -6,14 +6,14 @@ import '../pages/accom-style.css';
 
 // TODO: (Jemu) - fix style
 const ReviewTileItem = ({ data }) => {
-
+    console.log("data rating" + data.rating)
     return(
         <Container>
             <Row key={data._id}>
                 <Col style={{background: "white"  }} className='border rounded border-1 border-primary d-flex flex-column justify-content-start'>
-                    <ReadStarRating rate={data.rating} />
+                    <ReadStarRating rate={data} />
                     <p className='my-4'>{data.detail}</p>
-                    <h6><b>Traveller</b></h6>
+                    <h6><b>Traveler</b></h6>
                     <p>Date of <b>review</b>: </p>
                     
                 </Col>
@@ -32,7 +32,7 @@ const ReviewList = ({ data }) => {
 
 
     // TODO: Add function to pagination
-    let active = 2;
+    let active = 1;
     let items = [];
     for (let number = 1; number <= 5; number++) {
     items.push(

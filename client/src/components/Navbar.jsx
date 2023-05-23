@@ -22,11 +22,6 @@ const NavBar = () => {
         },
         {
             id: 4,
-            name: "Accommodation",
-            href: "/accommodation",
-        },
-        {
-            id: 5,
             name: "User",
             href: "/user",
         },
