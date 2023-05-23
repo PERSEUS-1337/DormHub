@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import FaveTileList from '../components/FaveTileList';
 import LodgingTileList from "../components/LodgingTileList";
 import { Container, Col, Row, Image } from "react-bootstrap";
+import FaveTileItem from "../components/FaveTileItem";
 
 const ProfilePic = () => {
   return (
@@ -9,31 +9,61 @@ const ProfilePic = () => {
   );
 }
 
+const FaveTileList = () => {
+
+  const [favData, setFavData] = useState({});
+  const uid = localStorage.getItem("_id");
+  const jwt = localStorage.getItem("token");
+  
+  useEffect(() => {
+      fetch(`/api/v1/auth-required-func/user/bookmark/${uid}`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization : `Bearer ${jwt}`
+        },
+      })
+      .then(res =>res.json())
+      .then(data => {
+          setFavData(data);
+          console.log(data);
+      })
+  }, []);
+
+  const LodgingList = favData && favData.map(data => <FaveTileItem key={data.id} data={data} />)
+
+  return (
+      <>
+          {LodgingList}
+      </>
+  )
+}
+
 const UserPage = () => {
   const [userData, setUserData] = useState({});
 
-  /*
-  Fix:
-  Updated fetch
-  Updated proxy with proxy overrideing (only a problem in development)
-  MAKE SURE TO DELETE THE HARDCODED ID TO TEST FOR OTHER USERS
-  */
-  const jwt = localStorage.getItem("token");
-  const uid = localStorage.getItem("_id");
-
   useEffect(() => {
-    fetch(`/api/v1/auth/${uid}`, {
-      headers: {
-        "Authorization": `Bearer ${jwt}`,
-      },
-    })
-      .then(res => res.json())
-      .then(data => setUserData(data))
-      .catch(error => {
-        console.error('User fetching error.', error);
-      }) 
+    const fetchData = async () => {
+      const uid = localStorage.getItem("_id");
+      console.log(uid);
+      const jwt = localStorage.getItem("token");
+      console.log(jwt);
 
-  }, []);
+      try {
+        const res = await fetch(`/api/v1/auth-required-func/user/${uid}`, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization : `Bearer ${jwt}`
+          },
+        });
+        const data = await res.json();
+        setUserData(data);
+        } catch (err) {
+          console.error('User fetching error.', err);
+        }
+      };
+      fetchData();
+    }, []); 
+
 
   const type = localStorage.getItem('userType');
 
