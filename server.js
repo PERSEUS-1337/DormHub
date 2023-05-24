@@ -31,6 +31,12 @@ app.use((req, res, next) => {
   next(); 
 });
 
+// Prints the backend access logs
+app.use((req, res, next) => {
+  console.info(`[${new Date().toLocaleString()}] [${req.method}] [${req.originalUrl}] [${req.ip}] [${req.get('User-Agent')}]`);
+  next();
+});
+
 // To serve the website directly
 app.use(express.static('client/build'));
 
@@ -54,10 +60,6 @@ app.use('/api/v1/auth-required-func', authRequiredFunc);
 app.use((req, res, next) => {
   res.status(404).json({ error: 'Route not found' });
 });
-
-// app.get('*', (req, res) => {
-//     res.sendFile(path.resolve('./client/build', 'index.html'));
-// });
 
 // Connect to the database and listen for requests
 console.log('Awakening the server...');

@@ -2,6 +2,17 @@ const Owner = require('../models/Owner');
 const Accommodation = require('../models/Accommodation');
 const mongooseObjectId = require('mongoose').Types.ObjectId;
 const validator = require('validator');
+const {
+    logReturnError,
+    logReturnSuccess,
+    logRespondSuccess
+} = require('../middleware/console')
+
+
+/*
+Guide:
+[timestamp] [HTTP Method] [Route] [IP Address] [User Agent]
+*/
 
 
 // GET ALL ACCOMMODATIONS
@@ -19,6 +30,9 @@ const getAccommodation = async(req, res) => {
 
     // Find the actual accommodations that fit the keyword
     let accommodation = Accommodation.find(queryObject)
+    if (!accommodation) {
+        logReturnError(req, res, 404, "No Accommodations Found")
+    }
 
     // Sorting of accommodations
     if (sort === 'a-z') accommodation = accommodation.sort('name');
@@ -35,20 +49,25 @@ const getAccommodation = async(req, res) => {
 
     // Filter returns to comply with paging style and limiters
     accommodation = accommodation.skip(skip).limit(limit);
+    console.info(`[${new Date().toLocaleString()}] [200] Accommodations Successfully Filtered and Sorted [${req.ip}]`);
+    logRespondSuccess(req, res, 200, 'Accommodations Successfully Filtered and Sorted')
 
     const accommodations = await accommodation;
     const totalAccommodations = await Accommodation.countDocuments(queryObject);
     const numOfPages = Math.ceil(totalAccommodations / limit);
 
-    if (!totalAccommodations) {
-        return res.status(404).json({ error: "No Accommodation Exists" });
-    }
-
-    res.status(200).json({
+    // console.info(`[${new Date().toLocaleString()}] [200] Accommodations Successfully Fetched [${req.ip}]`);
+    // return res.status(200).json({
+        //     accommodations,
+        //     totalAccommodations,
+        //     numOfPages
+        // })
+    const response = {
         accommodations,
         totalAccommodations,
         numOfPages
-    })
+    };
+    logReturnSuccess(req, res, 200, 'Accommodations Successfully Fetched',  response)
 }
 
 // GET SINGLE ACCOMMODATION
@@ -59,10 +78,12 @@ const getAccommodationById = async (req, res) => {
         .equals(false);
 
     if (!accommodation) {
+        console.error(`[${new Date().toLocaleString()}] [404] No Accommodation Exists [${req.ip}]`)
         return res.status(404).json({ error: "No Accommodation Exists" })
     }
 
-    res.status(200).json(accommodation)
+    console.info(`[${new Date().toLocaleString()}] [200] Accommodations Successfully Fetched [${req.ip}]`);
+    return res.status(200).json(accommodation)
 }
 
 // POST ACCOMMODATION
