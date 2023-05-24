@@ -10,26 +10,7 @@ import { StarRating } from '../components/StarRating';
 
 
 const AccomCards = () => {
-    // const temp_data = [
-    //     {
-    //         id: 1,
-    //         name: "TENA'S RESIDENCES",
-    //         img_src: "https://cdn.houseplansservices.com/product/tahbfmakhok6k787jtmjm3ecgt/w620x413.png?v=9",
-    //         price: 3000
-    //     },
-    //     {
-    //         id: 2,
-    //         name: "DORMIFY",
-    //         img_src: "https://cf.bstatic.com/xdata/images/hotel/max1024x768/315663049.jpg?k=bfa63b17927cc47fbeece382d0f520052eaefc592601ec7a9555685c01803949&o=&hp=1",
-    //         price: 3500
-    //     },
-    //     {
-    //         id: 3,
-    //         name: "DWELLO",
-    //         img_src: "https://media-cdn.tripadvisor.com/media/photo-s/0a/22/d6/51/peredo-s-loding-house.jpg",
-    //         price: 7000
-    //     }
-    // ]
+
 
     const navigate = useNavigate();
 
