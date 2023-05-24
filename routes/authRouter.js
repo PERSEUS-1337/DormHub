@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 // CONTROLLERS
-const {registerUser, loginUser, getAllUsers, getUserData, getUserData, uploadPfp, getPfp} = require('../controllers/userController');
+const {registerUser, loginUser, getAllUsers, getUserData, uploadPfp, getPfp} = require('../controllers/userController');
 const {registerOwner, loginOwner, getAllOwners} = require('../controllers/ownerController');
 
 // TODO: Transfer this to authRequiredRoutes.js & remove unused imports

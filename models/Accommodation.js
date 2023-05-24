@@ -75,6 +75,6 @@ const accommodationSchema = new Schema({
   },
 }, {timestamps: true});
 
-const Accomodation = mongoose.model('Accomodation', accomodationSchema);
+module.exports = mongoose.model('dummy_accomodation', accommodationSchema);
 
-module.exports = Accomodation;
+// module.exports = Accomodation;
