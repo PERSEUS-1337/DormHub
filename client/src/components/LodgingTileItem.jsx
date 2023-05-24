@@ -5,7 +5,7 @@ import { useNavigate, Link } from 'react-router-dom'
 const LodgingTileItem = ({ data }) => {
     const navigate = useNavigate()
 
-    const navigateToLodge = () => {
+    const navigateToLodge = (data) => {
         navigate('/accommodation', {state: {data}})
     }
 
@@ -27,8 +27,8 @@ const LodgingTileItem = ({ data }) => {
                             :
                             <h3 className='my-4'>PHP {data.price[0]} - {data.price[1]}</h3>
                         }
-                        <div className="justify-content-end mt-2">
-                            <Button onClick={navigateToLodge}>check</Button>
+                        <div className="justify-content-end">
+                            <Button onClick={() => navigateToLodge(data)} className='mb-4'>check</Button>
                         </div>
                     </Row>
                     
