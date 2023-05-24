@@ -3,9 +3,20 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const accommodationSchema = new Schema({
+  _id: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true
+  },
   name: {
     type: String,
     required: true
+  },
+  desc: {
+      type: String,
+      required: true
+  },
+  pics: {
+      type: [String],
   },
   price: {
     type: [Number],
@@ -16,11 +27,8 @@ const accommodationSchema = new Schema({
     required: true
   },
   type: {
-    type: String,
-    required: true
-  },
-  rating: {
-    type: Number,
+    type: [String],
+    enum: ["apartment", "condominium", "dormitory", "transient", "hotel", "hostel", "bedspace"],
     required: true
   },
   archived: {
@@ -39,36 +47,34 @@ const accommodationSchema = new Schema({
     type: [mongoose.Schema.Types.ObjectId],
     required: false
   },
-  review: {
-    type: [
-      {
-        rating: {
-          type: Number,
-          required: false
-        },
-        user: {
-          type: mongoose.Schema.Types.ObjectId,
-          required: false
-        },
-        detail: {
-          type: String,
-          required: false
-        }
-      }
-    ],
-    required: false
+  archived: {
+    type: Boolean,
+    required: true
   },
-  report: {
-    type: [
-      {
-        concern: {
-          type: String,
-          required: false
-        }
-      }
-    ],
-    required: false
-  }
+  // fixed review
+  review: {
+      type: [{
+          rating: {
+              type: Number,
+              enum: [1, 2, 3, 4, 5],
+              required: true
+          },
+          user: {
+              type: mongoose.Schema.Types.ObjectId,
+              required: true
+          },
+          detail: {
+              type: String,
+              required: true
+          },
+          liked: {
+              type: Boolean
+          }
+      }],
+      // required: true
+  },
 }, {timestamps: true});
 
-module.exports = mongoose.model('dummy_accomodation', accommodationSchema);
+const Accomodation = mongoose.model('Accomodation', accomodationSchema);
+
+module.exports = Accomodation;

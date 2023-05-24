@@ -9,7 +9,7 @@ const router = express.Router();
 // This is for guest website visitors, who do not need authentication
 
 // GET all accommodations
-router.get('/', getAccommodation);
+router.get('/all', getAccommodation);
 // GET single accommodation
 router.get('/:id', getAccommodationById);
 
