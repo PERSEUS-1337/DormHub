@@ -3,7 +3,6 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
-  // separate fname and lname --
   fname: {
     type: String,
     required: true
@@ -12,10 +11,10 @@ const userSchema = new Schema({
     type: String,
     required: true
   },
-  // add pfp --
   pfp: {
     type: String,
-    required: true
+    required: false,
+    default: "null"
   },
   email: {
     type: String,
@@ -31,30 +30,14 @@ const userSchema = new Schema({
     ref: 'Listing', 
     default: []
   },
+  pfp: {
+    type: String,
+    required: false,
+    default: "null"
+  }
 }, 
 );
 
 const User = mongoose.model('User', userSchema, 'users_be');
 
 module.exports = User;
-
-/* 
-Below is just a sample usage, it may or may not be correct, please test yourself
-
-Sample Usage:
-const user = new User({
-  _id: mongoose.Types.ObjectId('AAAAA'),
-  name: 'Romijn Vergara',
-  email: 'romijn@gmail.com',
-  password: 'password1',
-  bookmark: [mongoose.Types.ObjectId('AAA')]
-});
-
-user.save()
-  .then(result => {
-    console.log('User saved successfully!');
-  })
-  .catch(error => {
-    console.error(error);
-  });
-*/

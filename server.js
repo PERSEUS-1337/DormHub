@@ -7,13 +7,13 @@ You can check what values or JSON responses it returns so you know where to star
 
 - Resty (BE)
 */
-
-
 require('dotenv').config();
 
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+
+const path = require('path');
 
 // Import Routes
 const accommodationRouter = require('./routes/accommodationRouter');
@@ -28,8 +28,11 @@ const app = express();
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-  next();
+  next(); 
 });
+
+// To serve the website directly
+app.use(express.static('client/build'));
 
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
@@ -46,12 +49,15 @@ app.get('/api/v1', (req, res) => {
 });
 app.use('/api/v1/accommodation', accommodationRouter);
 app.use('/api/v1/auth', authRouter);
+app.use('/api/v1/auth-required-func', authRequiredFunc);
 
-app.use('/auth-required-func', authRequiredFunc);
-
-app.get('*', (req, res) => {
-    res.json({ msg: 'Welcome to the Backend. All other routes not declared in the routes folder will be routed automatically to this message' });
+app.use((req, res, next) => {
+  res.status(404).json({ error: 'Route not found' });
 });
+
+// app.get('*', (req, res) => {
+//     res.sendFile(path.resolve('./client/build', 'index.html'));
+// });
 
 // Connect to the database and listen for requests
 console.log('Awakening the server...');
@@ -63,12 +69,3 @@ mongoose.connect(process.env.MONGO_URI)
     })
   })
   .catch((err) => console.log(err))
-
-// // MONGODB TRIAL
-// mongoose.connect(process.env.MONGO_URI_TRIAL)
-//   .then(() =>{
-//     app.listen(process.env.PORT, () => {
-//       console.log('Database connected successfully, listening on port', process.env.PORT)
-//     })
-//   })
-//   .catch((err) => console.log(err))

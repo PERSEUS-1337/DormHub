@@ -1,0 +1,50 @@
+
+.header {
+    margin-left: 58px;
+}
+
+.recomms {
+    /* background-color: red; */
+    padding-bottom: 50px;
+    padding-top: 10px;
+}
+
+.recomm-list {
+    margin-top: 30px;
+}
+
+#searchbtn {
+    /* margin-left: -45px; */
+    height: 37px;
+    padding-top: 5px;
+}
+
+#search-container {
+    /**
+    border-style: solid;
+    border-color: red;
+    border-radius: 5px;
+    **/
+    /* width: 100%;
+    position:relative;
+    left: -50px; */
+}
+
+.filter {
+    border-radius: 0px;
+}
+
+#col-1 {
+    /* background-color: green; */
+    padding-right:0%;
+}
+
+#col-2 {
+    /* background-color: green; */
+    padding-left:0%;
+    padding-right:0%;
+}
+
+#col-3 {
+    padding-left:0%;
+}

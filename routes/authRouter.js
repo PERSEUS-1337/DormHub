@@ -1,41 +1,26 @@
 const express = require('express');
 const router = express.Router();
 
-// MODEL
-const User = require('../models/User');
-
 // CONTROLLERS
-const { uploadPfp, registerUser, loginUser, getAllUsers, getUserData, editUserData, getPfp } = require('../controllers/userController');
+const {registerUser, loginUser, getAllUsers, getUserData, getUserData, uploadPfp, getPfp} = require('../controllers/userController');
+const {registerOwner, loginOwner, getAllOwners} = require('../controllers/ownerController');
 
-
+// TODO: Transfer this to authRequiredRoutes.js & remove unused imports
 // upload pfp
 router.post('/:id/upload-pfp', uploadPfp);
-
 // retrieve pfp
 router.get('/:id/pfp', getPfp);
 
-router.get('/hello', (req, res, next) => {
-    res.json({ msg: 'Hello World' })
-});
+// SAMPLE: Get data to test
+router.get('/users', getAllUsers);
+router.get('/owners', getAllOwners);
 
-router.get('/all-users', getAllUsers);
+// POST: Register a user
+router.post('/register/user', registerUser);
+// POST: Register an owner
+router.post('/register/owner', registerOwner);
 
-// // POST: Register a user
-router.post('/register', registerUser);
+router.post('/login/user', loginUser);
+router.post('/login/owner', loginOwner);
 
-router.post('/login', loginUser);
-
-// get one user info
-router.get('/user/:id', getUserData);
-
-
-
-// edit user data
-router.patch('/edit-user/:id', editUserData);
-
-// UPDATE an accommodation
-// router.patch('/update-user', (req, res, next) => {
-//     res.json({ msg: 'UPDATE a user' })
-// });
-
-module.exports = router;
+module.exports = router; 

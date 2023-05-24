@@ -1,0 +1,88 @@
+.carousel-indicators button {
+    border-radius: 100%;
+    width: 10px !important;
+    height: 10px !important;
+    margin: 0 5px !important;
+}
+
+.carousel{
+    max-width: 75%;
+    height: 300px;
+    margin: 50px auto 20px auto;
+}
+
+.carousel-item img{
+    height: 300px;
+    object-fit: cover;
+    width: 100%;
+    border-radius: 10px;
+}
+
+#desc_accom{
+    max-width: 75%;
+    text-align: justify;
+}
+
+.detail{
+    margin-bottom: 15px !important;
+}
+
+.detail img{
+    height: 30px;
+    max-width: 35px;
+    margin: auto;
+}
+
+#accommDetail{
+    margin-top: 0;
+    margin-bottom: 30px;
+}
+
+.detail p{
+    margin: auto 0px;
+}
+
+.detail button{
+    max-width: 100px;
+    margin: auto !important;
+}
+
+.detail .map{
+    padding-right: 0px !important;
+    padding: auto !important;
+}
+
+
+@media only screen and (max-width:750px){
+    .carousel{
+        max-width: 85%;
+        margin: 20px auto 20px auto;
+    }
+    
+    #desc_accom{
+        max-width: 85%;
+    }
+
+    .detail img{
+        margin-top: 10px !important;
+        height: 30px;
+        width: 55px;
+        margin: auto;
+    }
+    
+    .detail p{
+        margin-top: 5px !important;
+        margin: auto 0px;
+        text-align: center;
+    }
+    
+    .map{
+        width: 100px;
+        margin: 10px auto 0px auto !important;
+        text-align: center;
+    }
+}
+
+h3{
+    margin: 20px auto;
+}
