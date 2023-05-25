@@ -11,6 +11,10 @@ const ownerSchema = new Schema({
     type: String,
     required: true
   },
+  pfp: {
+    type: String,
+    required: true
+  },
   email: {
     type: String,
     required: true
@@ -27,11 +31,13 @@ const ownerSchema = new Schema({
   accommodations: {
     type: [mongoose.Schema.Types.ObjectId],
     required: false,
+    ref: 'Listing',
     default: []
   },
   bookmark: {
     type: [mongoose.Schema.Types.ObjectId],
     required: false,
+    ref: 'Listing', 
     default: []
   },
   pfp: {
@@ -39,30 +45,8 @@ const ownerSchema = new Schema({
     required: false,
     default: "null"
   }
-
 });
 
 const Owner = mongoose.model('Owner', ownerSchema, 'owner_be');
 
 module.exports = Owner;
-
-/* 
-Below is just a sample usage, it may or may not be correct, please test yourself
-
-Sample Usage:
-const user = new Owner({
-  _id: mongoose.Types.ObjectId('AAAA'),
-  name: 'John Russel Lacson',
-  email: 'jrus@gmail.com',
-  password: 'password1',
-  phone: ['09123456789']
-});
-
-user.save()
-  .then(result => {
-    console.log('Owner saved successfully!');
-  })
-  .catch(error => {
-    console.error(error);
-  });
-*/
