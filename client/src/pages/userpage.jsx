@@ -159,7 +159,7 @@ const UserPage = () => {
             </Col>
           </Row>
         </Container>
-        <Container className="mb-5">
+        <Container className="pb-5">
           <CheckIfOwner />
           <h3>Favorites:</h3>
           <FaveTileList />

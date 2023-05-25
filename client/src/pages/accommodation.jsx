@@ -26,7 +26,7 @@ const Slideshow = () => {
 
 const Details = (data) => {
     return (
-        <Container id="desc_accom">
+        <Container id="desc_accom" className="border-bottom pb-4">
             <Row>
                 <Col lg={4} md={5} sm={6} xs={7}>
                     <h3>{data.accomData.name}</h3>
@@ -50,7 +50,7 @@ const Details = (data) => {
                 </Col>
                 <Col sm={2}>
                     <div className="map" style={{ margin: '0px', padding: '0px' }}>
-                        <Button type="button">View Map</Button>
+                        <Button type="button" variant="light">View Map</Button>
                     </div>
                 </Col>
             </Row>
