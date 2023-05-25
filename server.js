@@ -20,6 +20,7 @@ const accommodationRouter = require('./routes/accommodationRouter');
 const authRouter = require('./routes/authRouter');
 
 const authRequiredFunc = require('./routes/authRequiredRoutes');
+const { logReturnError } = require('./middleware/console');
 
 // Express application
 const app = express();
@@ -58,7 +59,8 @@ app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/auth-required-func', authRequiredFunc);
 
 app.use((req, res, next) => {
-  res.status(404).json({ error: 'Route not found' });
+  // res.status(404).json({ error: 'Route not found' });
+  logReturnError(req, res, 404, "Route not found:")
 });
 
 // Connect to the database and listen for requests

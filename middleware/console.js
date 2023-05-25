@@ -7,7 +7,7 @@ function logReturnError(req, res, statusCode, errorMessage) {
 }
 
 // SUCCESS
-function logReturnSuccess(req, res, statusCode, successMessage) {
+function logReturnSuccess(req, res, statusCode, successMessage, data) {
     const timestamp = new Date().toLocaleString();
     const message = `[${timestamp}] [${statusCode}] ${successMessage} [${req.ip}]`;
     console.info(message);

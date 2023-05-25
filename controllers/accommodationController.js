@@ -31,7 +31,7 @@ const getAccommodation = async(req, res) => {
     // Find the actual accommodations that fit the keyword
     let accommodation = Accommodation.find(queryObject)
     if (!accommodation) {
-        logReturnError(req, res, 404, "No Accommodations Found")
+        return logReturnError(req, res, 404, "No Accommodations Found")
     }
 
     // Sorting of accommodations
@@ -49,41 +49,40 @@ const getAccommodation = async(req, res) => {
 
     // Filter returns to comply with paging style and limiters
     accommodation = accommodation.skip(skip).limit(limit);
-    console.info(`[${new Date().toLocaleString()}] [200] Accommodations Successfully Filtered and Sorted [${req.ip}]`);
     logRespondSuccess(req, res, 200, 'Accommodations Successfully Filtered and Sorted')
 
     const accommodations = await accommodation;
     const totalAccommodations = await Accommodation.countDocuments(queryObject);
     const numOfPages = Math.ceil(totalAccommodations / limit);
 
-    // console.info(`[${new Date().toLocaleString()}] [200] Accommodations Successfully Fetched [${req.ip}]`);
-    // return res.status(200).json({
-        //     accommodations,
-        //     totalAccommodations,
-        //     numOfPages
-        // })
     const response = {
         accommodations,
         totalAccommodations,
         numOfPages
     };
-    logReturnSuccess(req, res, 200, 'Accommodations Successfully Fetched',  response)
+
+    return logReturnSuccess(req, res, 200, 'Accommodations Successfully Fetched',  response)
 }
 
 // GET SINGLE ACCOMMODATION
 const getAccommodationById = async (req, res) => {
     const { id } = req.params;
+
+    if (!mongooseObjectId.isValid(id)) {
+        return logReturnError(req, res, 400, "Not a valid id")
+    }
+
     const accommodation = await Accommodation.findById(id)
         .where('archived')
         .equals(false);
 
     if (!accommodation) {
-        console.error(`[${new Date().toLocaleString()}] [404] No Accommodation Exists [${req.ip}]`)
-        return res.status(404).json({ error: "No Accommodation Exists" })
+        return logReturnError(req, res, 404, "No Accommodation Exists")
     }
 
-    console.info(`[${new Date().toLocaleString()}] [200] Accommodations Successfully Fetched [${req.ip}]`);
-    return res.status(200).json(accommodation)
+    // console.info(`[${new Date().toLocaleString()}] [200] Accommodations Successfully Fetched [${req.ip}]`);
+    // return res.status(200).json(accommodation)
+    return logReturnSuccess(req, res, 200, 'Accommodations Successfully Fetched',  accommodation)
 }
 
 // POST ACCOMMODATION
@@ -91,22 +90,22 @@ const createAccommodation = async (req, res) => {
     const { oId, name, price, location, type, rating, amenity } = req.body;
 
     if (!validator.default.isMongoId(oId)) {
-      return res.status(400).json({err: 'Not a valid ownerId'});
+        return logReturnError(req, res, 400, "Not a valid ownerId");
     }
 
     // Check if the owner exists
     const owner = await Owner.findById(oId);
     if (!owner) {
-        return res.status(404).json({ error: 'OWNER: NOT FOUND' });
+        return logReturnError(req, res, 404, "Owner does not exist");
     }
 
     const accommodationExist = await Accommodation.findOne({name});
     if (accommodationExist) {
-        return res.status(400).json({ error: 'ACCOMMODATION: ALREADY EXISTS' });
+        return logReturnError(req, res, 400, "ACCOMMODATION: ALREADY EXISTS");
     }
 
     if (!name || !price || !location || !type || !rating || !amenity)  {
-        return res.status(400).json({ error: 'All fields must be provided' });
+        return logReturnError(req, res, 400, "All fields must be provided");
     }
 
     // Create the accommodation with default or empty values
@@ -132,9 +131,11 @@ const createAccommodation = async (req, res) => {
         owner.accommodations.push(savedAccommodation._id);
         await owner.save();
 
-        res.status(201).json({msg: "ACCOMMODATION: CREATED"});
+        // res.status(201).json({msg: "ACCOMMODATION: CREATED"});
+        return logReturnSuccess(req, res, 201, "ACCOMMODATION: CREATED")
     } catch (error) {
-        res.status(500).json({ error: 'ACCOMMODATION: CREATE FAILED' });
+        // res.status(500).json({ error: 'ACCOMMODATION: CREATE FAILED' });
+        return logReturnError(req, res, 500, "ACCOMMODATION: CREATE FAILED");
     }
 };
 
@@ -159,9 +160,9 @@ const updateAccommodation = async (req, res) => {
         if (!updatedAccommodation) {
             return res.status(404).json({ error: "No Accommodation Exists" });
         }
-        res.status(200).json(updatedAccommodation);
+        return res.status(200).json(updatedAccommodation);
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        return res.status(500).json({ error: err.message });
     }
 };
 
@@ -186,10 +187,10 @@ const deleteAccommodation = async (req, res) => {
             return res.status(404).json({ error: 'Accommodation not found' });
         }
 
-        res.status(200).json({ message: 'Accommodation deleted successfully' });
+        return res.status(200).json({ message: 'Accommodation deleted successfully' });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: 'Server error' });
+        return res.status(500).json({ error: 'Server error' });
     }
 };
 
