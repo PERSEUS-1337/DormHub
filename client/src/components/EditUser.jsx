@@ -54,7 +54,7 @@ const EditUserProfile = ({data}) => {
   
     return (
       <>
-        <Button variant="primary" onClick={handleShow}>
+        <Button variant="light" onClick={handleShow}>
           Edit Details
         </Button>
   
