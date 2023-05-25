@@ -56,7 +56,7 @@ const SearchBar = ({ data }) => {
                         <Form>
                             <Form.Group controlId="filterAccomms"  className='d-flex align-items-center'>
                                 <Form.Control type="search" placeholder="Search for an accommodation..." className='m-3' onChange={handleFilter} value={wordEntered} />
-                                <Button type="submit" id="searchbtn" className ="rounded-2" variant="secondary">SEARCH</Button>
+                                <Button type="submit" id="searchbtn" className ="rounded-1" variant="secondary">SEARCH</Button>
                             </Form.Group>
                         </Form>
                     </Col>

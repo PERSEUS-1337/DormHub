@@ -58,7 +58,7 @@ const EditUserProfile = ({data}) => {
           Edit Details
         </Button>
   
-        <Modal show={show} onHide={handleClose} backdrop="static">
+        <Modal show={show} onHide={handleClose} backdrop="static" centered>
           <Modal.Header closeButton>
             <Modal.Title>Edit Profile Details</Modal.Title>
           </Modal.Header>
@@ -82,20 +82,13 @@ const EditUserProfile = ({data}) => {
                   isInvalid={!!errors.lname}
                 />
               </Form.Group>
-              <Form.Group
-                className="mb-3"
-                controlId="exampleForm.ControlTextarea1"
-              >
-                <Form.Label>Example textarea</Form.Label>
-                <Form.Control as="textarea" rows={3} />
-              </Form.Group>
             
           </Modal.Body>
             <Modal.Footer>
-                <Button variant="secondary" onClick={handleClose}>
+                <Button variant="primary" onClick={handleClose}>
                 Close
                 </Button>
-                <Button type="submit" variant="primary" onClick={handleClose}>
+                <Button type="submit" variant="secondary" onClick={handleClose}>
                 Save
                 </Button>
             </Modal.Footer>

@@ -44,7 +44,7 @@ const Signup = () => {
   return (
     <>
       <div className="signup-container">
-        <h2>Create an <span style={{ color: '#ffe941' }}>Account</span></h2>
+        <h2>Create an <span style={{ color: '#ffd041' }}>Account</span></h2>
         <Form onSubmit={handleSubmit}>
           <Form.Group controlId="formFirstName">
             <Form.Label>First Name</Form.Label>

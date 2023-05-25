@@ -142,7 +142,7 @@ const HomePage = () => {
 
             <Container className = "mt-5 px-5">
                 <h5>
-                    TOP <span style={{ color: "#ffe941" }}>RECOMMENDATIONS</span>
+                    TOP <span style={{ color: "#ffd041" }}>RECOMMENDATIONS</span>
                 </h5>
             </Container>
             <Container className = "mt-4 pb-5 align-items-center">
