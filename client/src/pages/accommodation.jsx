@@ -3,6 +3,7 @@ import { Button, Row, Col, Carousel, Container } from 'react-bootstrap';
 import React, { useState, useEffect } from "react";
 import { ReadStarRating, StarRating } from '../components/StarRating';
 import { useLocation } from 'react-router-dom';
+import ReviewList from '../components/ReviewTile';
 
 const Slideshow = () => {
     return (
@@ -78,14 +79,6 @@ const Details = (data) => {
     );
 }
 
-const Reviews = () => {
-    return (
-        <Container style={{ background: "#dddddd" }} className='d-flex justify-content-center py-2'>
-            <span>This is the Review Div</span>
-        </Container>
-    )
-}
-
 
 function Accommodation(props) {
     const location = useLocation()
@@ -94,7 +87,7 @@ function Accommodation(props) {
         <Slideshow />
         {/* <ReadStarRating rate={location.state.data} /> */}
         <Details accomData={location.state.data} />
-        <Reviews />
+        <ReviewList data={location.state.data} />
     </>
     );
 }
