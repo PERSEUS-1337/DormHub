@@ -3,7 +3,7 @@ const Accommodation = require('../models/Accommodation');
 const mongooseObjectId = require('mongoose').Types.ObjectId;
 const validator = require('validator');
 
-const errorMessages = require('../errorMessages');
+const errorMessages = require('../middleware/apiMessages');
 
 // GET ALL ACCOMMODATIONS
 const getAccommodation = async(req, res) => {

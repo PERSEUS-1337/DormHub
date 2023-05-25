@@ -2,7 +2,7 @@ const User = require('../models/User');
 const Accommodation = require('../models/Accommodation');
 const mongooseObjectId = require('mongoose').Types.ObjectId;
 
-const errorMessages = require('../errorMessages');
+const errorMessages = require('../middleware/apiMessages');
 
 // GET ALL BOOKMARKS COMPLETE with INFO
 const getBookmark = async (req, res)  => {
