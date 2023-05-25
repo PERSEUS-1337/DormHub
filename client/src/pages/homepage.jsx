@@ -23,11 +23,11 @@ const AccomCards = () => {
 
 
     useEffect(() => {
-        fetch("/api/v1/accommodation")
+        fetch("/api/v1/accommodation/all")
         .then(res =>res.json())
         .then(data => {
             setAccommData(data);
-            console.log(data["accommodations"][2]);
+            console.log(data["accommodations"]);
         })
     }, []);
 
@@ -63,11 +63,11 @@ const HomePage = () => {
 
 
     useEffect(() => {
-        fetch("/api/v1/accommodation")
+        fetch("/api/v1/accommodation/all")
         .then(res =>res.json())
         .then(data => {
             setAccommData(data);
-            console.log(data["accommodations"][2]);
+            console.log(data["accommodations"]);
         })
     }, []); 
     
