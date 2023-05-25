@@ -25,6 +25,11 @@ const NavBar = () => {
             name: "User",
             href: "/user",
         },
+        {
+            id: 5,
+            name: "Logout",
+            href: "/login",
+        }
     ]
 
     const navList = nav_items.map(data => <NavItem key={data.id} nav={data} />)

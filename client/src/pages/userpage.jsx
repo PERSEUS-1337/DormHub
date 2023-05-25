@@ -47,6 +47,7 @@ const AccommTileList = () => {
 const FaveTileList = () => {
 
   const [favData, setFavData] = useState(null);
+  const [hasFav, setHasFav] = useState(true);
 
   useEffect(() => {
     const fetchBookmarks = async () => {
@@ -64,21 +65,31 @@ const FaveTileList = () => {
         });
         const faves = await res.json();
         setFavData(faves);
+        if (faves.error) {
+          setHasFav(false);
+        }
         } catch (err) {
           console.error('Bookmark fetching error.', err);
         }
       };
       fetchBookmarks();
-    }, []); 
+    }, []);
 
-    console.log(favData);
-    const LodgingList = favData && favData.map(data => <FaveTileItem key={data.id} data={data} />)
+    
 
-  return (
-      <> 
+    if (hasFav === false) {
+      return(
+        <p>No Favorites Yet.</p>
+      )
+    } else {
+      const LodgingList = favData && favData.map(data => <FaveTileItem key={data.id} data={data} />)
+      return (
+        <>
           {LodgingList}
-      </>
-  )
+        </>
+      )
+    }
+  
 }
 
 const CheckUserType = () => {
@@ -130,7 +141,6 @@ const UserPage = () => {
 
     return (
       <>
-        {/* When userType is owner, this component appears */}
         <Container className="mt-5 mb-3 pb-4 d-flex flex-column align-items-left border-bottom">
           <Row>
             <Col xs={2}>
