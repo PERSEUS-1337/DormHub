@@ -1,8 +1,10 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Container, Row, Col, Button, Image } from 'react-bootstrap'
+import { FaHeart } from 'react-icons/fa'
 import { useNavigate, Link } from 'react-router-dom'
 
 const LodgingTileItem = ({ data }) => {
+    const [isBookmarked, setIsBookmarked] = useState(false)
     const navigate = useNavigate()
 
     const navigateToLodge = (data) => {
@@ -21,18 +23,28 @@ const LodgingTileItem = ({ data }) => {
                 </Col>
                 <Col>
                     <Row>
-                        {
-                            data.price.length ==1? 
-                            <h3 className='my-4'>PHP {data.price[0]}</h3>
-                            :
-                            <h3 className='my-4'>PHP {data.price[0]} - {data.price[1]}</h3>
-                        }
-                        <div className="justify-content-end">
+                        <Col className='d-flex align-items-center'>
+                            {
+                                data.price.length ==1? 
+                                <h3 className='my-4'>PHP {data.price[0]}</h3>
+                                :
+                                <h3 className='my-4'>PHP {data.price[0]} - {data.price[1]}</h3>
+                            }
+                            <FaHeart
+                                size={35}
+                                onClick={() => setIsBookmarked(!isBookmarked)}
+                                color={isBookmarked ? "#8b0000" : "#b8bac2"}
+                                style={{ cursor: 'pointer' }}
+                            />
+                        </Col>
+
+                        <div className="d-flex justify-content-center">
                             <Button onClick={() => navigateToLodge(data)} className='mb-4'>check</Button>
                         </div>
                     </Row>
                     
                 </Col>
+              
             </Row>
         </Container>
     )
