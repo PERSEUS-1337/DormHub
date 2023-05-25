@@ -26,6 +26,8 @@ const upload = multer({
     // },
 });
 
+const errorMessages = require('../middleware/apiMessages');
+
 // JWT
 const createToken = (_id) => {
     return jwt.sign({_id}, process.env.PRIVATE_KEY, {expiresIn: '1d' });
