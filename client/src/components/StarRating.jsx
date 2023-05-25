@@ -43,7 +43,6 @@ const ReadStarRating = (data) => {
     console.log(data.rate.rating)
     const rating = data.rate.rating
 
-
     return (
         <div className='d-flex align-items-center'>
             {[...Array(5)].map((star, index) => {

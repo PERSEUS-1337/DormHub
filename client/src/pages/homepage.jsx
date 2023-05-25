@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import LodgingTileList from '../components/LodgingTileList';
 import { useState, useEffect } from 'react';
 import { StarRating } from '../components/StarRating';
+import SearchBar from '../components/SearchBar';
 //import Accommodation from './pages/accomodation';
 //todo: include button in form
 
@@ -22,11 +23,11 @@ const AccomCards = () => {
 
 
     useEffect(() => {
-        fetch("/api/v1/accommodation")
+        fetch("/api/v1/accommodation/all")
         .then(res =>res.json())
         .then(data => {
             setAccommData(data);
-            console.log(data["accommodations"][2]);
+            // console.log(data["accommodations"][2]);
         })
     }, []);
 
@@ -53,14 +54,29 @@ const AccomCards = () => {
 }
 
 const HomePage = () => {
-const [isInvisible, setIsInvisible] = useState("rounded-0 border border-dark invisible");
-const toggleVisible = () => {
-  setIsInvisible("rounded-0 border border-dark");
-} 
+    const [isInvisible, setIsInvisible] = useState("rounded-0 border border-dark invisible");
+    const toggleVisible = () => {
+    setIsInvisible("rounded-0 border border-dark");
+    } 
 
+    const [accommData, setAccommData] = useState({});
+
+
+    useEffect(() => {
+        fetch("/api/v1/accommodation/all")
+        .then(res =>res.json())
+        .then(data => {
+            setAccommData(data);
+            // console.log(data["accommodations"][2]);
+        })
+    }, []); 
+    
     return(
         <>
-        <Container className="mt-5 ms-5" id="search-container2">
+            <SearchBar data={ accommData.accommodations } />
+            {/* commented the lines below this comment to test the search function */}
+            {/* also moved the code to its own file for reusability in the future */}
+        {/* <Container className="mt-5 ms-5" id="search-container2">
                 <Row>
                     <Col xs={2} ></Col>
                     <Col xs={8} >
@@ -118,8 +134,8 @@ const toggleVisible = () => {
                         </Button>
                     </Col>
                 </Row>
-            </Container>
-        <LodgingTileList />
+            </Container> */}
+        {/* <LodgingTileList /> */}
 
         <Container className = "recomms">
             <h5 className="header">

@@ -10,6 +10,7 @@ const ProfilePic = () => {
 
 const AccommTileList = () => {
   const [accommData, setAccommData] = useState(null);
+  const [hasAccomm, setHasAccomm] = useState(true);
 
   useEffect(() => {
     const fetchAccomms = async () => {
@@ -27,6 +28,9 @@ const AccommTileList = () => {
         });
         const owned = await res.json();
         setAccommData(owned.accommodations);
+        if (owned.error) {
+          setHasAccomm(false);
+        }
         } catch (err) {
           console.error('Bookmark fetching error.', err);
         }
@@ -34,29 +38,33 @@ const AccommTileList = () => {
       fetchAccomms();
     }, []); 
 
-    console.log(accommData);
-    const LodgingList = accommData && accommData.map(data => <FaveTileItem key={data.id} data={data} />)
-
-  return (
-      <> 
+    if (hasAccomm === false) {
+      return(
+        <p>No Accommodations Uploaded Yet.</p>
+      )
+    } else {
+      const LodgingList = accommData && accommData.map(data => <FaveTileItem key={data.id} data={data} />)
+      return (
+        <>
           {LodgingList}
-      </>
-  )
+        </>
+      )
+    }
 }
 
 const FaveTileList = () => {
 
   const [favData, setFavData] = useState(null);
+  const [hasFav, setHasFav] = useState(true);
 
   useEffect(() => {
     const fetchBookmarks = async () => {
+      const type = localStorage.getItem("userType");
       const uid = localStorage.getItem("_id");
-      console.log(uid);
       const jwt = localStorage.getItem("token");
-      console.log(jwt);
 
       try {
-        const res = await fetch(`/api/v1/auth-required-func/user/bookmark/${uid}`, {
+        const res = await fetch(`/api/v1/auth-required-func/${type}/bookmark/${uid}`, {
           headers: {
             "Content-Type": "application/json",
             Authorization : `Bearer ${jwt}`
@@ -64,24 +72,34 @@ const FaveTileList = () => {
         });
         const faves = await res.json();
         setFavData(faves);
+        if (faves.error) {
+          setHasFav(false);
+        }
         } catch (err) {
           console.error('Bookmark fetching error.', err);
         }
       };
       fetchBookmarks();
-    }, []); 
+    }, []);
 
-    console.log(favData);
-    const LodgingList = favData && favData.map(data => <FaveTileItem key={data.id} data={data} />)
+    
 
-  return (
-      <> 
-          {LodgingList}
-      </>
-  )
+    if (hasFav === false) {
+      return(
+        <p>No Favorites Yet.</p>
+      )
+    } else {
+      const BkmarkList = favData && favData.map(data => <FaveTileItem key={data.id} data={data} />)
+      return (
+        <>
+          {BkmarkList}
+        </>
+      )
+    }
+  
 }
 
-const CheckUserType = () => {
+const CheckIfOwner = () => {
   const userType = localStorage.getItem("userType");
 
   if (userType === "owner") {
@@ -89,13 +107,6 @@ const CheckUserType = () => {
       <>
       <h3>Accommodations:</h3>
       <AccommTileList />
-      </>
-    );
-  } else if (userType === "user") {
-    return (
-      <>
-      <h3>Favorites:</h3>
-      <FaveTileList />
       </>
     );
   }
@@ -106,13 +117,12 @@ const UserPage = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      const type = localStorage.getItem("userType");
       const uid = localStorage.getItem("_id");
-      console.log(uid);
       const jwt = localStorage.getItem("token");
-      console.log(jwt);
 
       try {
-        const res = await fetch(`/api/v1/auth-required-func/${localStorage.getItem("userType")}/${uid}`, {
+        const res = await fetch(`/api/v1/auth-required-func/${type}/${uid}`, {
           headers: {
             "Content-Type": "application/json",
             Authorization : `Bearer ${jwt}`
@@ -130,7 +140,6 @@ const UserPage = () => {
 
     return (
       <>
-        {/* When userType is owner, this component appears */}
         <Container className="mt-5 mb-3 pb-4 d-flex flex-column align-items-left border-bottom">
           <Row>
             <Col xs={2}>
@@ -138,7 +147,6 @@ const UserPage = () => {
             </Col>
             <Col xs={7}>
               <h2>{`${userData.fname} ${userData.lname}`}</h2>
-              {/* <h2> Juan Dela Cruz </h2> */}
               <h5 className="lead">From Manila, Philippines</h5>
               <h5 className="lead">Email: {`${userData.email}`}</h5>
               <h5 className="lead">Contact Number: 09950055973 </h5>
@@ -146,7 +154,9 @@ const UserPage = () => {
           </Row>
         </Container>
         <Container>
-          <CheckUserType />
+          <CheckIfOwner />
+          <h3>Favorites:</h3>
+          <FaveTileList />
         </Container>
         
       </>
