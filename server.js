@@ -9,7 +9,7 @@ You can check what values or JSON responses it returns so you know where to star
 */
 require('dotenv').config();
 
-const errorMessages = require('./errorMessages');
+const apiMessages = require('./middleware/apiMessages');
 
 const express = require('express');
 const mongoose = require('mongoose');

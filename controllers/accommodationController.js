@@ -8,13 +8,13 @@ const {
     logRespondSuccess
 } = require('../middleware/console')
 
+const apiMsg = require('../middleware/apiMessages');
 
 /*
 Guide:
 [timestamp] [HTTP Method] [Route] [IP Address] [User Agent]
 */
 
-const errorMessages = require('../middleware/apiMessages');
 
 // GET ALL ACCOMMODATIONS
 const getAccommodation = async(req, res) => {
@@ -32,8 +32,10 @@ const getAccommodation = async(req, res) => {
     // Find the actual accommodations that fit the keyword
     let accommodation = Accommodation.find(queryObject)
     if (!accommodation) {
-        return logReturnError(req, res, 404, "No Accommodations Found")
+        return logReturnError(req, res, 404, apiMsg.accommodationNotFound)
     }
+
+    logRespondSuccess(req, res, 200, 'Accommodations Found')
 
     // Sorting of accommodations
     if (sort === 'a-z') accommodation = accommodation.sort('name');
@@ -70,7 +72,7 @@ const getAccommodationById = async (req, res) => {
     const { id } = req.params;
 
     if (!mongooseObjectId.isValid(id)) {
-        return logReturnError(req, res, 400, "Not a valid id")
+        return logReturnError(req, res, 400, apiMsg.objectIdInvalid)
     }
 
     const accommodation = await Accommodation.findById(id)
@@ -78,12 +80,10 @@ const getAccommodationById = async (req, res) => {
         .equals(false);
 
     if (!accommodation) {
-        return logReturnError(req, res, 404, "No Accommodation Exists")
+        return logReturnError(req, res, 404, apiMsg.accommodationNotFound)
     }
 
-    // console.info(`[${new Date().toLocaleString()}] [200] Accommodations Successfully Fetched [${req.ip}]`);
-    // return res.status(200).json(accommodation)
-    return logReturnSuccess(req, res, 200, 'Accommodations Successfully Fetched',  accommodation)
+    return logReturnSuccess(req, res, 200, 'Accommodation Successfully Fetched',  accommodation)
 }
 
 // POST ACCOMMODATION
@@ -91,22 +91,22 @@ const createAccommodation = async (req, res) => {
     const { oId, name, price, location, type, rating, amenity } = req.body;
 
     if (!validator.default.isMongoId(oId)) {
-        return logReturnError(req, res, 400, "Not a valid ownerId");
+        return logReturnError(req, res, 400, apiMsg.ownerIdInvalid);
     }
 
     // Check if the owner exists
     const owner = await Owner.findById(oId);
     if (!owner) {
-        return logReturnError(req, res, 404, "Owner does not exist");
+        return logReturnError(req, res, 404, apiMsg.ownerNotFound);
     }
 
     const accommodationExist = await Accommodation.findOne({name});
     if (accommodationExist) {
-        return logReturnError(req, res, 400, "ACCOMMODATION: ALREADY EXISTS");
+        return logReturnError(req, res, 400, apiMsg.accommodationAlreadyExists);
     }
 
     if (!name || !price || !location || !type || !rating || !amenity)  {
-        return logReturnError(req, res, 400, "All fields must be provided");
+        return logReturnError(req, res, 400, apiMsg.fieldsMissing);
     }
 
     // Create the accommodation with default or empty values
@@ -123,6 +123,8 @@ const createAccommodation = async (req, res) => {
         review: [],
         report: [],
     });
+    
+    logRespondSuccess(req, res, 201, 'Create Accommodation Fields are satisfied')
 
     try {
         // Save the accommodation
@@ -132,11 +134,9 @@ const createAccommodation = async (req, res) => {
         owner.accommodations.push(savedAccommodation._id);
         await owner.save();
 
-        // res.status(201).json({msg: "ACCOMMODATION: CREATED"});
-        return logReturnSuccess(req, res, 201, "ACCOMMODATION: CREATED")
+        return logReturnSuccess(req, res, 201, apiMsg.accommodationCreated, apiMsg.accommodationCreated)
     } catch (error) {
-        // res.status(500).json({ error: 'ACCOMMODATION: CREATE FAILED' });
-        return logReturnError(req, res, 500, "ACCOMMODATION: CREATE FAILED");
+        return logReturnError(req, res, 500, apiMsg.accommodationCreationFailed);
     }
 };
 
@@ -147,23 +147,26 @@ const updateAccommodation = async (req, res) => {
     const update = req.body; 
     
     if (!mongooseObjectId.isValid(id) || !mongooseObjectId.isValid(oId)) {
-        return res.json({error: errorMessages.objectIdInvalid});
+        return logReturnError(req, res, 400, apiMsg.objectIdInvalid);
     }
 
     try {
         const accommodation = await Accommodation.findById(id);
         
         if (accommodation.owner != oId || !accommodation) {
-            throw Error(errorMessages.invalidAccommodationOwner);
+            throw Error(apiMsg.invalidAccommodationOwner);
         }
 
         const updatedAccommodation = await Accommodation.findByIdAndUpdate(id, update, { new: true });
+
         if (!updatedAccommodation) {
-            return res.status(404).json({ error: errorMessages.accommodationNotFound });
+            return logReturnError(req, res, 404, apiMsg.accommodationNotFound);
         }
-        return res.status(200).json(updatedAccommodation);
-    } catch (err) {
-        return res.status(500).json({ error: err.message });
+        logRespondSuccess(req, res, 200, 'Accommodation Found')
+
+        return logReturnSuccess(req, res, 200, "Accommodation updated", "Accommodation updated");
+    } catch (error) {
+        return logReturnError(req, res, 500, error);
     }
 };
 
@@ -172,26 +175,29 @@ const deleteAccommodation = async (req, res) => {
     const { id,oId } = req.params;
     
     if (!mongooseObjectId.isValid(id) || !mongooseObjectId.isValid(oId)) {
-        return res.json({error: errorMessages.objectIdInvalid});
+        return logReturnError(req, res, 400, apiMsg.objectIdInvalid)
     }
 
     try {
 
         const accommodation = await Accommodation.findById(id);
+
         if (accommodation.owner != oId || !accommodation) {
-            throw Error(errorMessages.invalidAccommodationOwner);
+            throw Error(apiMsg.invalidAccommodationOwner);
         }
+
+        logRespondSuccess(req, res, 200, 'Valid Accommodation Owner')
 
         const deletedAccommodation = await Accommodation.findByIdAndDelete(id);
 
         if (!deletedAccommodation) {
-            return res.status(404).json({ error: errorMessages.accommodationNotFound });
+            return logReturnError(req, res, 404, apiMsg.accommodationNotFound);
         }
 
-        return res.status(200).json({ message: 'Accommodation deleted successfully' });
+        return logReturnSuccess(req, res, 200, apiMsg.accommodationDeleted, apiMsg.accommodationDeleted);
+
     } catch (error) {
-        console.error(error);
-        return res.status(500).json({ error: 'Server error' });
+        return logReturnError(req, res, 500, error);
     }
 };
 
@@ -199,30 +205,34 @@ const archiveAccommodation = async (req, res) => {
     const { id,oId } = req.params;
     
     if (!mongooseObjectId.isValid(id) || !mongooseObjectId.isValid(oId)) {
-        return res.json({error: errorMessages.objectIdInvalid});
+        return logReturnError(req, res, 400, apiMsg.objectIdInvalid);
     }
 
     try {
 
         const accommodation = await Accommodation.findById(id);
+
         if (accommodation.owner != oId || !accommodation) {
-            throw Error(errorMessages.invalidAccommodationOwner);
+            throw Error(apiMsg.invalidAccommodationOwner);
         }
+
+        logRespondSuccess(req, res, 200, 'Valid Accommodation Owner')
 
         const archiveAccommodation = await Accommodation.findOneAndUpdate(
             { _id: id, owner: oId },
             { archived: true },
             { new: true }
         );
-
+        
         if (!archiveAccommodation) {
-            return res.status(404).json({ error: errorMessages.accommodationNotFound });
+            return logReturnError(req, res, 404, apiMsg.accommodationNotFound);
         }
 
-        res.status(200).json({ message: errorMessages.accommodationArchived});
+        logRespondSuccess(req, res, 200, 'Accommodation Found')
+
+        return logReturnSuccess(req, res, 200, apiMsg.accommodationArchived, archiveAccommodation);
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: errorMessages.serverError });
+        return logReturnError(req, res, 500, error);
     }
 };
 
@@ -233,7 +243,7 @@ const getAccommodationReview = async(req, res) => {
         const accommodation = await Accommodation.findById(id);
 
         if (!accommodation) {
-            return res.status(404).json({ error: errorMessages.accommodationNotFound });
+            return logReturnError(req, res, 404, apiMsg.accommodationNotFound)
         }
 
         const reviews = accommodation.review;
@@ -265,22 +275,26 @@ const getAccommodationReviewByUserId = async(req, res) => {
 const postReviewAccommodation = async(req, res) => {
     const { id } = req.params;
     const { rating, user, detail } = req.body;
+
     try {
         const accommodation = await Accommodation.findById(id);
+
         if (!accommodation) {
-            return res.status(404).json({ error: errorMessages.accommodationNotFound});
+            return logReturnError(req, res, 404, apiMsg.accommodationNotFound)
         }
+
         const review = {
             rating: rating,
             user: user,
             detail: detail
         };
+
         accommodation.review.push(review);
         await accommodation.save();
-        res.status(201).json(accommodation);
+
+        return logReturnSuccess(req, res, 201, "Posted Review Successfully", "Posted Review Successfully");
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: errorMessages.serverError });
+        return logReturnError(req, res, 500, apiMsg.serverError)
     }
 }
 
@@ -292,23 +306,22 @@ const deleteReviewAccommodation = async (req, res) => {
         const accommodation = await Accommodation.findById(id);
 
         if (!accommodation) {
-            return res.status(404).json({ error: errorMessages.accommodationNotFound});
+            return logReturnError(req, res, 404, apiMsg.accommodationNotFound);
         }
         
         const reviewIndex = accommodation.review.findIndex((review) => review.user.toString() === oId);
         
         if (reviewIndex === -1) {
-            return res.status(404).json({ error: errorMessages.reviewNotFound});
+            return logReturnError(req, res, 404, apiMsg.noReviewsFound)
         }
 
         accommodation.review.splice(reviewIndex, 1);
 
         await accommodation.save();
 
-        res.status(200).json({ message: errorMessages.reviewDeleted });
+        return logReturnSuccess(req, res, 200, apiMsg.reviewDeleted, apiMsg.reviewDeleted);
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: errorMessages.serverError });
+        return logReturnError(req, res, 500, apiMsg.serverError);
     }
 }
 
@@ -320,7 +333,7 @@ module.exports = {
     // getAccommodationReviewByUserId,
     updateAccommodation,
     deleteAccommodation,
-    archiveAccommodation
-    // postReviewAccommodation,
-    // deleteReviewAccommodation
+    archiveAccommodation,
+    postReviewAccommodation,
+    deleteReviewAccommodation
 }

@@ -10,7 +10,7 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
-const errorMessages = require('../errorMessages');
+const apiMessages = require('./apiMessages');
 
 const requireAuth = async (req, res, next) => {
 

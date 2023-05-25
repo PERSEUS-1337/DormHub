@@ -6,7 +6,7 @@ const validator = require('validator');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-const errorMessages = require('../middleware/apiMessages');
+const apiMessages = require('../middleware/apiMessages');
 
 // JWT
 const createToken = (_id) => {

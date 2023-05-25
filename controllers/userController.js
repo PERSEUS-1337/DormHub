@@ -1,6 +1,7 @@
 const User = require('../models/User');
 const Accommodation = require('../models/Accommodation');
 const mongooseObjectId = require('mongoose').Types.ObjectId;
+const apiMessages = require('../middleware/apiMessages');
 
 const validator = require('validator');
 const bcrypt = require('bcrypt');
@@ -26,7 +27,6 @@ const upload = multer({
     // },
 });
 
-const errorMessages = require('../middleware/apiMessages');
 
 // JWT
 const createToken = (_id) => {
