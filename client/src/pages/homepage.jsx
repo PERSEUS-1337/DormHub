@@ -5,6 +5,7 @@ import LodgingTileList from '../components/LodgingTileList';
 import { useState, useEffect } from 'react';
 import { StarRating } from '../components/StarRating';
 import SearchBar from '../components/SearchBar';
+import ScrollToTopButton from '../components/ScrollTopBtn';
 //import Accommodation from './pages/accomodation';
 //todo: include button in form
 
@@ -148,6 +149,7 @@ const HomePage = () => {
             <Container className = "mt-4 pb-5 align-items-center">
                 <AccomCards />
             </Container>
+            <ScrollToTopButton />
         </Container>   
         </>
 

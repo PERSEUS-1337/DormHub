@@ -80,7 +80,7 @@ const NavBar = () => {
 
     const navList = nav_items.map(data => <NavItem key={data.id} nav={data} />)
     return (
-        <Navbar bg="primary" expand="lg">
+        <Navbar bg="primary" expand="lg" className="fixed-navbar">
             <Container>
                 <Navbar.Brand style={{color:"white"}} href="/">DORMHUB</Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
