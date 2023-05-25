@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Container, Col, Row, Image } from "react-bootstrap";
 import FaveTileItem from "../components/FaveTileItem";
+import EditUserProfile from "../components/EditUser";
 
 const ProfilePic = () => {
   return (
@@ -43,7 +44,7 @@ const AccommTileList = () => {
         <p>No Accommodations Uploaded Yet.</p>
       )
     } else {
-      const LodgingList = accommData && accommData.map(data => <FaveTileItem key={data.id} data={data} />)
+      const LodgingList = accommData && accommData.map(data => <FaveTileItem key={data._id} data={data} />)
       return (
         <>
           {LodgingList}
@@ -141,7 +142,7 @@ const UserPage = () => {
     return (
       <>
         <Container className="mt-5 mb-3 pb-4 d-flex flex-column align-items-left border-bottom">
-          <Row>
+          <Row> 
             <Col xs={2}>
               <ProfilePic />
             </Col>
@@ -150,6 +151,9 @@ const UserPage = () => {
               <h5 className="lead">From Manila, Philippines</h5>
               <h5 className="lead">Email: {`${userData.email}`}</h5>
               <h5 className="lead">Contact Number: 09950055973 </h5>
+            </Col>
+            <Col xs={3} className ="d-flex justify-content-end align-items-start">
+              <EditUserProfile key={userData.id} data={userData}/>
             </Col>
           </Row>
         </Container>
