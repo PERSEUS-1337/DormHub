@@ -50,13 +50,13 @@ const SearchBar = ({ data }) => {
         )
     }
         return (
-            <Container className='mt-5'>
+            <Container className='mt-4'>
                 <Row>
                     <Col lg={12} className='px-5'>
                         <Form>
                             <Form.Group controlId="filterAccomms"  className='d-flex align-items-center'>
                                 <Form.Control type="search" placeholder="Search for an accommodation..." className='m-3' onChange={handleFilter} value={wordEntered} />
-                                <Button type="submit" id="searchbtn" className ="rounded-3">Search</Button>
+                                <Button type="submit" id="searchbtn" className ="rounded-1" variant="secondary">SEARCH</Button>
                             </Form.Group>
                         </Form>
                     </Col>
@@ -70,7 +70,7 @@ const SearchBar = ({ data }) => {
                 </Row> */}
                 {/* Initial state of results when user inputs is the LodgingTileList, will change later */}
                 {filteredData.length != 0 && (
-                    <Container className='rounded-3' style={{background: "#ffffff"}}>
+                    <Container className='rounded-3 mt-4' style={{background: "#ffffff"}}>
                         {filteredData.slice(0, 10).map((value, key) => {
                             return (
                                 <LodgingTileItem key={value.id} data={value} />

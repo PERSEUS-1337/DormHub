@@ -3,8 +3,6 @@ import { Container, Col, Row, Image, Button, Modal, Form } from "react-bootstrap
 import FaveTileItem from "../components/FaveTileItem";
 import EditUserProfile from "../components/EditUser";
 
-//BACKLOGS: Create functional loading before data appears
-
 const ProfilePic = () => {
   return (
     <Image className="rounded-circle w-100 h-100" src="https://i.pinimg.com/222x/57/70/f0/5770f01a32c3c53e90ecda61483ccb08.jpg" />
@@ -318,8 +316,38 @@ const CheckIfOwner = () => {
   }
 };
 
+const Details = ({ data }) => {
+  return (
+    <>
+        <Container className="mt-5 mb-3 pb-4 d-flex flex-column align-items-left border-bottom">
+          <Row> 
+            <Col xs={2}>
+              <ProfilePic />
+            </Col>
+            <Col xs={7}>
+              <h2>{`${data.fname} ${data.lname}`}</h2>
+              <h5 className="lead">From Manila, Philippines</h5>
+              <h5 className="lead">Email: {`${data.email}`}</h5>
+              <h5 className="lead">Contact Number: 09950055973 </h5>
+            </Col>
+            <Col xs={3} className ="d-flex justify-content-end align-items-start">
+              <EditUserProfile key={data.id} data={data}/>
+            </Col>
+          </Row>
+        </Container>
+        <Container className="pb-5">
+          <CheckIfOwner />
+          <h3>Favorites:</h3>
+          <FaveTileList />
+        </Container>
+        
+      </>
+  )
+}
+
 const UserPage = () => {
   const [userData, setUserData] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -336,6 +364,7 @@ const UserPage = () => {
         });
         const data = await res.json();
         setUserData(data);
+        setIsLoading(false);
         console.log(data);
         const userType = localStorage.getItem("userType");
         console.log(userType)
@@ -371,7 +400,6 @@ const UserPage = () => {
       </Container>
     </>
   );
-
 };
 
 export default UserPage;

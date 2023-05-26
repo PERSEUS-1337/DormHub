@@ -1,4 +1,4 @@
-import { Container, Col, Row, Dropdown, DropdownButton, Form, Button, Card } from 'react-bootstrap';
+import { Container, Col, Row, Dropdown, DropdownButton, Form, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import './homepage-style.css';
 import StarRating from '../components/StarRating';

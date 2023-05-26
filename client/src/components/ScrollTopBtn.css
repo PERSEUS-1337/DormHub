@@ -1,0 +1,22 @@
+.scroll-to-top-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 999;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  
+  .scroll-to-top-button.show {
+    opacity: 1;
+  }
+  
+  .scroll-to-top-button.hide {
+    opacity: 0;
+    pointer-events: none;
+  }
+  
+  /* Animation */
+  html {
+    scroll-behavior: smooth;
+  }

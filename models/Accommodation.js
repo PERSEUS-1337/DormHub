@@ -47,11 +47,6 @@ const accommodationSchema = new Schema({
     type: [mongoose.Schema.Types.ObjectId],
     required: false
   },
-  archived: {
-    type: Boolean,
-    required: true
-  },
-  // fixed review
   review: {
       type: [{
           rating: {
