@@ -1,0 +1,117 @@
+import React, { useState } from 'react';
+import { Form, Button } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
+import './style.css';
+
+const Signup = () => {
+  const [fname, setfName] = useState('');
+  const [lname, setlName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [userType, setUserType] = useState('user');
+  const navigateTo = useNavigate();
+
+  const handleLoginClick = () => {
+    navigateTo('/login');
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+  
+    const formData = { fname, lname, email, password };
+  
+    try {
+      const res = await fetch(`/api/v1/auth/register/${userType}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+  
+      if (res.ok) {
+        console.log('Registration Successful');
+        console.log(fname, lname, email, password, userType);
+        navigateTo('/');
+      } else {
+        console.error('Registration failed');
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  return (
+    <>
+      <div className="signup-container">
+        <h2>Create an <span style={{ color: '#ffd041' }}>Account</span></h2>
+        <Form onSubmit={handleSubmit}>
+          <Form.Group controlId="formFirstName">
+            <Form.Label>First Name</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="Enter first name"
+              value={fname}
+              onChange={(e) => setfName(e.target.value)}
+            />
+          </Form.Group>
+          <Form.Group controlId="formLastName">
+            <Form.Label>Last Name</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="Enter last name"
+              value={lname}
+              onChange={(e) => setlName(e.target.value)}
+            />
+          </Form.Group>
+          <Form.Group controlId="formEmail">
+            <Form.Label>Email</Form.Label>
+            <Form.Control
+              type="email"
+              placeholder="Enter email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </Form.Group>
+          <Form.Group controlId="formPassword">
+            <Form.Label>Password</Form.Label>
+            <Form.Control
+              type="password"
+              placeholder="Enter password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </Form.Group>
+          <Form.Group controlId="formUserType">
+            <Form.Label>User Type:</Form.Label>
+            <br />
+            <Form.Check
+              inline
+              type="radio"
+              label="User"
+              name="userType"
+              value="studentuser"
+              checked={userType === 'user'}
+              onChange={() => setUserType('user')}
+            />
+            <Form.Check
+              inline
+              type="radio"
+              label="Owner"
+              name="userType"
+              value="owner"
+              checked={userType === 'owner'}
+              onChange={() => setUserType('owner')}
+            />
+          </Form.Group>
+          <br />
+          <Button type="submit" variant="secondary">CREATE ACCOUNT</Button>
+          <br />
+          <Button onClick={handleLoginClick} variant="light">GO TO LOGIN</Button>
+        </Form>
+      </div>
+    </>
+  );
+};
+
+export default Signup;

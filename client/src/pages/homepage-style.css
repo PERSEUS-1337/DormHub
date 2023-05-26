@@ -1,0 +1,45 @@
+.background-container {
+    background-image: url('https://c0.wallpaperflare.com/preview/856/893/194/apartment-architecture-black-and-white-black-and-white.jpg');
+    background-position: center top;
+    background-size: cover;
+    background-repeat: no-repeat;
+    height: 26vh;
+    background-attachment: scroll;
+    padding-top: 50px;
+}
+
+#searchbtn {
+    /* margin-left: -45px; */
+    height: 37px;
+    padding-top: 5px;
+}
+
+#search-container {
+    /**
+    border-style: solid;
+    border-color: red;
+    border-radius: 5px;
+    **/
+    /* width: 100%;
+    position:relative;
+    left: -50px; */
+}
+
+.filter {
+    border-radius: 0px;
+}
+
+#col-1 {
+    /* background-color: green; */
+    padding-right:0%;
+}
+
+#col-2 {
+    /* background-color: green; */
+    padding-left:0%;
+    padding-right:0%;
+}
+
+#col-3 {
+    padding-left:0%;
+}
