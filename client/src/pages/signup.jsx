@@ -44,7 +44,7 @@ const Signup = () => {
   return (
     <>
       <div className="signup-container">
-        <h2>Create an account</h2>
+        <h2>Create an <span style={{ color: '#ffd041' }}>Account</span></h2>
         <Form onSubmit={handleSubmit}>
           <Form.Group controlId="formFirstName">
             <Form.Label>First Name</Form.Label>
@@ -105,9 +105,9 @@ const Signup = () => {
             />
           </Form.Group>
           <br />
-          <Button type="submit">Create Account</Button>
+          <Button type="submit" variant="secondary">CREATE ACCOUNT</Button>
           <br />
-          <Button onClick={handleLoginClick}>Go to Login</Button>
+          <Button onClick={handleLoginClick} variant="light">GO TO LOGIN</Button>
         </Form>
       </div>
     </>

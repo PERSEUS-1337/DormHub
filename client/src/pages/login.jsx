@@ -70,7 +70,7 @@ const Login = () => {
     <>
       <div className="signup-container">
         <Container>
-          <h2>Login</h2>
+          <h2>LOG<span style={{ color: '#ffd041' }}>IN</span></h2>
           <Form onSubmit={login}>
             <Form.Group controlId="form-control">
               <Form.Label className="input-label">Email</Form.Label>
