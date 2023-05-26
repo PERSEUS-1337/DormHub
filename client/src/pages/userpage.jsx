@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { Container, Col, Row, Image, Button, Modal, Form } from "react-bootstrap";
 import FaveTileItem from "../components/FaveTileItem";
 import EditUserProfile from "../components/EditUser";
-import { Link, useNavigate } from "react-router-dom";
 
 //BACKLOGS: Create functional loading before data appears
 
@@ -318,10 +317,7 @@ const CheckIfOwner = () => {
 };
 
 const UserPage = () => {
-  const navigateTo = useNavigate();
   const [userData, setUserData] = useState({});
-  const [isLoading, setIsLoading] = useState(true);
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -336,50 +332,43 @@ const UserPage = () => {
             Authorization: `Bearer ${jwt}`
           },
         });
-
-        if (res.status == 401) {
-          setIsLoggedIn(false);
-        }
-
         const data = await res.json();
         setUserData(data);
-        setIsLoading(false);
+        console.log(data);
+        const userType = localStorage.getItem("userType");
+        console.log(userType)
+      } catch (err) {
+        console.error('User fetching error.', err);
+      }
+    };
+    fetchData();
+  }, []);
 
-        } catch (err) {
-          console.error('User fetching error.', err);
-        }
-      };
-      fetchData();
-      
-    }, []); 
-    
   return (
-      <>
-        {isLoggedIn ? (
-          <div>
-            {isLoading ? (
-              <Container className="d-flex align-items-center justify-content-center vh-100">
-                <Spinner animation="border" role="status" size="lg">
-                  <span className="visually-hidden">Loading...</span>
-                </Spinner>
-              </Container>
-            ) : (
-              <Details data={userData}/>
-            )}
-          </div>
-      ) : (
-          <div>
-            <Container>
-              <h3>You must be logged in. Redirecting you to the login page.</h3>
-              <p>if it is not working, <Link to="/login" style={{color: "black"}}> click here </Link></p>
-            </Container>
-          </div>
-      )
-        
-        }
-      </>
-      
-    );
+    <>
+      <Container className="mt-5 mb-3 pb-4 d-flex flex-column align-items-left border-bottom">
+        <Row>
+          <Col xs={2}>
+            <ProfilePic />
+          </Col>
+          <Col xs={7}>
+            <h2>{`${userData.fname} ${userData.lname}`}</h2>
+            <h5 className="lead">From Manila, Philippines</h5>
+            <h5 className="lead">Email: {`${userData.email}`}</h5>
+            <h5 className="lead">Contact Number: 09950055973 </h5>
+          </Col>
+          <Col xs={3} className="d-flex justify-content-end align-items-start">
+            <EditUserProfile key={userData.id} data={userData} />
+          </Col>
+        </Row>
+      </Container>
+      <Container>
+        <CheckIfOwner />
+        <h3>Favorites:</h3>
+        <FaveTileList />
+      </Container>
+    </>
+  );
 
 };
 
