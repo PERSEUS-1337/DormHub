@@ -39,7 +39,7 @@ const FaveTileItem = ({ data }) => {
                     <p>{data.rating} STARS</p>
                 </Col>
                 <Col>
-                    <Row>
+                    <Row className="bg-info">
                         {
                             data.price.length === 1? 
                             <h3 className='my-4'>PHP {data.price[0]}</h3>
@@ -47,7 +47,7 @@ const FaveTileItem = ({ data }) => {
                             <h3 className='my-4'>PHP {data.price[0]} - {data.price[1]}</h3>
                         }
                         <div className="justify-content-end mt-2">
-                            <Button onClick={() => navigateToLodge(data)} className='mb-4'>check</Button>
+                            <Button variant="secondary" onClick={() => navigateToLodge(data)} className='mb-5'>Check</Button>
                         </div>
                     </Row>
                     

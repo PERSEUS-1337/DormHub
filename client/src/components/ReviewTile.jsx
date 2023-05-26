@@ -45,7 +45,7 @@ const ReviewList = ({ data }) => {
     return (
         <>
             {/* <span className='ms-5'>Review</span> */}
-            <Container className='d-flex flex-column align-items-center m-auto'>
+            <Container className='d-flex flex-column align-items-center m-auto mt-4 pb-2'>
                 <Row>{ReviewList}</Row>
                 <Row className='mt-3'><Pagination>{items}</Pagination></Row>  
             </Container>

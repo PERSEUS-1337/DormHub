@@ -1,24 +1,22 @@
-import { Container, Col, Row, Dropdown, DropdownButton, Form, Button, Card } from 'react-bootstrap';
+import { Container, Col, Row, Dropdown, DropdownButton, Form, Button, Card, Spinner } from 'react-bootstrap';
 import './homepage-style.css';
 import { Link, useNavigate } from 'react-router-dom';
 import LodgingTileList from '../components/LodgingTileList';
 import { useState, useEffect } from 'react';
 import { StarRating } from '../components/StarRating';
 import SearchBar from '../components/SearchBar';
+import ScrollToTopButton from '../components/ScrollTopBtn';
 //import Accommodation from './pages/accomodation';
 //todo: include button in form
 
-
-
 const AccomCards = () => {
-
-
     const navigate = useNavigate();
 
     const toAccomm = (data) => {
         navigate("/accommodation", {state: {data}})
     }
 
+    const [isLoading, setIsLoading] = useState(true);
     const [accommData, setAccommData] = useState({});
 
 
@@ -27,30 +25,43 @@ const AccomCards = () => {
         .then(res =>res.json())
         .then(data => {
             setAccommData(data);
-            console.log(data["accommodations"]);
+            setIsLoading(false);
             // console.log(data["accommodations"][2]);
         })
     }, []);
 
     return (
-      <Row xs={2} md={4} className="g-5">
-        {accommData.accommodations && accommData.accommodations.map( data => (
-            <Col key={data.id} className="col mx-auto">
-            <Card onClick={() => toAccomm(data)}>
-                <Card.Img variant="top" src={ data.img_src } />
-              <Card.Body>
-                    <Card.Title>{data.name}</Card.Title>
-                    {
-                            data.price.length ==1? 
-                            <Card.Text className="text-muted">PHP {data.price[0]}</Card.Text>
-                            :
-                            <Card.Text className="text-muted">PHP {data.price[0]} - {data.price[1]}</Card.Text>
-                    }
-              </Card.Body>
-            </Card>
-          </Col>
-        ))}
-      </Row>
+        <>
+        {isLoading ? (
+            <Container className="d-flex align-items-top justify-content-center vh-100">
+            <Spinner animation="border" role="status" size="lg">
+              <span className="visually-hidden">Loading...</span>
+            </Spinner>
+            </Container>
+        ) : (
+            <Row md={4} className="g-3 row mx-auto">
+            {/* BACKLOG: Retrieve highest rating top 3 accommodations */}
+            {accommData.accommodations && accommData.accommodations.slice(0,3).map( data => (
+                <Col key={data.id} className="col mx-auto">
+                <Card className="bg-info" onClick={() => toAccomm(data)}>
+                    {/* Added static src to test UI */}
+                    <Card.Img variant="top" src="https://www.home-designing.com/wp-content/uploads/2016/02/luxury-gray-and-wood-bedroom.jpg" />
+                <Card.Body>
+                        <Card.Title>{data.name}</Card.Title>
+                        {
+                                data.price.length === 1? 
+                                <Card.Text className="text-muted">PHP {data.price[0]} / month</Card.Text>
+                                :
+                                <Card.Text className="text-muted">PHP {data.price[0]} - {data.price[1]} / month</Card.Text>
+                        }
+                </Card.Body>
+                </Card>
+            </Col>
+            ))}
+            </Row>
+        )}
+      
+      </>
     );
 }
 
@@ -68,13 +79,16 @@ const HomePage = () => {
         .then(res =>res.json())
         .then(data => {
             setAccommData(data);
-            console.log(data["accommodations"]);
+            // console.log(data["accommodations"][2]);
         })
-    }, []); 
+    }, []);
     
     return(
         <>
-            <SearchBar data={ accommData.accommodations } />
+            <Container fluid className="background-container">
+
+                <SearchBar data={ accommData.accommodations } />
+             
             {/* commented the lines below this comment to test the search function */}
             {/* also moved the code to its own file for reusability in the future */}
         {/* <Container className="mt-5 ms-5" id="search-container2">
@@ -138,17 +152,16 @@ const HomePage = () => {
             </Container> */}
         {/* <LodgingTileList /> */}
 
-        <Container className = "recomms">
-            <h5 className="header">
-                TOP RECOMMENDATIONS
-            </h5>
-            <Container className = "recomm-list">
+            <Container className = "mt-5 px-5">
+                <h5>
+                    TOP <span style={{ color: "#ffd041" }}>RECOMMENDATIONS</span>
+                </h5>
+            </Container>
+            <Container className = "mt-4 pb-5 align-items-center">
                 <AccomCards />
             </Container>
-        </Container>
-
-        
-            
+            <ScrollToTopButton />
+        </Container>   
         </>
 
     );

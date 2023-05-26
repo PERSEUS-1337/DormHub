@@ -75,7 +75,7 @@ router.get('/owner/accommodation/:oId', getAccommodationOwner);
 // GET bookmarks
 router.get('/owner/bookmark/:oId', getBookmarkOwner)
 // UPDATE owner data
-router.patch('/owner/:uId', editOwnerData); 
+router.patch('/owner/:oId', editOwnerData); 
 // ADD a bookmark
 router.patch('/owner/bookmark/:id/:oId', addToBookmarkOwner); 
 // DELETE bookmark
