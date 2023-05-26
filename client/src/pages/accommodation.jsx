@@ -9,11 +9,11 @@ const Slideshow = () => {
     const [modalShow, setModalShow] = React.useState(false);
     const [imgSrc, setImgSrc] = React.useState();
 
-    function setupModal(src){
+    function setupModal(src) {
         setModalShow(true);
         setImgSrc(src);
     }
-    
+
     return (
         <>
             <Carousel>
@@ -55,13 +55,14 @@ function ImageModal(props) {
             <Modal.Header closeButton>
             </Modal.Header>
             <Modal.Body closeButton>
-                <img src={props.imgSrc}/>
+                <img src={props.imgSrc} />
             </Modal.Body>
         </Modal>
     );
 }
 
 const Details = (data) => {
+
     return (
         <Container className="desc_accom">
             <h3 className='accomTitle'>{data.accomData.name}</h3>
@@ -80,6 +81,19 @@ const Details = (data) => {
                 Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
                 fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
                 culpa qui officia deserunt mollit anim id est laborum.</p>
+                
+            <Row id="amenity" className="detail">
+                <Col sm={1}>
+                    <img src="../../assets/icons/amenities.jpg" alt="test4" />
+                </Col>
+                <Col sm={11}>
+                    <p>
+                        {data.accomData.amenity.map((amenity) => {
+                            return amenity + ", ";
+                        })}
+                    </p>
+                </Col>
+            </Row>
             <Row id="location" className="detail">
                 <Col sm={1}>
                     <img src="../../assets/icons/location.jpg" alt="test1" />
