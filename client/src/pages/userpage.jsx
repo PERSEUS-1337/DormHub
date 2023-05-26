@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Container, Col, Row, Image, Spinner } from "react-bootstrap";
 import FaveTileItem from "../components/FaveTileItem";
 import EditUserProfile from "../components/EditUser";
+import { useNavigate } from "react-router-dom";
 
 const ProfilePic = () => {
   return (
@@ -143,8 +144,10 @@ const Details = ({ data }) => {
 }
 
 const UserPage = () => {
+  const navigateTo = useNavigate();
   const [userData, setUserData] = useState({});
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -159,29 +162,47 @@ const UserPage = () => {
             Authorization : `Bearer ${jwt}`
           },
         });
+
+        if (res.status == 401) {
+          setIsLoggedIn(false);
+        }
+
         const data = await res.json();
         setUserData(data);
-        setIsLoading(false);
-        console.log(data);
+
         } catch (err) {
           console.error('User fetching error.', err);
         }
       };
       fetchData();
+      
     }, []); 
-
-    return (
-      <div>
-        {isLoading ? (
-          <Container className="d-flex align-items-center justify-content-center vh-100">
-            <Spinner animation="border" role="status" size="lg">
-              <span className="visually-hidden">Loading...</span>
-            </Spinner>
-          </Container>
-        ) : (
-          <Details data={userData}/>
-        )}
-      </div>
+    
+  return (
+      <>
+        {isLoggedIn ? (
+          <div>
+            {isLoading ? (
+              <Container className="d-flex align-items-center justify-content-center vh-100">
+                <Spinner animation="border" role="status" size="lg">
+                  <span className="visually-hidden">Loading...</span>
+                </Spinner>
+              </Container>
+            ) : (
+              <Details data={userData}/>
+            )}
+          </div>
+      ) : (
+          <div>
+            <Container>
+              <h3>You must be logged in</h3>
+            </Container>
+          </div>
+      )
+        
+        }
+      </>
+      
     );
   
 };
