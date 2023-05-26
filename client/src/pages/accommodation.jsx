@@ -149,7 +149,7 @@ const AddToBookmarks = ({ bId }) => {
 const Details = (data) => {
 
     return (
-        <Container className="desc_accom">
+        <Container className="desc_accom border-bottom pb-4">
             <h3 className='accomTitle'>{data.accomData.name}</h3>
             <Row className="accomRating">
                 <Col className='' lg={1}>
