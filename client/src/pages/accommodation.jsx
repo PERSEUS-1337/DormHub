@@ -133,15 +133,15 @@ const AddToBookmarks = ({ bId }) => {
     }
     
 }
- 
+
 const Details = (data) => {
 
+    return (
         <Container className="desc_accom">
             <h3 className='accomTitle'>{data.accomData.name}</h3>
             <Row className="accomRating">
                 <Col className='' lg={1}>
                     <h5 className='ratingTitle'>Rating: </h5>
-                    <h3>{data.accomData.name}</h3>
                 </Col>
                 <Col>
                     <ReadStarRating rate={data.accomData} />
@@ -175,7 +175,9 @@ const Details = (data) => {
                     <p>{data.accomData.location}</p>
                 </Col>
                 <Col sm={2}>
-                    <AddToBookmarks bId={data.accomData._id}/>
+                    <div className="map" style={{ margin: '0px', padding: '0px' }}>
+                        <Button type="button">View Map</Button>
+                    </div>
                 </Col>
             </Row>
             <Row id="price" className="detail">
@@ -215,7 +217,7 @@ const Review = (data) => {
 
 
 function Accommodation(props) {
-    const location = useLocation();
+    const location = useLocation()
 
     return (<>
         <Slideshow />
