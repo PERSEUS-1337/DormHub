@@ -13,6 +13,7 @@ const PopOver = () => {
             trigger="click"
             key="bottom"
             placement="bottom-start"
+            rootClose
             overlay={
                 <Popover id={`popover-positioned-bottom-start`}>
                     <Popover.Body>

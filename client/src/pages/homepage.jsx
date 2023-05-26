@@ -1,4 +1,4 @@
-import { Container, Col, Row, Dropdown, DropdownButton, Form, Button, Card } from 'react-bootstrap';
+import { Container, Col, Row, Dropdown, DropdownButton, Form, Button, Card, Spinner } from 'react-bootstrap';
 import './homepage-style.css';
 import { Link, useNavigate } from 'react-router-dom';
 import LodgingTileList from '../components/LodgingTileList';
@@ -10,14 +10,13 @@ import ScrollToTopButton from '../components/ScrollTopBtn';
 //todo: include button in form
 
 const AccomCards = () => {
-
-
     const navigate = useNavigate();
 
     const toAccomm = (data) => {
         navigate("/accommodation", {state: {data}})
     }
 
+    const [isLoading, setIsLoading] = useState(true);
     const [accommData, setAccommData] = useState({});
 
 
@@ -26,31 +25,43 @@ const AccomCards = () => {
         .then(res =>res.json())
         .then(data => {
             setAccommData(data);
+            setIsLoading(false);
             // console.log(data["accommodations"][2]);
         })
     }, []);
 
     return (
-      <Row md={4} className="g-3 row mx-auto">
-        {/* BACKLOG: Retrieve highest rating top 3 accommodations */}
-        {accommData.accommodations && accommData.accommodations.slice(0,3).map( data => (
-            <Col key={data.id} className="col mx-auto">
-            <Card className="bg-info" onClick={() => toAccomm(data)}>
-                {/* Added static src to test UI */}
-                <Card.Img variant="top" src="https://www.home-designing.com/wp-content/uploads/2016/02/luxury-gray-and-wood-bedroom.jpg" />
-              <Card.Body>
-                    <Card.Title>{data.name}</Card.Title>
-                    {
-                            data.price.length === 1? 
-                            <Card.Text className="text-muted">PHP {data.price[0]} / month</Card.Text>
-                            :
-                            <Card.Text className="text-muted">PHP {data.price[0]} - {data.price[1]} / month</Card.Text>
-                    }
-              </Card.Body>
-            </Card>
-          </Col>
-        ))}
-      </Row>
+        <>
+        {isLoading ? (
+            <Container className="d-flex align-items-top justify-content-center vh-100">
+            <Spinner animation="border" role="status" size="lg">
+              <span className="visually-hidden">Loading...</span>
+            </Spinner>
+            </Container>
+        ) : (
+            <Row md={4} className="g-3 row mx-auto">
+            {/* BACKLOG: Retrieve highest rating top 3 accommodations */}
+            {accommData.accommodations && accommData.accommodations.slice(0,3).map( data => (
+                <Col key={data.id} className="col mx-auto">
+                <Card className="bg-info" onClick={() => toAccomm(data)}>
+                    {/* Added static src to test UI */}
+                    <Card.Img variant="top" src="https://www.home-designing.com/wp-content/uploads/2016/02/luxury-gray-and-wood-bedroom.jpg" />
+                <Card.Body>
+                        <Card.Title>{data.name}</Card.Title>
+                        {
+                                data.price.length === 1? 
+                                <Card.Text className="text-muted">PHP {data.price[0]} / month</Card.Text>
+                                :
+                                <Card.Text className="text-muted">PHP {data.price[0]} - {data.price[1]} / month</Card.Text>
+                        }
+                </Card.Body>
+                </Card>
+            </Col>
+            ))}
+            </Row>
+        )}
+      
+      </>
     );
 }
 
