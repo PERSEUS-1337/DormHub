@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Container, Col, Row, Image, Button, Modal, Form } from "react-bootstrap";
 import FaveTileItem from "../components/FaveTileItem";
+import LodgingTileItem from "../components/LodgingTileItem";
 import EditUserProfile from "../components/EditUser";
 
 //BACKLOGS: Create functional loading before data appears
@@ -46,7 +47,7 @@ const AccommTileList = () => {
       <p>No Accommodations Uploaded Yet.</p>
     )
   } else {
-    const LodgingList = accommData && accommData.map(data => <FaveTileItem key={data._id} data={data} />)
+    const LodgingList = accommData && accommData.map(data => <LodgingTileItem key={data._id} data={data} />)
     return (
       <>
         {LodgingList}
@@ -86,6 +87,8 @@ const FaveTileList = () => {
 
     fetchBookmarks();
   }, []);
+
+  console.log(favData);
 
   if (hasFav === false) {
     return (

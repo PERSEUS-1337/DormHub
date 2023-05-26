@@ -117,6 +117,8 @@ const AddToBookmarks = ({ bId }) => {
             .then((body) => {
                 console.log(body);
         });
+
+        window.location.reload();
     };
     
 

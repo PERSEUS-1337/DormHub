@@ -2,27 +2,28 @@ import React from 'react'
 import { Container, Row, Col, Button, Image } from 'react-bootstrap'
 import { useNavigate } from 'react-router-dom'
 
-// When functional, add a button for delete
-const DeleteBookmark = () => {
-    fetch('api/v1/auth/user/bookmark/:id/:uId', { // api endpoint to be modified
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-      .then(response => {
-        if (response.ok) {
-          return response.json();
-        } 
-        throw response;
-      })
-      .catch(error => {
-        console.error("Error fetching data: ", error);
-      });
-};
-
 const FaveTileItem = ({ data }) => {
     const navigate = useNavigate()
+
+    const bId = data._id;
+
+    function DeleteBookmark() {
+            const type = localStorage.getItem('userType');
+            const id = localStorage.getItem('_id');
+            const jwt = localStorage.getItem('token');
+        
+            fetch(`api/v1/auth-required-func/${type}/bookmark/${bId}/${id}`, { // api endpoint to be modified
+              method: 'DELETE',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${jwt}`,
+              },
+            })
+            .then(res =>res.json())
+            console.log('successful deletion');
+
+            window.location.reload();
+    }
 
     const navigateToLodge = (data) => {
         navigate('/accommodation', {state: {data}})
@@ -46,9 +47,16 @@ const FaveTileItem = ({ data }) => {
                             :
                             <h3 className='my-4'>PHP {data.price[0]} - {data.price[1]}</h3>
                         }
-                        <div className="justify-content-end mt-2">
-                            <Button variant="secondary" onClick={() => navigateToLodge(data)} className='mb-5'>Check</Button>
-                        </div>
+                        <Col>
+                            <div className="justify-content-end ms-auto">
+                                <Button variant="secondary" onClick={() => navigateToLodge(data)} className='mb-5'>Check</Button>
+                            </div>
+                        </Col>
+                        <Col>
+                            <div className="justify-content-end ms-auto">
+                                <Button variant="light" onClick={DeleteBookmark} className='mb-5'>Remove</Button>
+                            </div>
+                        </Col>
                     </Row>
                     
                 </Col>
