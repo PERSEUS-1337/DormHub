@@ -26,7 +26,7 @@ const AccommTileList = () => {
         const res = await fetch(`/api/v1/auth-required-func/owner/accommodation/${oid}`, {
           headers: {
             "Content-Type": "application/json",
-            Authorization : `Bearer ${jwt}`
+            Authorization: `Bearer ${jwt}`
           },
         });
         const owned = await res.json();
@@ -34,25 +34,25 @@ const AccommTileList = () => {
         if (owned.error) {
           setHasAccomm(false);
         }
-        } catch (err) {
-          console.error('Bookmark fetching error.', err);
-        }
-      };
-      fetchAccomms();
-    }, []); 
+      } catch (err) {
+        console.error('Bookmark fetching error.', err);
+      }
+    };
+    fetchAccomms();
+  }, []);
 
-    if (hasAccomm === false) {
-      return(
-        <p>No Accommodations Uploaded Yet.</p>
-      )
-    } else {
-      const LodgingList = accommData && accommData.map(data => <FaveTileItem key={data._id} data={data} />)
-      return (
-        <>
-          {LodgingList}
-        </>
-      )
-    }
+  if (hasAccomm === false) {
+    return (
+      <p>No Accommodations Uploaded Yet.</p>
+    )
+  } else {
+    const LodgingList = accommData && accommData.map(data => <FaveTileItem key={data._id} data={data} />)
+    return (
+      <>
+        {LodgingList}
+      </>
+    )
+  }
 }
 
 const FaveTileList = () => {
@@ -88,7 +88,7 @@ const FaveTileList = () => {
   }, []);
 
   if (hasFav === false) {
-    return(
+    return (
       <p>No Favorites Yet.</p>
     )
   } else {
@@ -98,7 +98,7 @@ const FaveTileList = () => {
         {BkmarkList}
       </>
     )
-}
+  }
 }
 
 const CheckIfOwner = () => {
@@ -131,7 +131,7 @@ const CheckIfOwner = () => {
       } catch (err) {
         console.error('Accommodations fetching error.', err);
       }
-    };   fetchAccommodations();
+    }; fetchAccommodations();
   }, []);
   const openModal = () => {
     setShowModal(true);
@@ -162,9 +162,9 @@ const CheckIfOwner = () => {
       });
       const data = await res.json();
       if (res.status === 201) {
-        console.log(data.msg); 
+        console.log(data.msg);
       } else {
-        console.error(data.error); 
+        console.error(data.error);
       }
     } catch (err) {
       console.error("Accommodation creation error.", err);
@@ -184,12 +184,33 @@ const CheckIfOwner = () => {
       });
       const data = await res.json();
       if (res.status === 200) {
-        console.log(data.message); 
+        console.log(data.message);
       } else {
-        console.error(data.error); 
+        console.error(data.error);
       }
     } catch (err) {
       console.error("Accommodation deletion error.", err);
+    }
+  };
+  const handleArchiveAccommodation = async (accommodationId) => {
+    const oId = localStorage.getItem("_id");
+    const jwt = localStorage.getItem("token");
+    try {
+      const res = await fetch(`/api/v1/auth-required-func/accommodation/${accommodationId}/${oId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${jwt}`,
+        },
+      });
+      const data = await res.json();
+      if (res.status === 200) {
+        console.log(data.message);
+      } else {
+        console.error(data.error);
+      }
+    } catch (err) {
+      console.error("Accommodation archiving error.", err);
     }
   };
   const userType = localStorage.getItem("userType");
@@ -275,13 +296,21 @@ const CheckIfOwner = () => {
           </Modal.Body>
         </Modal>
         {accommData.map((accommodation) => (
-  <div key={accommodation._id} className="mb-3">
-    <AccommTileList data={accommodation} />
-    <Button variant="danger" onClick={() => handleDeleteAccommodation(accommodation._id)}>
-      Delete
-    </Button>
-  </div>
-))}
+          <div key={accommodation._id} className="mb-3">
+            <AccommTileList data={accommodation} />
+            <Button variant="danger" onClick={() => handleDeleteAccommodation(accommodation._id)}>
+              Delete
+            </Button>
+          </div>
+        ))}
+        {accommData.map((accommodation) => (
+          <div key={accommodation._id} className="mb-3">
+            <AccommTileList data={accommodation} />
+            <Button variant="primary" onClick={() => handleArchiveAccommodation(accommodation._id)}>
+              Archive
+            </Button>
+          </div>
+        ))}
       </>
     );
   } else {
@@ -302,7 +331,7 @@ const UserPage = () => {
         const res = await fetch(`/api/v1/auth-required-func/${type}/${uid}`, {
           headers: {
             "Content-Type": "application/json",
-            Authorization : `Bearer ${jwt}`
+            Authorization: `Bearer ${jwt}`
           },
         });
         const data = await res.json();
@@ -310,39 +339,39 @@ const UserPage = () => {
         console.log(data);
         const userType = localStorage.getItem("userType");
         console.log(userType)
-        } catch (err) {
-          console.error('User fetching error.', err);
-        }
-      };
-      fetchData();
-    }, []); 
+      } catch (err) {
+        console.error('User fetching error.', err);
+      }
+    };
+    fetchData();
+  }, []);
 
-    return (
-      <>
-        <Container className="mt-5 mb-3 pb-4 d-flex flex-column align-items-left border-bottom">
-          <Row> 
-            <Col xs={2}>
-              <ProfilePic />
-            </Col>
-            <Col xs={7}>
-              <h2>{`${userData.fname} ${userData.lname}`}</h2>
-              <h5 className="lead">From Manila, Philippines</h5>
-              <h5 className="lead">Email: {`${userData.email}`}</h5>
-              <h5 className="lead">Contact Number: 09950055973 </h5>
-            </Col>
-            <Col xs={3} className ="d-flex justify-content-end align-items-start">
-              <EditUserProfile key={userData.id} data={userData}/>
-            </Col>
-          </Row>
-        </Container>
-        <Container>
-          <CheckIfOwner />
-          <h3>Favorites:</h3>
-          <FaveTileList />
-        </Container>  
-      </>
-    );
-  
+  return (
+    <>
+      <Container className="mt-5 mb-3 pb-4 d-flex flex-column align-items-left border-bottom">
+        <Row>
+          <Col xs={2}>
+            <ProfilePic />
+          </Col>
+          <Col xs={7}>
+            <h2>{`${userData.fname} ${userData.lname}`}</h2>
+            <h5 className="lead">From Manila, Philippines</h5>
+            <h5 className="lead">Email: {`${userData.email}`}</h5>
+            <h5 className="lead">Contact Number: 09950055973 </h5>
+          </Col>
+          <Col xs={3} className="d-flex justify-content-end align-items-start">
+            <EditUserProfile key={userData.id} data={userData} />
+          </Col>
+        </Row>
+      </Container>
+      <Container>
+        <CheckIfOwner />
+        <h3>Favorites:</h3>
+        <FaveTileList />
+      </Container>
+    </>
+  );
+
 };
 
 export default UserPage;
