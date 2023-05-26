@@ -60,15 +60,88 @@ function ImageModal(props) {
         </Modal>
     );
 }
+const AddToBookmarks = ({ bId }) => {
+    const type = localStorage.getItem("userType");
+    const id = localStorage.getItem("_id");
+    const jwt = localStorage.getItem("token");
 
+    const [fetchedData, setFetchedData] = useState([]);
+    const [containsValue, setContainsValue] = useState(false);
+
+    useEffect(() => {
+        try {
+            fetch(`/api/v1/auth-required-func/${type}/bookmark/${id}`, {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization : `Bearer ${jwt}`
+                },
+            })
+            .then(res =>res.json())
+            .then(data => {
+                console.log(data);
+                setFetchedData(data);
+            })
+        } catch (err) {
+            console.log(err);
+        }
+    }, []);
+
+    useEffect(() => {
+        try {
+            if (fetchedData.some(item => item._id === bId)) {
+                setContainsValue(true);
+            } else {
+                setContainsValue(false);
+            }
+        } catch (err) {
+            setContainsValue(true);
+        }
+        
+        console.log(containsValue);
+    }, [fetchedData]);
+
+    function addBookmark() { 
+        console.log(`Trying to add bookmark with id ${bId}`);
+        fetch(`/api/v1/auth-required-func/${type}/bookmark/${bId}/${id}`, {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${jwt}`
+            },
+                body: JSON.stringify(bId),
+        })
+            .then((response) => response.json())
+            .then((body) => {
+                console.log(body);
+        });
+    };
+
+    if (type && containsValue == false) {
+        return(
+            <div className="map" style={{ margin: '0px', padding: '0px' }}>
+                <Button type="button" onClick={addBookmark} variant="light">Bookmark</Button>
+            </div>
+        );
+    } else if (type && containsValue === true) {
+        return(
+            <p>Already Bookmarked.</p>
+        );
+    } else {
+        return(
+            <p>Please log-in to bookmark!</p>
+        );
+    }
+    
+}
+ 
 const Details = (data) => {
 
-    return (
         <Container className="desc_accom">
             <h3 className='accomTitle'>{data.accomData.name}</h3>
             <Row className="accomRating">
                 <Col className='' lg={1}>
                     <h5 className='ratingTitle'>Rating: </h5>
+                    <h3>{data.accomData.name}</h3>
                 </Col>
                 <Col>
                     <ReadStarRating rate={data.accomData} />
@@ -102,9 +175,7 @@ const Details = (data) => {
                     <p>{data.accomData.location}</p>
                 </Col>
                 <Col sm={2}>
-                    <div className="map" style={{ margin: '0px', padding: '0px' }}>
-                        <Button type="button">View Map</Button>
-                    </div>
+                    <AddToBookmarks bId={data.accomData._id}/>
                 </Col>
             </Row>
             <Row id="price" className="detail">
@@ -144,7 +215,7 @@ const Review = (data) => {
 
 
 function Accommodation(props) {
-    const location = useLocation()
+    const location = useLocation();
 
     return (<>
         <Slideshow />
