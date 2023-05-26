@@ -29,7 +29,7 @@ const AccomCards = () => {
             // console.log(data["accommodations"][2]);
         })
     }, []);
-
+    
     return (
         <>
         {isLoading ? (
@@ -79,6 +79,7 @@ const HomePage = () => {
         .then(res =>res.json())
         .then(data => {
             setAccommData(data);
+            
             // console.log(data["accommodations"][2]);
         })
     }, []);
