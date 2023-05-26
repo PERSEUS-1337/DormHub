@@ -5,10 +5,11 @@ import { ReadStarRating } from './StarRating'
 import '../pages/accom-style.css';
 
 // TODO: (Jemu) - fix style
+// TODO: Add scrollbar when review is too long for consistent review sizes
 const ReviewTileItem = ({ data }) => {
     console.log("data rating" + data.rating)
     return(
-        <Container>
+        <Container className='d-flex justify-content-center'>
             <Row key={data._id}>
                 <Col style={{background: "white"  }} className='border rounded border-1 border-primary d-flex flex-column justify-content-start'>
                     <ReadStarRating rate={data} />
@@ -33,8 +34,9 @@ const ReviewList = ({ data }) => {
 
     // TODO: Add function to pagination
     let active = 1;
+    let max = 1;
     let items = [];
-    for (let number = 1; number <= 5; number++) {
+    for (let number = 1; number <= max; number++) {
     items.push(
         <Pagination.Item key={number} active={number === active}>
         {number}
