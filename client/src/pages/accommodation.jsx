@@ -17,20 +17,20 @@ const Slideshow = () => {
     return (
         <>
             <Carousel>
-                <Carousel.Item onClick={() => setupModal("https://uplbosa.org/ui/images//dorms/mens.jpg")}>
-                    <img src="https://uplbosa.org/ui/images//dorms/mens.jpg"
+                <Carousel.Item onClick={() => setupModal("https://uplbperspective.files.wordpress.com/2020/03/img_0070.jpg?w=950")}>
+                    <img src="https://uplbperspective.files.wordpress.com/2020/03/img_0070.jpg?w=950"
                         alt="Picture 1" className="d-block" />
                 </Carousel.Item>
-                <Carousel.Item onClick={() => setupModal("https://4.bp.blogspot.com/-xbPJSFbs2Yc/Tcv3xRh9bVI/AAAAAAAACZA/1SgESM2EmDg/s1600/IMG_0775.JPG")}>
-                    <img src="https://4.bp.blogspot.com/-xbPJSFbs2Yc/Tcv3xRh9bVI/AAAAAAAACZA/1SgESM2EmDg/s1600/IMG_0775.JPG"
+                <Carousel.Item onClick={() => setupModal("https://collegelifemadeeasy.com/wp-content/uploads/2022/06/cool-dorm-room-stuff-decorating-ideas-Facebook.jpg")}>
+                    <img src="https://collegelifemadeeasy.com/wp-content/uploads/2022/06/cool-dorm-room-stuff-decorating-ideas-Facebook.jpg"
                         alt="Picture 2" className="d-block" />
                 </Carousel.Item>
                 <Carousel.Item onClick={() => setupModal("https://www.suidersee.co.za/media/cache/67/e6/67e6f48c4a41d0c53fedffc1190f5ea0.jpg")}>
                     <img src="https://www.suidersee.co.za/media/cache/67/e6/67e6f48c4a41d0c53fedffc1190f5ea0.jpg" alt="Picture 3"
                         className="d-block" />
                 </Carousel.Item>
-                <Carousel.Item onClick={() => setupModal("https://cf.bstatic.com/xdata/images/hotel/max500/462347368.jpg?k=686083a55febc1406804e2c8bea7cbc0edd1d15d1afb06a1a8e9e6142b60af93&o=&hp=1")}>
-                    <img src="https://cf.bstatic.com/xdata/images/hotel/max500/462347368.jpg?k=686083a55febc1406804e2c8bea7cbc0edd1d15d1afb06a1a8e9e6142b60af93&o=&hp=1" alt="Picture 3"
+                <Carousel.Item onClick={() => setupModal("https://www.une.edu/sites/default/files/styles/block_image_large/public/2020-12/Avila-6259.jpg?itok=5HTs3fnj")}>
+                    <img src="https://www.une.edu/sites/default/files/styles/block_image_large/public/2020-12/Avila-6259.jpg?itok=5HTs3fnj" alt="Picture 4"
                         className="d-block" />
                 </Carousel.Item>
             </Carousel>
@@ -81,7 +81,7 @@ const Details = (data) => {
                 Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
                 fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
                 culpa qui officia deserunt mollit anim id est laborum.</p>
-                
+
             <Row id="amenity" className="detail">
                 <Col sm={1}>
                     <img src="../../assets/icons/amenities.jpg" alt="test4" />
