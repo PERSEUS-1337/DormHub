@@ -103,12 +103,12 @@ const FaveTileList = () => {
 
 const CheckIfOwner = () => {
   const [showModal, setShowModal] = useState(false);
-  const [accommodationName, setAccommodationName] = useState("");
-  const [accommodationPrice, setAccommodationPrice] = useState("");
-  const [accommodationLocation, setAccommodationLocation] = useState("");
-  const [accommodationType, setAccommodationType] = useState("");
-  const [accommodationRating, setAccommodationRating] = useState("");
-  const [accommodationAmenity, setAccommodationAmenity] = useState("");
+  const [name, setAccommodationName] = useState("");
+  const [price, setAccommodationPrice] = useState("");
+  const [location, setAccommodationLocation] = useState("");
+  const [type, setAccommodationType] = useState("");
+  const [rating, setAccommodationRating] = useState("");
+  const [amenity, setAccommodationAmenity] = useState("");
   const [accommData, setAccommData] = useState([]);
   useEffect(() => {
     const fetchAccommodations = async () => {
@@ -144,19 +144,13 @@ const CheckIfOwner = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const oid = localStorage.getItem("_id");
+    const oId = localStorage.getItem("_id");
     const jwt = localStorage.getItem("token");
 
     const formData = {
-      oId: oid,
-      name: accommodationName,
-      price: accommodationPrice,
-      location: accommodationLocation,
-      type: accommodationType,
-      rating: accommodationRating,
-      amenity: accommodationAmenity,
+      oId, name, price, location, type, rating, amenity
     };
-    
+    console.log(formData)
     try {
       const res = await fetch("/api/v1/auth-required-func/accommodation", {
         method: "POST",
@@ -168,23 +162,20 @@ const CheckIfOwner = () => {
       });
       const data = await res.json();
       if (res.status === 201) {
-        console.log(data.msg); // Accommodation created successfully
-        // Perform any additional actions or state updates upon successful accommodation creation
+        console.log(data.msg); 
       } else {
-        console.error(data.error); // Error creating accommodation
-        // Perform any error handling or display error message to the user
+        console.error(data.error); 
       }
     } catch (err) {
       console.error("Accommodation creation error.", err);
-      // Perform any error handling or display error message to the user
     }
   };
   const handleDeleteAccommodation = async (accommodationId) => {
-    const oid = localStorage.getItem("_id");
+    const oId = localStorage.getItem("_id");
     const jwt = localStorage.getItem("token");
 
     try {
-      const res = await fetch(`/api/v1/auth-required-func/owner/accommodation/${accommodationId}/${oid}`, {
+      const res = await fetch(`/api/v1/auth-required-func/accommodation/${accommodationId}/${oId}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -193,15 +184,12 @@ const CheckIfOwner = () => {
       });
       const data = await res.json();
       if (res.status === 200) {
-        console.log(data.message); // Accommodation deleted successfully
-        // Perform any additional actions or state updates upon successful deletion
+        console.log(data.message); 
       } else {
-        console.error(data.error); // Error deleting accommodation
-        // Perform any error handling or display error message to the user
+        console.error(data.error); 
       }
     } catch (err) {
       console.error("Accommodation deletion error.", err);
-      // Perform any error handling or display error message to the user
     }
   };
   const userType = localStorage.getItem("userType");
@@ -225,7 +213,7 @@ const CheckIfOwner = () => {
                 <Form.Control
                   type="text"
                   placeholder="Enter accommodation name"
-                  value={accommodationName}
+                  value={name}
                   onChange={(e) => setAccommodationName(e.target.value)}
                 />
               </Form.Group>
@@ -235,7 +223,7 @@ const CheckIfOwner = () => {
                 <Form.Control
                   type="number"
                   placeholder="Enter price"
-                  value={accommodationPrice}
+                  value={price}
                   onChange={(e) => setAccommodationPrice(e.target.value)}
                 />
               </Form.Group>
@@ -245,7 +233,7 @@ const CheckIfOwner = () => {
                 <Form.Control
                   type="text"
                   placeholder="Enter location"
-                  value={accommodationLocation}
+                  value={location}
                   onChange={(e) => setAccommodationLocation(e.target.value)}
                 />
               </Form.Group>
@@ -255,7 +243,7 @@ const CheckIfOwner = () => {
                 <Form.Control
                   type="text"
                   placeholder="Enter type"
-                  value={accommodationType}
+                  value={type}
                   onChange={(e) => setAccommodationType(e.target.value)}
                 />
               </Form.Group>
@@ -265,7 +253,7 @@ const CheckIfOwner = () => {
                 <Form.Control
                   type="number"
                   placeholder="Enter rating"
-                  value={accommodationRating}
+                  value={rating}
                   onChange={(e) => setAccommodationRating(e.target.value)}
                 />
               </Form.Group>
@@ -275,7 +263,7 @@ const CheckIfOwner = () => {
                 <Form.Control
                   type="text"
                   placeholder="Enter amenity"
-                  value={accommodationAmenity}
+                  value={amenity}
                   onChange={(e) => setAccommodationAmenity(e.target.value)}
                 />
               </Form.Group>
@@ -287,13 +275,13 @@ const CheckIfOwner = () => {
           </Modal.Body>
         </Modal>
         {accommData.map((accommodation) => (
-          <div key={accommodation._id} className="mb-3">
-            <FaveTileItem data={accommodation} />
-            <Button variant="danger" onClick={() => handleDeleteAccommodation(accommodation._id)}>
-              Delete
-            </Button>
-            </div>
-        ))}
+  <div key={accommodation._id} className="mb-3">
+    <AccommTileList data={accommodation} />
+    <Button variant="danger" onClick={() => handleDeleteAccommodation(accommodation._id)}>
+      Delete
+    </Button>
+  </div>
+))}
       </>
     );
   } else {
