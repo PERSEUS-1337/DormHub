@@ -1,26 +1,63 @@
 import './accom-style.css';
-import { Button, Row, Col, Carousel, Container, Spinner } from 'react-bootstrap';
+import { Button, Row, Col, Carousel, Container, Spinner, Modal } from 'react-bootstrap';
 import React, { useState, useEffect } from "react";
 import { ReadStarRating, StarRating } from '../components/StarRating';
 import { useLocation } from 'react-router-dom';
 import ReviewList from '../components/ReviewTile';
 
 const Slideshow = () => {
+    const [modalShow, setModalShow] = React.useState(false);
+    const [imgSrc, setImgSrc] = React.useState();
+
+    function setupModal(src) {
+        setModalShow(true);
+        setImgSrc(src);
+    }
+
     return (
-        <Carousel>
-            <Carousel.Item>
-                <img src="https://hips.hearstapps.com/hmg-prod/images/sunset-quotes-21-1586531574.jpg?crop=1.00xw:0.752xh;0,0.0601xh&resize=1200:*"
-                    alt="Picture 1" className="d-block" />
-            </Carousel.Item>
-            <Carousel.Item>
-                <img src="https://img.freepik.com/free-vector/sunset-sunrise-ocean-nature-landscape_33099-2244.jpg?w=2000"
-                    alt="Picture 2" className="d-block" />
-            </Carousel.Item>
-            <Carousel.Item>
-                <img src="https://cms.accuweather.com/wp-content/uploads/2017/05/sunset.jpg" alt="Picture 3"
-                    className="d-block" />
-            </Carousel.Item>
-        </Carousel>
+        <>
+            <Carousel>
+                <Carousel.Item onClick={() => setupModal("https://uplbperspective.files.wordpress.com/2020/03/img_0070.jpg?w=950")}>
+                    <img src="https://uplbperspective.files.wordpress.com/2020/03/img_0070.jpg?w=950"
+                        alt="Picture 1" className="d-block" />
+                </Carousel.Item>
+                <Carousel.Item onClick={() => setupModal("https://collegelifemadeeasy.com/wp-content/uploads/2022/06/cool-dorm-room-stuff-decorating-ideas-Facebook.jpg")}>
+                    <img src="https://collegelifemadeeasy.com/wp-content/uploads/2022/06/cool-dorm-room-stuff-decorating-ideas-Facebook.jpg"
+                        alt="Picture 2" className="d-block" />
+                </Carousel.Item>
+                <Carousel.Item onClick={() => setupModal("https://www.suidersee.co.za/media/cache/67/e6/67e6f48c4a41d0c53fedffc1190f5ea0.jpg")}>
+                    <img src="https://www.suidersee.co.za/media/cache/67/e6/67e6f48c4a41d0c53fedffc1190f5ea0.jpg" alt="Picture 3"
+                        className="d-block" />
+                </Carousel.Item>
+                <Carousel.Item onClick={() => setupModal("https://www.une.edu/sites/default/files/styles/block_image_large/public/2020-12/Avila-6259.jpg?itok=5HTs3fnj")}>
+                    <img src="https://www.une.edu/sites/default/files/styles/block_image_large/public/2020-12/Avila-6259.jpg?itok=5HTs3fnj" alt="Picture 4"
+                        className="d-block" />
+                </Carousel.Item>
+            </Carousel>
+            <ImageModal
+                show={modalShow}
+                onHide={() => setModalShow(false)}
+                imgSrc={imgSrc}
+            />
+        </>
+
+    );
+}
+
+function ImageModal(props) {
+    return (
+        <Modal
+            {...props}
+            size="lg"
+            aria-labelledby="contained-modal-title-vcenter"
+            centered
+        >
+            <Modal.Header closeButton>
+            </Modal.Header>
+            <Modal.Body closeButton>
+                <img src={props.imgSrc} />
+            </Modal.Body>
+        </Modal>
     );
 }
 
@@ -110,22 +147,38 @@ const AddToBookmarks = ({ bId }) => {
 }
  
 const Details = (data) => {
+
     return (
-        <Container id="desc_accom" className="border-bottom pb-4">
-            <Row>
-                <Col lg={4} md={5} sm={6} xs={7}>
-                    <h3>{data.accomData.name}</h3>
+        <Container className="desc_accom">
+            <h3 className='accomTitle'>{data.accomData.name}</h3>
+            <Row className="accomRating">
+                <Col className='' lg={1}>
+                    <h5 className='ratingTitle'>Rating: </h5>
                 </Col>
-                <Col lg={6} md={7} sm={6} xs={5}>
+                <Col>
                     <ReadStarRating rate={data.accomData} />
                 </Col>
             </Row>
+
             <p id="accommDetail">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
                 tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
                 quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
                 Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
                 fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
                 culpa qui officia deserunt mollit anim id est laborum.</p>
+
+            <Row id="amenity" className="detail">
+                <Col sm={1}>
+                    <img src="../../assets/icons/amenities.jpg" alt="test4" />
+                </Col>
+                <Col sm={11}>
+                    <p>
+                        {data.accomData.amenity.map((amenity) => {
+                            return amenity + ", ";
+                        })}
+                    </p>
+                </Col>
+            </Row>
             <Row id="location" className="detail">
                 <Col sm={1}>
                     <img src="../../assets/icons/location.jpg" alt="test1" />
@@ -163,6 +216,16 @@ const Details = (data) => {
 }
 
 
+const Review = (data) => {
+    return (
+        <Container className='desc_accom reviewContainer'>
+            <h3 className='reviewTitle'>Reviews:</h3>
+            <ReviewList data={data.reviewData} />
+        </Container>
+    );
+}
+
+
 function Accommodation(props) {
     const location = useLocation();
 
@@ -170,7 +233,7 @@ function Accommodation(props) {
         <Slideshow />
         {/* <ReadStarRating rate={location.state.data} /> */}
         <Details accomData={location.state.data} />
-        <ReviewList data={location.state.data} />
+        <Review reviewData={location.state.data} />
     </>
     );
 }
