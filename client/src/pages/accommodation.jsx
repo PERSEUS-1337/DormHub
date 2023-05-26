@@ -26,15 +26,17 @@ const Slideshow = () => {
 
 const Details = (data) => {
     return (
-        <Container id="desc_accom">
-            <Row>
-                <Col lg={4} md={5} sm={6} xs={7}>
-                    <h3>{data.accomData.name}</h3>
+        <Container className="desc_accom">
+            <h3 className='accomTitle'>{data.accomData.name}</h3>
+            <Row className="accomRating">
+                <Col className='' lg={1}>
+                 <h5 className='ratingTitle'>Rating: </h5>
                 </Col>
-                <Col lg={6} md={7} sm={6} xs={5}>
+                <Col>
                     <ReadStarRating rate={data.accomData} />
                 </Col>
             </Row>
+
             <p id="accommDetail">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
                 tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
                 quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
@@ -80,6 +82,15 @@ const Details = (data) => {
 }
 
 
+const Review = (data) => {
+    return(
+        <Container className='desc_accom reviewContainer'>
+            <h3 className='reviewTitle'>Reviews:</h3>
+            <ReviewList data={data.reviewData} />
+        </Container>
+    );
+}
+
 function Accommodation(props) {
     const location = useLocation()
 
@@ -87,7 +98,7 @@ function Accommodation(props) {
         <Slideshow />
         {/* <ReadStarRating rate={location.state.data} /> */}
         <Details accomData={location.state.data} />
-        <ReviewList data={location.state.data} />
+        <Review reviewData={location.state.data} />
     </>
     );
 }

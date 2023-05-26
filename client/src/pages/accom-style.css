@@ -18,7 +18,7 @@
     border-radius: 10px;
 }
 
-#desc_accom{
+.desc_accom{
     max-width: 75%;
     text-align: justify;
 }
@@ -34,7 +34,7 @@
 }
 
 #accommDetail{
-    margin-top: 0;
+    margin-top: 20px;
     margin-bottom: 30px;
 }
 
@@ -85,4 +85,18 @@
 
 h3{
     margin: 20px auto;
+}
+
+.accomTitle{
+    /* border: 1px solid black; */
+    padding: 0 !important;
+    margin: 50px 0 0 0 !important;
+}
+
+.ratingTitle{
+    margin-top: 25px;
+}
+
+.reviewContainer{
+    margin-top: 50px !important;
 }
