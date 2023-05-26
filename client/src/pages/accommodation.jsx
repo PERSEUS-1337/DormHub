@@ -99,7 +99,7 @@ const AddToBookmarks = ({ bId }) => {
         );
     } else {
         return(
-            <Container className="d-flex align-items-center justify-content-center vh-100">
+            <Container className="d-flex align-items-center justify-content-center">
                 <Spinner animation="border" role="status" size="lg">
                 <span className="visually-hidden">Loading...</span>
                 </Spinner>
