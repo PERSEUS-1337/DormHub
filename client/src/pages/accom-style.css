@@ -18,6 +18,11 @@
     border-radius: 10px;
 }
 
+.modal-body img{
+    object-fit: cover;
+    width: 100%;
+}
+
 .desc_accom{
     max-width: 75%;
     text-align: justify;

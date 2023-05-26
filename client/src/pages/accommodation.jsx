@@ -1,26 +1,63 @@
 import './accom-style.css';
-import { Button, Row, Col, Carousel, Container } from 'react-bootstrap';
+import { Button, Row, Col, Carousel, Container, Modal } from 'react-bootstrap';
 import React, { useState, useEffect } from "react";
 import { ReadStarRating, StarRating } from '../components/StarRating';
 import { useLocation } from 'react-router-dom';
 import ReviewList from '../components/ReviewTile';
 
 const Slideshow = () => {
+    const [modalShow, setModalShow] = React.useState(false);
+    const [imgSrc, setImgSrc] = React.useState();
+
+    function setupModal(src){
+        setModalShow(true);
+        setImgSrc(src);
+    }
+    
     return (
-        <Carousel>
-            <Carousel.Item>
-                <img src="https://hips.hearstapps.com/hmg-prod/images/sunset-quotes-21-1586531574.jpg?crop=1.00xw:0.752xh;0,0.0601xh&resize=1200:*"
-                    alt="Picture 1" className="d-block" />
-            </Carousel.Item>
-            <Carousel.Item>
-                <img src="https://img.freepik.com/free-vector/sunset-sunrise-ocean-nature-landscape_33099-2244.jpg?w=2000"
-                    alt="Picture 2" className="d-block" />
-            </Carousel.Item>
-            <Carousel.Item>
-                <img src="https://cms.accuweather.com/wp-content/uploads/2017/05/sunset.jpg" alt="Picture 3"
-                    className="d-block" />
-            </Carousel.Item>
-        </Carousel>
+        <>
+            <Carousel>
+                <Carousel.Item onClick={() => setupModal("https://uplbosa.org/ui/images//dorms/mens.jpg")}>
+                    <img src="https://uplbosa.org/ui/images//dorms/mens.jpg"
+                        alt="Picture 1" className="d-block" />
+                </Carousel.Item>
+                <Carousel.Item onClick={() => setupModal("https://4.bp.blogspot.com/-xbPJSFbs2Yc/Tcv3xRh9bVI/AAAAAAAACZA/1SgESM2EmDg/s1600/IMG_0775.JPG")}>
+                    <img src="https://4.bp.blogspot.com/-xbPJSFbs2Yc/Tcv3xRh9bVI/AAAAAAAACZA/1SgESM2EmDg/s1600/IMG_0775.JPG"
+                        alt="Picture 2" className="d-block" />
+                </Carousel.Item>
+                <Carousel.Item onClick={() => setupModal("https://www.suidersee.co.za/media/cache/67/e6/67e6f48c4a41d0c53fedffc1190f5ea0.jpg")}>
+                    <img src="https://www.suidersee.co.za/media/cache/67/e6/67e6f48c4a41d0c53fedffc1190f5ea0.jpg" alt="Picture 3"
+                        className="d-block" />
+                </Carousel.Item>
+                <Carousel.Item onClick={() => setupModal("https://cf.bstatic.com/xdata/images/hotel/max500/462347368.jpg?k=686083a55febc1406804e2c8bea7cbc0edd1d15d1afb06a1a8e9e6142b60af93&o=&hp=1")}>
+                    <img src="https://cf.bstatic.com/xdata/images/hotel/max500/462347368.jpg?k=686083a55febc1406804e2c8bea7cbc0edd1d15d1afb06a1a8e9e6142b60af93&o=&hp=1" alt="Picture 3"
+                        className="d-block" />
+                </Carousel.Item>
+            </Carousel>
+            <ImageModal
+                show={modalShow}
+                onHide={() => setModalShow(false)}
+                imgSrc={imgSrc}
+            />
+        </>
+
+    );
+}
+
+function ImageModal(props) {
+    return (
+        <Modal
+            {...props}
+            size="lg"
+            aria-labelledby="contained-modal-title-vcenter"
+            centered
+        >
+            <Modal.Header closeButton>
+            </Modal.Header>
+            <Modal.Body closeButton>
+                <img src={props.imgSrc}/>
+            </Modal.Body>
+        </Modal>
     );
 }
 
@@ -30,7 +67,7 @@ const Details = (data) => {
             <h3 className='accomTitle'>{data.accomData.name}</h3>
             <Row className="accomRating">
                 <Col className='' lg={1}>
-                 <h5 className='ratingTitle'>Rating: </h5>
+                    <h5 className='ratingTitle'>Rating: </h5>
                 </Col>
                 <Col>
                     <ReadStarRating rate={data.accomData} />
@@ -83,13 +120,14 @@ const Details = (data) => {
 
 
 const Review = (data) => {
-    return(
+    return (
         <Container className='desc_accom reviewContainer'>
             <h3 className='reviewTitle'>Reviews:</h3>
             <ReviewList data={data.reviewData} />
         </Container>
     );
 }
+
 
 function Accommodation(props) {
     const location = useLocation()
