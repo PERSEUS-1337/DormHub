@@ -67,7 +67,7 @@ const getAccommodationById = async (req, res) => {
 
 // POST ACCOMMODATION
 const createAccommodation = async (req, res) => {
-    const { oId, name, price, location, type, rating, amenity } = req.body;
+    const { oId, name, desc, price, location, type, archived, amenity } = req.body;
 
     if (!validator.default.isMongoId(oId)) {
       return res.status(400).json({err: 'Not a valid ownerId'});
@@ -84,23 +84,23 @@ const createAccommodation = async (req, res) => {
         return res.status(400).json({ error: 'ACCOMMODATION: ALREADY EXISTS' });
     }
 
-    if (!name || !price || !location || !type || !rating || !amenity)  {
+    if (!name || !desc ||  !price || !location || !type || !amenity)  {
         return res.status(400).json({ error: 'All fields must be provided' });
     }
 
     // Create the accommodation with default or empty values
     const accommodation = new Accommodation({
         name: name,
+        desc: desc,
+        pics: [],
         price: price,
         location: location,
         type: type,
-        rating: rating,
         archived: false,
         amenity: amenity,
         owner: oId,
         user: [], // Set default value to empty
-        review: [],
-        report: [],
+        review: []
     });
 
     try {
