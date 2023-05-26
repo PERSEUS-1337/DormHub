@@ -3,11 +3,12 @@ import { Modal, Button , Form } from 'react-bootstrap';
 
 
 const EditUserProfile = ({data}) => {
-    const [form, setForm] = useState({});
+    const [form, setForm] = useState({"fname": data.fname, "lname": data.lname});
     const [errors, setErrors] = useState({});
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+
     const setField = (field, value) => {
         setForm({
           ...form,
@@ -67,18 +68,32 @@ const EditUserProfile = ({data}) => {
               <Form.Group className="mb-3" controlId="fname">
                 <Form.Label>First Name</Form.Label>
                 <Form.Control
-                  placeholder={data.fname}
-                  value={form.fname || data.fname || ""}
-                  onChange={(e) => setField("fname", e.target.value)}
+                  // placeholder={data.fname}
+                  value={form.fname}
+                  onChange={(e) => {
+                    if(e.target.value == "" || e.target.value == null){
+                      setField("fname", "");
+                    }else{
+                      setField("fname", e.target.value);
+                    }
+                  }
+                  }
                   isInvalid={!!errors.fname}
                 />
               </Form.Group>
               <Form.Group className="mb-3" controlId="lname">
                 <Form.Label>Last Name</Form.Label>
                 <Form.Control
-                  placeholder={data.lname}
-                  value={form.lname || data.lname  || ""}
-                  onChange={(e) => setField("lname", e.target.value)}
+                  // placeholder={data.lname}
+                  value={form.lname}
+                  onChange={(e) => {
+                    if(e.target.value == "" || e.target.value == null){
+                      setField("lname", "");
+                    }else{
+                      setField("lname", e.target.value);
+                    }
+                  }
+                }
                   isInvalid={!!errors.lname}
                 />
               </Form.Group>
