@@ -90,7 +90,7 @@ const Signup = () => {
               type="radio"
               label="User"
               name="userType"
-              value="user"
+              value="studentuser"
               checked={userType === 'user'}
               onChange={() => setUserType('user')}
             />
