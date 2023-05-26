@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Container, Col, Row, Image, Spinner } from "react-bootstrap";
 import FaveTileItem from "../components/FaveTileItem";
 import EditUserProfile from "../components/EditUser";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const ProfilePic = () => {
   return (
@@ -169,6 +169,7 @@ const UserPage = () => {
 
         const data = await res.json();
         setUserData(data);
+        setIsLoading(false);
 
         } catch (err) {
           console.error('User fetching error.', err);
@@ -195,7 +196,8 @@ const UserPage = () => {
       ) : (
           <div>
             <Container>
-              <h3>You must be logged in</h3>
+              <h3>You must be logged in. Redirecting you to the login page.</h3>
+              <p>if it is not working, <Link to="/login" style={{color: "black"}}> click here </Link></p>
             </Container>
           </div>
       )
