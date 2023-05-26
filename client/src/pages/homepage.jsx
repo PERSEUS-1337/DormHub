@@ -28,6 +28,7 @@ const AccomCards = () => {
         .then(data => {
             setAccommData(data);
             console.log(data["accommodations"]);
+            // console.log(data["accommodations"][2]);
         })
     }, []);
 

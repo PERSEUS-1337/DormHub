@@ -73,7 +73,8 @@ const SearchBar = ({ data }) => {
                     <Container className='rounded-3' style={{background: "#ffffff"}}>
                         {filteredData.slice(0, 10).map((value, key) => {
                             return (
-                                <LodgingTileItem key={value.id} data={value} />
+                                // <LodgingTileItem key={value.id} data={value} />
+                                <p key={key._id}>{value.name}</p>
                            
                             )
                         })
