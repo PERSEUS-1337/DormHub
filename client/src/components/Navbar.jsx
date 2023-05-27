@@ -83,7 +83,7 @@ const NavBar = () => {
     // const toggleVisible = () => {
     //     setIsVisible(!isVisible)
     // }
-
+    // let url = "/login"
     const [userData, setUserData] = useState({});
     const [isLoading, setIsLoading] = useState(true);
 
@@ -113,14 +113,12 @@ const NavBar = () => {
         
     }, []); 
     console.log("name: " + userData)
+
+    // if (userData && userData) {
+    //     url = "/user"
+    // }
     
     const nav_items = [
-        // {
-        //     id: 1,
-        //     icon: <FaHeart className='mx-2' color='#ffffff' size={20} />,
-        //     name: "Favorites",
-        //     href: "/user",
-        // },
         {
             id: 2,
             icon: <FaSignInAlt className='mx-2' color='#ffffff' size={20} />,
@@ -133,12 +131,6 @@ const NavBar = () => {
             name: "Signup",
             href: "/signup",
         },
-        // {
-        //     id: 4,
-        //     icon: <FaLaughWink className='mx-2' color='#ffffff' size={20} />,
-        //     name: "User",
-        //     href: "/user",
-        // },
 
     ]
 
@@ -150,8 +142,9 @@ const NavBar = () => {
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
                 <Nav className="ms-auto d-flex align-items-center">
+
                         
-                    <Nav.Link style={{color: "white"}} href="/user">
+                    <Nav.Link style={{color: "white"}} href={ userData && userData ? "/user" : "/login" }>
                         <label className='d-flex align-items-center' style={{cursor: "pointer"}}>
                             <FaHeart className='mx-2'
                             color='#ffffff'
