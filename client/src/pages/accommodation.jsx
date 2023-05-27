@@ -60,6 +60,7 @@ function ImageModal(props) {
         </Modal>
     );
 }
+
 const AddToBookmarks = ({ bId }) => {
     const type = localStorage.getItem("userType");
     const id = localStorage.getItem("_id");
@@ -146,7 +147,7 @@ const AddToBookmarks = ({ bId }) => {
     }
     
 }
-
+ 
 const Details = (data) => {
 
     return (
@@ -188,9 +189,7 @@ const Details = (data) => {
                     <p>{data.accomData.location}</p>
                 </Col>
                 <Col sm={2}>
-                    <div className="map" style={{ margin: '0px', padding: '0px' }}>
-                        <Button type="button">View Map</Button>
-                    </div>
+                    <AddToBookmarks bId={data.accomData._id}/>
                 </Col>
             </Row>
             <Row id="price" className="detail">
@@ -230,7 +229,7 @@ const Review = (data) => {
 
 
 function Accommodation(props) {
-    const location = useLocation()
+    const location = useLocation();
 
     return (<>
         <Slideshow />
