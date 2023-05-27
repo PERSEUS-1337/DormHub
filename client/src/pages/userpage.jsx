@@ -51,6 +51,7 @@ const AccommTileList = () => {
     return (
       <>
         {LodgingList}
+
       </>
     )
   }
@@ -222,9 +223,9 @@ const CheckIfOwner = () => {
     return (
       <>
         <h3>Accommodations:</h3>
+        <AccommTileList />
         {accommData.map((accommodation) => (
           <div key={accommodation._id} className="mb-3">
-            <AccommTileList data={accommodation} />
             <Button variant="danger" onClick={() => handleDeleteAccommodation(accommodation._id)}>
               Delete
             </Button>
@@ -233,6 +234,7 @@ const CheckIfOwner = () => {
             </Button>
           </div>
         ))}
+
         <Button variant="primary" className="mb-3" onClick={openModal}>
           Add Accommodation
         </Button>
@@ -308,8 +310,8 @@ const CheckIfOwner = () => {
             </Form>
           </Modal.Body>
         </Modal>
-    
-      
+
+
       </>
     );
   } else {
