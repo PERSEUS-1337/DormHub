@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Container, Col, Row, Image, Button, Modal, Form } from "react-bootstrap";
+import { Container, Col, Row, Image, Button, Modal, Form, Spinner } from "react-bootstrap";
 import FaveTileItem from "../components/FaveTileItem";
 import LodgingTileItem from "../components/LodgingTileItem";
 import EditUserProfile from "../components/EditUser";
@@ -59,6 +59,7 @@ const AccommTileList = () => {
 const FaveTileList = () => {
   const [favData, setFavData] = useState(null);
   const [hasFav, setHasFav] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchBookmarks = async () => {
@@ -75,11 +76,12 @@ const FaveTileList = () => {
         });
         const data = await res.json();
 
-        if (data.error) {
+        if (data.error || data.length === 0) {
           setHasFav(false);
         } else {
           setFavData(data);
         }
+        setIsLoading(false);
       } catch (err) {
         console.error('Bookmark fetching error.', err);
       }
@@ -90,18 +92,26 @@ const FaveTileList = () => {
 
   console.log(favData);
 
-  if (hasFav === false) {
+  if (isLoading === true) {
     return (
-      <p>No Favorites Yet.</p>
+      <Spinner animation="border" variant="secondary" role="status" size="lg">
+        <span className="visually-hidden">Loading...</span>
+      </Spinner>
     )
   } else {
-    const BkmarkList = favData && favData.map(data => <FaveTileItem key={data.id} data={data} />)
-    return (
-      <>
-        {BkmarkList}
-      </>
-    )
-  }
+    if (hasFav === false) {
+      return (
+        <p>No Favorites Yet.</p>
+      )
+    } else {
+      const BkmarkList = favData && favData.map(data => <FaveTileItem key={data.id} data={data} />)
+      return (
+        <>
+          {BkmarkList}
+        </>
+      )
+    }
+  } 
 }
 
 const CheckIfOwner = () => {
@@ -113,8 +123,10 @@ const CheckIfOwner = () => {
   const [type, setAccommodationType] = useState([]);
   const [amenity, setAccommodationAmenity] = useState([]);
   const [accommData, setAccommData] = useState([]);
+  const [loadingPostResult, setLoadingPostResult] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   useEffect(() => {
-    const fetchAccommodations = async () => {
+      const fetchAccommodations = async () => {
       const oid = localStorage.getItem("_id");
       const jwt = localStorage.getItem("token");
 
@@ -134,7 +146,8 @@ const CheckIfOwner = () => {
       } catch (err) {
         console.error('Accommodations fetching error.', err);
       }
-    }; fetchAccommodations();
+    }; 
+    fetchAccommodations();
   }, []);
   const openModal = () => {
     setShowModal(true);
@@ -149,11 +162,13 @@ const CheckIfOwner = () => {
 
     const oId = localStorage.getItem("_id");
     const jwt = localStorage.getItem("token");
+    setLoadingPostResult(true);
 
     const formData = {
       oId, name, desc, price, location, type, amenity
     };
-    console.log(formData)
+    console.log(formData);
+
     try {
       const res = await fetch("/api/v1/auth-required-func/accommodation", {
         method: "POST",
@@ -166,9 +181,13 @@ const CheckIfOwner = () => {
       const data = await res.json();
       if (res.status === 201) {
         console.log(data.msg);
+        closeModal();
+        window.location.reload();
       } else {
         console.error(data.error);
+        alert("Creation failed; fill-up all fields.");
       }
+      setLoadingPostResult(false);
     } catch (err) {
       console.error("Accommodation creation error.", err);
     }
@@ -176,6 +195,7 @@ const CheckIfOwner = () => {
   const handleDeleteAccommodation = async (accommodationId) => {
     const oId = localStorage.getItem("_id");
     const jwt = localStorage.getItem("token");
+    setDeleting(true);
 
     try {
       const res = await fetch(`/api/v1/auth-required-func/accommodation/${accommodationId}/${oId}`, {
@@ -188,6 +208,7 @@ const CheckIfOwner = () => {
       const data = await res.json();
       if (res.status === 200) {
         console.log(data.message);
+        window.location.reload();
       } else {
         console.error(data.error);
       }
@@ -225,7 +246,7 @@ const CheckIfOwner = () => {
         {accommData.map((accommodation) => (
           <div key={accommodation._id} className="mb-3">
             <AccommTileList data={accommodation} />
-            <Button variant="danger" onClick={() => handleDeleteAccommodation(accommodation._id)}>
+            <Button variant="danger" onClick={() => handleDeleteAccommodation(accommodation._id)} disabled={deleting}>
               Delete
             </Button>
             <Button variant="primary" onClick={() => handleArchiveAccommodation(accommodation._id)}>
@@ -301,10 +322,20 @@ const CheckIfOwner = () => {
                   onChange={(e) => setAccommodationAmenity(e.target.value)}
                 />
               </Form.Group>
+              
+              <Button className="" variant="secondary" type="submit" disabled={loadingPostResult}>
+                {
+                  loadingPostResult ? (
+                    <Spinner animation="border" variant="primary" role="status" size="sm" disabled>
+                      <span className="visually-hidden">Loading...</span>
+                    </Spinner>
 
-              <Button variant="primary" type="submit">
-                Save
+                  ) :(
+                  "Save"
+                  )
+                }
               </Button>
+              
             </Form>
           </Modal.Body>
         </Modal>

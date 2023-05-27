@@ -4,6 +4,7 @@ import { Button, Container, Form, InputGroup } from "react-bootstrap";
 import "./style.css";
 
 const Login = () => {
+
   const [form, setForm] = useState({});
   const [errors, setErrors] = useState({});
   const [authentication, setAuthenticated] = useState(false);
@@ -28,7 +29,7 @@ const Login = () => {
   };
   useEffect(() => {
     if (authentication) {
-      navigateTo("/");
+      window.location.href = "/";
     }
   }, [authentication]);
 

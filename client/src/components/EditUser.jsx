@@ -68,8 +68,15 @@ const EditUserProfile = ({data}) => {
                 <Form.Label>First Name</Form.Label>
                 <Form.Control
                   placeholder={data.fname}
-                  value={form.fname || data.fname || ""}
-                  onChange={(e) => setField("fname", e.target.value)}
+                  defaultValue={form.fname || data.fname}
+                  onChange={(e) => {
+                    if(e.target.value == "" || e.target.value == null){
+                      setField("fname", "");
+                    }else{
+                      setField("fname", e.target.value);
+                    }
+                  }
+                  }
                   isInvalid={!!errors.fname}
                 />
               </Form.Group>
@@ -77,8 +84,15 @@ const EditUserProfile = ({data}) => {
                 <Form.Label>Last Name</Form.Label>
                 <Form.Control
                   placeholder={data.lname}
-                  value={form.lname || data.lname  || ""}
-                  onChange={(e) => setField("lname", e.target.value)}
+                  defaultValue={form.lname || data.lname}
+                  onChange={(e) => {
+                    if(e.target.value == "" || e.target.value == null){
+                      setField("lname", "");
+                    }else{
+                      setField("lname", e.target.value);
+                    }
+                  }
+                  }
                   isInvalid={!!errors.lname}
                 />
               </Form.Group>

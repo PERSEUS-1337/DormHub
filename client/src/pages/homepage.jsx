@@ -6,8 +6,7 @@ import { useState, useEffect } from 'react';
 import { StarRating } from '../components/StarRating';
 import SearchBar from '../components/SearchBar';
 import ScrollToTopButton from '../components/ScrollTopBtn';
-//import Accommodation from './pages/accomodation';
-//todo: include button in form
+
 
 const AccomCards = () => {
     const navigate = useNavigate();
@@ -34,9 +33,9 @@ const AccomCards = () => {
         <>
         {isLoading ? (
             <Container className="d-flex align-items-top justify-content-center vh-100">
-            <Spinner animation="border" role="status" size="lg">
-              <span className="visually-hidden">Loading...</span>
-            </Spinner>
+                <Spinner animation="border" role="status" size="lg">
+                    <span className="visually-hidden">Loading...</span>
+                </Spinner>
             </Container>
         ) : (
             <Row md={4} className="g-3 row mx-auto">
