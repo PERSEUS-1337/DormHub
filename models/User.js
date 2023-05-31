@@ -24,17 +24,17 @@ const userSchema = new Schema({
     type: String,
     required: true
   },
-  bookmark: {
+  phone: {
+    type: [String],
+    required: false,
+    default: []
+  },
+  bookmarks: {
     type: [mongoose.Schema.Types.ObjectId],
     required: false,
     ref: 'Listing', 
     default: []
   },
-  pfp: {
-    type: String,
-    required: false,
-    default: "null"
-  }
 }, 
 );
 

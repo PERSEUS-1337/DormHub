@@ -13,7 +13,8 @@ const ownerSchema = new Schema({
   },
   pfp: {
     type: String,
-    required: true
+    required: false,
+    default: "null"
   },
   email: {
     type: String,
@@ -34,17 +35,12 @@ const ownerSchema = new Schema({
     ref: 'Listing',
     default: []
   },
-  bookmark: {
+  bookmarks: {
     type: [mongoose.Schema.Types.ObjectId],
     required: false,
     ref: 'Listing', 
     default: []
   },
-  pfp: {
-    type: String,
-    required: false,
-    default: "null"
-  }
 });
 
 const Owner = mongoose.model('Owner', ownerSchema, 'owner_be');
