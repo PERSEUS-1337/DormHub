@@ -15,6 +15,7 @@ const ProfilePic = () => {
 const AccommTileList = () => {
   const [accommData, setAccommData] = useState(null);
   const [hasAccomm, setHasAccomm] = useState(true);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     const fetchAccomms = async () => {
@@ -42,12 +43,68 @@ const AccommTileList = () => {
     fetchAccomms();
   }, []);
 
+  const handleDeleteAccommodation = async (accommodationId) => {
+    const oId = localStorage.getItem("_id");
+    const jwt = localStorage.getItem("token");
+    setDeleting(true);
+
+    try {
+      const res = await fetch(`/api/v1/auth-required-func/accommodation/${accommodationId}/${oId}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${jwt}`,
+        },
+      });
+      const data = await res.json();
+      if (res.status === 200) {
+        console.log(data.message);
+        window.location.reload();
+      } else {
+        console.error(data.error);
+      }
+    } catch (err) {
+      console.error("Accommodation deletion error.", err);
+    }
+  };
+  const handleArchiveAccommodation = async (accommodationId) => {
+    const oId = localStorage.getItem("_id");
+    const jwt = localStorage.getItem("token");
+    try {
+      const res = await fetch(`/api/v1/auth-required-func/accommodation/archive/${accommodationId}/${oId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${jwt}`,
+        },
+      });
+      const data = await res.json();
+      if (res.status === 200) {
+        console.log(`${data.message}, id: ${accommodationId}`);
+      } else {
+        console.error(data.error);
+      }
+    } catch (err) {
+      console.error("Accommodation archiving error.", err);
+    }
+  };
+
   if (hasAccomm === false) {
     return (
       <p>No Accommodations Uploaded Yet.</p>
     )
   } else {
-    const LodgingList = accommData && accommData.map(data => <LodgingTileItem key={data._id} data={data} />)
+    const LodgingList = accommData && accommData.map(data => 
+    <>
+      <LodgingTileItem key={data._id} data={data} />
+      <Button variant="danger" onClick={() => handleDeleteAccommodation(data._id)} disabled={deleting}>
+        Delete
+      </Button>
+      <Button variant="primary" onClick={() => handleArchiveAccommodation(data._id)}>
+        Archive
+      </Button>
+    </>
+    )
     return (
       <>
         {LodgingList}
@@ -124,7 +181,6 @@ const CheckIfOwner = () => {
   const [amenity, setAccommodationAmenity] = useState([]);
   const [accommData, setAccommData] = useState([]);
   const [loadingPostResult, setLoadingPostResult] = useState(false);
-  const [deleting, setDeleting] = useState(false);
   useEffect(() => {
       const fetchAccommodations = async () => {
       const oid = localStorage.getItem("_id");
@@ -192,68 +248,16 @@ const CheckIfOwner = () => {
       console.error("Accommodation creation error.", err);
     }
   };
-  const handleDeleteAccommodation = async (accommodationId) => {
-    const oId = localStorage.getItem("_id");
-    const jwt = localStorage.getItem("token");
-    setDeleting(true);
-
-    try {
-      const res = await fetch(`/api/v1/auth-required-func/accommodation/${accommodationId}/${oId}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${jwt}`,
-        },
-      });
-      const data = await res.json();
-      if (res.status === 200) {
-        console.log(data.message);
-        window.location.reload();
-      } else {
-        console.error(data.error);
-      }
-    } catch (err) {
-      console.error("Accommodation deletion error.", err);
-    }
-  };
-  const handleArchiveAccommodation = async (accommodationId) => {
-    const oId = localStorage.getItem("_id");
-    const jwt = localStorage.getItem("token");
-    try {
-      const res = await fetch(`/api/v1/auth-required-func/accommodation/archive/${accommodationId}/${oId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${jwt}`,
-        },
-      });
-      const data = await res.json();
-      if (res.status === 200) {
-        console.log(data.message);
-      } else {
-        console.error(data.error);
-      }
-    } catch (err) {
-      console.error("Accommodation archiving error.", err);
-    }
-  };
+  
   const userType = localStorage.getItem("userType");
 
   if (userType === "owner") {
     return (
       <>
         <h3>Accommodations:</h3>
-        {accommData.map((accommodation) => (
-          <div key={accommodation._id} className="mb-3">
-            <AccommTileList data={accommodation} />
-            <Button variant="danger" onClick={() => handleDeleteAccommodation(accommodation._id)} disabled={deleting}>
-              Delete
-            </Button>
-            <Button variant="primary" onClick={() => handleArchiveAccommodation(accommodation._id)}>
-              Archive
-            </Button>
-          </div>
-        ))}
+        <div key={accommData._id} className="mb-3">
+          <AccommTileList data={accommData} />
+        </div>
         <Button variant="primary" className="mb-3" onClick={openModal}>
           Add Accommodation
         </Button>
@@ -350,6 +354,7 @@ const CheckIfOwner = () => {
 
 const UserPage = () => {
   const [userData, setUserData] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -369,6 +374,7 @@ const UserPage = () => {
         console.log(data);
         const userType = localStorage.getItem("userType");
         console.log(userType)
+        setIsLoading(false);
       } catch (err) {
         console.error('User fetching error.', err);
       }
@@ -379,20 +385,33 @@ const UserPage = () => {
   return (
     <>
       <Container className="mt-5 mb-3 pb-4 d-flex flex-column align-items-left border-bottom">
-        <Row>
-          <Col xs={2}>
-            <ProfilePic />
-          </Col>
-          <Col xs={7}>
-            <h2>{`${userData.fname} ${userData.lname}`}</h2>
-            <h5 className="lead">From Manila, Philippines</h5>
-            <h5 className="lead">Email: {`${userData.email}`}</h5>
-            <h5 className="lead">Contact Number: 09950055973 </h5>
-          </Col>
-          <Col xs={3} className="d-flex justify-content-end align-items-start">
-            <EditUserProfile key={userData.id} data={userData} />
-          </Col>
-        </Row>
+        <>
+        {
+          isLoading ? (
+            <div className="d-flex justify-content-center align-items-center">
+              <Spinner animation="border" variant="primary" role="status" size="lg">
+                <span className="visually-hidden">Loading...</span>
+              </Spinner>
+            </div>
+          ) : (
+            <Row>
+              <Col xs={2}>
+                <ProfilePic />
+              </Col>
+              <Col xs={7}>
+                <h2>{`${userData.fname} ${userData.lname}`}</h2>
+                <h5 className="lead">From Manila, Philippines</h5>
+                <h5 className="lead">Email: {`${userData.email}`}</h5>
+                <h5 className="lead">Contact Number: 09950055973 </h5>
+              </Col>
+              <Col xs={3} className="d-flex justify-content-end align-items-start">
+                <EditUserProfile key={userData.id} data={userData} />
+              </Col>
+            </Row>
+          )
+        }
+        
+        </>
       </Container>
       <Container>
         <CheckIfOwner />
