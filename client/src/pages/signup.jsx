@@ -74,14 +74,17 @@ const Signup = () => {
             />
           </Form.Group>
           <Form.Group controlId="formPassword">
-            <Form.Label>Password</Form.Label>
-            <Form.Control
-              type="password"
-              placeholder="Enter password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </Form.Group>
+  <Form.Label>Password</Form.Label>
+  <Form.Control
+    type="password"
+    placeholder="Enter password"
+    value={password}
+    onChange={(e) => setPassword(e.target.value)}
+  />
+  <Form.Text className="text-muted">
+    Password should be of length 8 or more and must contain an uppercase letter, a lowercase letter, a digit, and a symbol.
+  </Form.Text>
+</Form.Group>
           <Form.Group controlId="formUserType">
             <Form.Label>User Type:</Form.Label>
             <br />

@@ -102,29 +102,7 @@ const Login = () => {
                 </Form.Control.Feedback>
               </InputGroup>
             </Form.Group>
-           
-            <Form.Group controlId="formUserType">
-            <Form.Label>User Type:</Form.Label>
-            <br />
-            <Form.Check
-              inline
-              type="radio"
-              label="User"
-              name="userType"
-              value="studentuser"
-              checked={userType === 'user'}
-              onChange={() => setUserType('user')}
-            />
-            <Form.Check
-              inline
-              type="radio"
-              label="Owner"
-              name="userType"
-              value="owner"
-              checked={userType === 'owner'}
-              onChange={() => setUserType('owner')}
-            />
-          </Form.Group>
+
             <br />
             <Button type="submit">Login</Button>
             <br />

@@ -94,16 +94,16 @@ const AccommTileList = () => {
       <p>No Accommodations Uploaded Yet.</p>
     )
   } else {
-    const LodgingList = accommData && accommData.map(data => 
-    <>
-      <LodgingTileItem key={data._id} data={data} />
-      <Button variant="danger" onClick={() => handleDeleteAccommodation(data._id)} disabled={deleting}>
-        Delete
-      </Button>
-      <Button variant="primary" onClick={() => handleArchiveAccommodation(data._id)}>
-        Archive
-      </Button>
-    </>
+    const LodgingList = accommData && accommData.map(data =>
+      <>
+        <LodgingTileItem key={data._id} data={data} />
+        <Button variant="danger" onClick={() => handleDeleteAccommodation(data._id)} disabled={deleting}>
+          Delete
+        </Button>
+        <Button variant="primary" onClick={() => handleArchiveAccommodation(data._id)}>
+          Archive
+        </Button>
+      </>
     )
     return (
       <>
@@ -168,7 +168,7 @@ const FaveTileList = () => {
         </>
       )
     }
-  } 
+  }
 }
 
 const CheckIfOwner = () => {
@@ -182,7 +182,7 @@ const CheckIfOwner = () => {
   const [accommData, setAccommData] = useState([]);
   const [loadingPostResult, setLoadingPostResult] = useState(false);
   useEffect(() => {
-      const fetchAccommodations = async () => {
+    const fetchAccommodations = async () => {
       const oid = localStorage.getItem("_id");
       const jwt = localStorage.getItem("token");
 
@@ -202,7 +202,7 @@ const CheckIfOwner = () => {
       } catch (err) {
         console.error('Accommodations fetching error.', err);
       }
-    }; 
+    };
     fetchAccommodations();
   }, []);
   const openModal = () => {
@@ -248,7 +248,7 @@ const CheckIfOwner = () => {
       console.error("Accommodation creation error.", err);
     }
   };
-  
+
   const userType = localStorage.getItem("userType");
 
   if (userType === "owner") {
@@ -309,11 +309,18 @@ const CheckIfOwner = () => {
               <Form.Group controlId="accommodationType">
                 <Form.Label>Type</Form.Label>
                 <Form.Control
-                  type="text"
-                  placeholder="Enter type"
+                  as="select"
                   value={type}
                   onChange={(e) => setAccommodationType(e.target.value)}
-                />
+                >
+                  <option value="apartment">Apartment</option>
+                  <option value="condominium">Condominium</option>
+                  <option value="dormitory">Dormitory</option>
+                  <option value="transient">Transient</option>
+                  <option value="hotel">Hotel</option>
+                  <option value="hostel">Hostel</option>
+                  <option value="bedspace">Bedspace</option>
+                </Form.Control>
               </Form.Group>
 
 
@@ -326,7 +333,7 @@ const CheckIfOwner = () => {
                   onChange={(e) => setAccommodationAmenity(e.target.value)}
                 />
               </Form.Group>
-              
+
               <Button className="" variant="secondary" type="submit" disabled={loadingPostResult}>
                 {
                   loadingPostResult ? (
@@ -334,17 +341,17 @@ const CheckIfOwner = () => {
                       <span className="visually-hidden">Loading...</span>
                     </Spinner>
 
-                  ) :(
-                  "Save"
+                  ) : (
+                    "Save"
                   )
                 }
               </Button>
-              
+
             </Form>
           </Modal.Body>
         </Modal>
-    
-      
+
+
       </>
     );
   } else {
@@ -386,31 +393,31 @@ const UserPage = () => {
     <>
       <Container className="mt-5 mb-3 pb-4 d-flex flex-column align-items-left border-bottom">
         <>
-        {
-          isLoading ? (
-            <div className="d-flex justify-content-center align-items-center">
-              <Spinner animation="border" variant="primary" role="status" size="lg">
-                <span className="visually-hidden">Loading...</span>
-              </Spinner>
-            </div>
-          ) : (
-            <Row>
-              <Col xs={2}>
-                <ProfilePic />
-              </Col>
-              <Col xs={7}>
-                <h2>{`${userData.fname} ${userData.lname}`}</h2>
-                <h5 className="lead">From Manila, Philippines</h5>
-                <h5 className="lead">Email: {`${userData.email}`}</h5>
-                <h5 className="lead">Contact Number: 09950055973 </h5>
-              </Col>
-              <Col xs={3} className="d-flex justify-content-end align-items-start">
-                <EditUserProfile key={userData.id} data={userData} />
-              </Col>
-            </Row>
-          )
-        }
-        
+          {
+            isLoading ? (
+              <div className="d-flex justify-content-center align-items-center">
+                <Spinner animation="border" variant="primary" role="status" size="lg">
+                  <span className="visually-hidden">Loading...</span>
+                </Spinner>
+              </div>
+            ) : (
+              <Row>
+                <Col xs={2}>
+                  <ProfilePic />
+                </Col>
+                <Col xs={7}>
+                  <h2>{`${userData.fname} ${userData.lname}`}</h2>
+                  <h5 className="lead">From Manila, Philippines</h5>
+                  <h5 className="lead">Email: {`${userData.email}`}</h5>
+                  <h5 className="lead">Contact Number: 09950055973 </h5>
+                </Col>
+                <Col xs={3} className="d-flex justify-content-end align-items-start">
+                  <EditUserProfile key={userData.id} data={userData} />
+                </Col>
+              </Row>
+            )
+          }
+
         </>
       </Container>
       <Container>
