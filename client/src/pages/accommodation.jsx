@@ -87,7 +87,7 @@ const AddToBookmarks = ({ bId }) => {
         } catch (err) {
             console.log(err);
         }
-    }, []);
+    }, [id, jwt, type]);
 
     useEffect(() => {
         try {
@@ -97,11 +97,12 @@ const AddToBookmarks = ({ bId }) => {
                 setContainsValue(false);
             }
         } catch (err) {
-            setContainsValue(true);
+            setContainsValue(false);
         }
         
         console.log(containsValue);
-    }, [fetchedData]);
+    }, [fetchedData, bId, containsValue]);
+
 
     function addBookmark() { 
         console.log(`Trying to add bookmark with id ${bId}`);
@@ -111,18 +112,16 @@ const AddToBookmarks = ({ bId }) => {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${jwt}`
             },
-                body: JSON.stringify(bId),
         })
             .then((response) => response.json())
             .then((body) => {
                 console.log(body);
+                window.location.reload();
         });
-
-        window.location.reload();
     };
     
 
-    if (!isLoading && type && containsValue == false) {
+    if (!isLoading && type && containsValue === false) {
         return(
             <div className="map" style={{ margin: '0px', padding: '0px' }}>
                 <Button type="button" onClick={addBookmark} variant="light">Bookmark</Button>
@@ -198,7 +197,7 @@ const Details = (data) => {
                 </Col>
                 <Col sm={11}>
                     {
-                        data.accomData.price.length == 1 ?
+                        data.accomData.price.length === 1 ?
                             <p >Php {data.accomData.price[0]} per month</p>
                             :
                             <p >Php {data.accomData.price[0]} - Php {data.accomData.price[1]} per month</p>

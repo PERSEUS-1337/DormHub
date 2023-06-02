@@ -19,6 +19,35 @@ const Signup = () => {
     e.preventDefault();
   
     const formData = { fname, lname, email, password };
+
+    function login() {
+  
+      const credentials = {
+        email: formData.email,
+        password: formData.password,
+      };
+  
+      fetch(`/api/v1/auth/login/${userType}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(credentials),
+      })
+        .then((response) => response.json())
+        .then((body) => {
+          console.log(body);
+  
+          if (body.token) {
+            localStorage.setItem("token", body.token);
+            localStorage.setItem("userType", userType);
+            console.log(userType);
+            localStorage.setItem("_id", body._id);
+          } else {
+            alert("Failed to log in");
+          }
+        });
+    }
   
     try {
       const res = await fetch(`/api/v1/auth/register/${userType}`, {
@@ -32,7 +61,8 @@ const Signup = () => {
       if (res.ok) {
         console.log('Registration Successful');
         console.log(fname, lname, email, password, userType);
-        navigateTo('/');
+        login();
+        window.location.href = "/";
       } else {
         console.error('Registration failed');
       }

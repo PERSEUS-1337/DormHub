@@ -382,6 +382,8 @@ const UserPage = () => {
     fetchData();
   }, []);
 
+  console.log(userData.phone);
+
   return (
     <>
       <Container className="mt-5 mb-3 pb-4 d-flex flex-column align-items-left border-bottom">
@@ -400,13 +402,14 @@ const UserPage = () => {
               </Col>
               <Col xs={7}>
                 <h2>{`${userData.fname} ${userData.lname}`}</h2>
-                <h5 className="lead">From Manila, Philippines</h5>
+                {/* TO ADD: USER TYPE */}
+                {/* <h5 className="lead">From Manila, Philippines</h5> */}
                 <h5 className="lead">Email: {`${userData.email}`}</h5>
                 <h5 className="lead">Contact Number: {
-                  userData && userData.phone ? (
-                    `${userData.phone}`
+                  userData.phone.length === 0 || userData.phone[0] === "" ? (
+                    <span className="text-muted">Edit Profile to Add</span>
                   ) : (
-                    `No Contact Number Yet.`
+                    `${userData.phone}`
                   )
                 } </h5>
               </Col>

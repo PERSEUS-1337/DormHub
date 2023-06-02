@@ -33,6 +33,7 @@ const EditUserProfile = ({data}) => {
         const details = {
             fname: form.fname,
             lname: form.lname,
+            phone: form.phone,
         };
 
         
@@ -96,7 +97,22 @@ const EditUserProfile = ({data}) => {
                   isInvalid={!!errors.lname}
                 />
               </Form.Group>
-            
+              <Form.Group className="mb-3" controlId="phone">
+                <Form.Label>Contact Number</Form.Label>
+                <Form.Control
+                  placeholder={data.phone}
+                  defaultValue={form.phone || data.phone}
+                  onChange={(e) => {
+                    if(e.target.value == "" || e.target.value == null){
+                      setField("phone", "");
+                    }else{
+                      setField("phone", e.target.value);
+                    }
+                  }
+                  }
+                />
+              </Form.Group>
+                  
           </Modal.Body>
             <Modal.Footer>
                 <Button variant="primary" onClick={handleClose}>
