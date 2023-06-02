@@ -6,6 +6,26 @@ const validator = require('validator');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
+const { Storage } = require('@google-cloud/storage');
+
+const storage = new Storage({
+    projectId: 'dormhub-128-e8l',
+    keyFilename: '\middleware\\database\\dormhub-128-e8l-c813bcd1295a.json',
+});
+
+const bucketName = 'dormhub-128-e8l';
+
+const multer = require('multer');
+
+const storageBucket = storage.bucket(bucketName);
+
+const upload = multer({
+    storage: multer.memoryStorage(),
+    // limits: {
+    //     fileSize: 5 * 1024 * 1024, // 5MB limit
+    // },
+});
+
 // JWT
 const createToken = (_id) => {
     return jwt.sign({_id}, process.env.PRIVATE_KEY, {expiresIn: '1d' });
@@ -237,6 +257,77 @@ const checkBookmarkExists = async (id, oId) => {
     }
 }
 
+// UPLOAD OWNER PFP
+const uploadPfpOwner = async(req, res) => {
+    const { id } = req.params;
+
+    if (!mongooseObjectId.isValid(id)) {
+        return res.json({ err: 'Not a valid ownerid' });
+    }
+
+    upload.single('pfp')(req, res, (err) => {
+        console.log("pfp");
+
+        if (err) {
+            console.error(err);
+            return res.status(400).json({ error: 'Failed to upload picture.' });
+        }
+
+        if (!req.file) {
+            return res.status(400).json({ error: 'No picture provided.' });
+        }
+
+        const folderName = 'pfp';
+
+        const fileName = `${folderName}/${req.file.originalname.replace(/ /g, '_')}`;
+
+        const blob = storageBucket.file(fileName);
+        const blobStream = blob.createWriteStream({
+            resumable: false,
+            contentType: req.file.mimetype,
+        });
+
+        blobStream.on('error', (err) => {
+            console.error(err);
+            return res.status(400).json({ error: 'Failed to upload picture.' });
+        });
+
+        blobStream.on('finish', () => {
+            const publicUrl = `https://storage.googleapis.com/${bucketName}/${blob.name}`;
+
+            Owner.findByIdAndUpdate(id, { pfp: publicUrl }, { new: true })
+                .then(updatedOwner => {
+                    // Send the updated owner as the response
+                    return res.status(200).json({ msg: { url: publicUrl, owner: updatedOwner } });
+                })
+                .catch(error => {
+                    // Handle the error
+                    console.log(error);
+                    res.status(500).json({ error: 'Failed to update profile picture' });
+                });
+        });
+
+        blobStream.end(req.file.buffer);
+    });
+}
+
+// GET OWNER PFP
+const getPfpOwner = async(req, res) => {
+    const { id } = req.params;
+
+    if (!mongooseObjectId.isValid(id)) {
+        return res.json({ err: 'Not a valid ownerid' });
+    }
+
+    const owner = await Owner.findById(id);
+
+    if (!owner) {
+        return res.json({ err: 'Owner does not exist' });
+    }
+
+    res.json({ pfp: owner.pfp });
+}
+
 module.exports = {
     registerOwner, 
     loginOwner,
@@ -246,5 +337,7 @@ module.exports = {
     getAccommodationOwner,
     getBookmarkOwner,
     addToBookmarkOwner,
-    deleteBookmarkOwner
+    deleteBookmarkOwner,
+    uploadPfpOwner,
+    getPfpOwner
 }

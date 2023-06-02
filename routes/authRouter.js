@@ -3,7 +3,7 @@ const router = express.Router();
 const rateLimit = require("express-rate-limit");
 
 // CONTROLLERS
-const { registerUser, loginUser, getAllUsers, getUserData, uploadPfp, getPfp } = require('../controllers/userController');
+const { registerUser, loginUser, getAllUsers } = require('../controllers/userController');
 const { registerOwner, loginOwner, getAllOwners } = require('../controllers/ownerController');
 
 const limiter = rateLimit({
@@ -13,12 +13,6 @@ const limiter = rateLimit({
 
 // Apply rate limiting middleware to all routes following this middleware
 router.use(limiter);
-
-// TODO: Transfer this to authRequiredRoutes.js & remove unused imports
-// upload pfp
-router.post('/:id/upload-pfp', uploadPfp);
-// retrieve pfp
-router.get('/:id/pfp', getPfp);
 
 // SAMPLE: Get data to test
 router.get('/users', getAllUsers);

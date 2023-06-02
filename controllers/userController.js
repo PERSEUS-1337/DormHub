@@ -234,8 +234,8 @@ const checkBookmarkExists = async (id, uId) => {
     }
 }
 
-// upload PFP
-const uploadPfp = async(req, res) => {
+// UPLOAD USER PFP
+const uploadPfpUser = async(req, res) => {
     const { id } = req.params;
 
     if (!mongooseObjectId.isValid(id)) {
@@ -288,8 +288,8 @@ const uploadPfp = async(req, res) => {
     });
 }
 
-// get PFP
-const getPfp = async(req, res) => {
+// GET USER PFP
+const getPfpUser = async(req, res) => {
     const { id } = req.params;
 
     if (!mongooseObjectId.isValid(id)) {
@@ -315,6 +315,6 @@ module.exports = {
     getBookmarkUser,
     addToBookmarkUser,
     deleteBookmarkUser,
-    uploadPfp,
-    getPfp
+    uploadPfpUser,
+    getPfpUser
 };

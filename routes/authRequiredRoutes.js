@@ -20,7 +20,9 @@ const {
     editUserData,
     getBookmarkUser,
     addToBookmarkUser,
-    deleteBookmarkUser
+    deleteBookmarkUser,
+    uploadPfpUser,
+    getPfpUser
 } = require('../controllers/userController');
 
 const {
@@ -30,7 +32,9 @@ const {
     addToBookmarkOwner,
     deleteBookmarkOwner,
     editOwnerData,
-    getAccommodationOwner
+    getAccommodationOwner,
+    uploadPfpOwner,
+    getPfpOwner
 } = require('../controllers/ownerController');
 
 const {
@@ -66,6 +70,10 @@ router.get('/user/bookmark/:uId', getBookmarkUser)
 router.patch('/user/bookmark/:id/:uId', addToBookmarkUser); 
 // DELETE bookmark
 router.delete('/user/bookmark/:id/:uId', deleteBookmarkUser); 
+// POST pfp
+router.post('/user/upload-pfp/:uId', uploadPfpUser);
+// GET pfp
+router.get('/user/pfp/:uId', getPfpUser);
 
 // OWNER
 // GET owner data
@@ -79,7 +87,12 @@ router.patch('/owner/:oId', editOwnerData);
 // ADD a bookmark
 router.patch('/owner/bookmark/:id/:oId', addToBookmarkOwner); 
 // DELETE bookmark
-router.delete('/owner/bookmark/:id/:oId', deleteBookmarkOwner); 
+router.delete('/owner/bookmark/:id/:oId', deleteBookmarkOwner);
+// POST pfp
+router.post('/owner/upload-pfp/:oId', uploadPfpOwner);
+// GET pfp
+router.get('/owner/pfp/:oId', getPfpOwner);
+
 
 // ACCOMMODATION ROUTES
 // POST a new ACCOMMODATION
