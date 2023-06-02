@@ -402,7 +402,13 @@ const UserPage = () => {
                 <h2>{`${userData.fname} ${userData.lname}`}</h2>
                 <h5 className="lead">From Manila, Philippines</h5>
                 <h5 className="lead">Email: {`${userData.email}`}</h5>
-                <h5 className="lead">Contact Number: 09950055973 </h5>
+                <h5 className="lead">Contact Number: {
+                  userData && userData.phone ? (
+                    `${userData.phone}`
+                  ) : (
+                    `No Contact Number Yet.`
+                  )
+                } </h5>
               </Col>
               <Col xs={3} className="d-flex justify-content-end align-items-start">
                 <EditUserProfile key={userData.id} data={userData} />
