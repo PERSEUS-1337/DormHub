@@ -166,7 +166,7 @@ const getBookmarkOwner = async (req, res)  => {
       return res.status(404).json({err: 'USER: NON EXISTENT'});
     }
 
-    const bookmarks = owner.bookmark
+    const bookmarks = owner.bookmarks
 
 
     if (bookmarks.length===0) {
@@ -313,13 +313,13 @@ const uploadPfpOwner = async(req, res) => {
 
 // GET OWNER PFP
 const getPfpOwner = async(req, res) => {
-    const { id } = req.params;
+    const { oId } = req.params;
 
-    if (!mongooseObjectId.isValid(id)) {
+    if (!mongooseObjectId.isValid(oId)) {
         return res.json({ err: 'Not a valid ownerid' });
     }
 
-    const owner = await Owner.findById(id);
+    const owner = await Owner.findById(oId);
 
     if (!owner) {
         return res.json({ err: 'Owner does not exist' });

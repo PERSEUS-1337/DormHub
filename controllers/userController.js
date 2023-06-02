@@ -290,13 +290,13 @@ const uploadPfpUser = async(req, res) => {
 
 // GET USER PFP
 const getPfpUser = async(req, res) => {
-    const { id } = req.params;
+    const { uId } = req.params;
 
-    if (!mongooseObjectId.isValid(id)) {
+    if (!mongooseObjectId.isValid(uId)) {
         return res.json({ err: 'Not a valid userid' });
     }
 
-    const user = await User.findById(id);
+    const user = await User.findById(uId);
 
     if (!user) {
         return res.json({ err: 'User does not exist' });
