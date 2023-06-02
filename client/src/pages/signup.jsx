@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Form, Button } from 'react-bootstrap';
+import { Form, Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import './style.css';
 
@@ -17,9 +17,9 @@ const Signup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     const formData = { fname, lname, email, password };
-  
+
     try {
       const res = await fetch(`/api/v1/auth/register/${userType}`, {
         method: 'POST',
@@ -28,7 +28,7 @@ const Signup = () => {
         },
         body: JSON.stringify(formData),
       });
-  
+
       if (res.ok) {
         console.log('Registration Successful');
         console.log(fname, lname, email, password, userType);
@@ -74,38 +74,33 @@ const Signup = () => {
             />
           </Form.Group>
           <Form.Group controlId="formPassword">
-  <Form.Label>Password</Form.Label>
-  <Form.Control
-    type="password"
-    placeholder="Enter password"
-    value={password}
-    onChange={(e) => setPassword(e.target.value)}
-  />
-  <Form.Text className="text-muted">
-    Password should be of length 8 or more and must contain an uppercase letter, a lowercase letter, a digit, and a symbol.
-  </Form.Text>
-</Form.Group>
+            <Form.Label>Password</Form.Label>
+            <OverlayTrigger
+              placement="right"
+              overlay={
+                <Tooltip id="password-tooltip">
+                  Password should be of length 8 or more and must contain an uppercase letter,
+                  a lowercase letter, a digit, and a symbol.
+                </Tooltip>
+              }
+            >
+              <Form.Control
+                type="password"
+                placeholder="Enter password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </OverlayTrigger>
+          </Form.Group>
           <Form.Group controlId="formUserType">
             <Form.Label>User Type:</Form.Label>
-            <br />
-            <Form.Check
-              inline
-              type="radio"
-              label="User"
-              name="userType"
-              value="studentuser"
-              checked={userType === 'user'}
-              onChange={() => setUserType('user')}
-            />
-            <Form.Check
-              inline
-              type="radio"
-              label="Owner"
-              name="userType"
-              value="owner"
-              checked={userType === 'owner'}
-              onChange={() => setUserType('owner')}
-            />
+            <Form.Select
+              value={userType}
+              onChange={(e) => setUserType(e.target.value)}
+            >
+              <option value="user">User</option>
+              <option value="owner">Owner</option>
+            </Form.Select>
           </Form.Group>
           <br />
           <Button type="submit" variant="secondary">CREATE ACCOUNT</Button>
