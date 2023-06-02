@@ -39,6 +39,26 @@ const SearchBar = ({ data }) => {
         setShow(false)
         clearInput()
     }
+
+    const returnResults = () => {
+        return (<>
+            {
+                filteredData.length != 0 && (
+                    <Container className='rounded-3 mt-4' style={{background: "#ffffff"}}>
+                        {filteredData.slice(0, 10).map((value, key) => {
+                            return (
+                                <LodgingTileItem key={value.id} data={value} />
+                                // <p key={key._id}>{value.name}</p>
+                           
+                            )
+                        })
+                        }
+                    </Container>
+        )
+        }
+        </>)
+    }
+
     if (show) {
         return (
             <Alert variant="danger" onClose={() => dismissAlert()} dismissible className='mt-3 mx-3' style={{caretColor: "transparent"}}>
@@ -56,7 +76,7 @@ const SearchBar = ({ data }) => {
                         <Form>
                             <Form.Group controlId="filterAccomms"  className='d-flex align-items-center'>
                                 <Form.Control type="search" placeholder="Search for an accommodation..." className='m-3' onChange={handleFilter} value={wordEntered} />
-                                <Button type="submit" id="searchbtn" className ="rounded-1" variant="secondary">SEARCH</Button>
+                                {/* <Button onClick={() => returnResults()} id="searchbtn" className ="rounded-1" variant="secondary">SEARCH</Button> */}
                             </Form.Group>
                         </Form>
                     </Col>
@@ -74,6 +94,7 @@ const SearchBar = ({ data }) => {
                         {filteredData.slice(0, 10).map((value, key) => {
                             return (
                                 <LodgingTileItem key={value.id} data={value} />
+                                // <p key={key._id}>{value.name}</p>
                            
                             )
                         })

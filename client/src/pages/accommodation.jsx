@@ -1,5 +1,5 @@
 import './accom-style.css';
-import { Button, Row, Col, Carousel, Container, Modal } from 'react-bootstrap';
+import { Button, Row, Col, Carousel, Container, Spinner, Modal } from 'react-bootstrap';
 import React, { useState, useEffect } from "react";
 import { ReadStarRating, StarRating } from '../components/StarRating';
 import { useLocation } from 'react-router-dom';
@@ -60,6 +60,7 @@ function ImageModal(props) {
         </Modal>
     );
 }
+
 const AddToBookmarks = ({ bId }) => {
     const type = localStorage.getItem("userType");
     const id = localStorage.getItem("_id");
@@ -67,6 +68,7 @@ const AddToBookmarks = ({ bId }) => {
 
     const [fetchedData, setFetchedData] = useState([]);
     const [containsValue, setContainsValue] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         try {
@@ -80,6 +82,7 @@ const AddToBookmarks = ({ bId }) => {
             .then(data => {
                 console.log(data);
                 setFetchedData(data);
+                setIsLoading(false);
             })
         } catch (err) {
             console.log(err);
@@ -114,30 +117,41 @@ const AddToBookmarks = ({ bId }) => {
             .then((body) => {
                 console.log(body);
         });
-    };
 
-    if (type && containsValue == false) {
+        window.location.reload();
+    };
+    
+
+    if (!isLoading && type && containsValue == false) {
         return(
             <div className="map" style={{ margin: '0px', padding: '0px' }}>
                 <Button type="button" onClick={addBookmark} variant="light">Bookmark</Button>
             </div>
         );
-    } else if (type && containsValue === true) {
+    } else if (!isLoading && type && containsValue === true) {
         return(
             <p>Already Bookmarked.</p>
         );
-    } else {
+    } else if (!isLoading) {
         return(
             <p>Please log-in to bookmark!</p>
         );
+    } else {
+        return(
+            <Container className="d-flex align-items-center justify-content-center">
+                <Spinner animation="border" role="status" size="lg">
+                <span className="visually-hidden">Loading...</span>
+                </Spinner>
+            </Container>
+        )
     }
     
 }
-
+ 
 const Details = (data) => {
 
     return (
-        <Container className="desc_accom">
+        <Container className="desc_accom border-bottom pb-4">
             <h3 className='accomTitle'>{data.accomData.name}</h3>
             <Row className="accomRating">
                 <Col className='' lg={1}>
@@ -175,9 +189,7 @@ const Details = (data) => {
                     <p>{data.accomData.location}</p>
                 </Col>
                 <Col sm={2}>
-                    <div className="map" style={{ margin: '0px', padding: '0px' }}>
-                        <Button type="button">View Map</Button>
-                    </div>
+                    <AddToBookmarks bId={data.accomData._id}/>
                 </Col>
             </Row>
             <Row id="price" className="detail">
@@ -217,7 +229,7 @@ const Review = (data) => {
 
 
 function Accommodation(props) {
-    const location = useLocation()
+    const location = useLocation();
 
     return (<>
         <Slideshow />

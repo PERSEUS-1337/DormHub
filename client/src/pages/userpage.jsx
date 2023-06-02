@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
-import { Container, Col, Row, Image, Button, Modal, Form } from "react-bootstrap";
+import { Container, Col, Row, Image, Button, Modal, Form, Spinner } from "react-bootstrap";
 import FaveTileItem from "../components/FaveTileItem";
+import LodgingTileItem from "../components/LodgingTileItem";
 import EditUserProfile from "../components/EditUser";
 
 //BACKLOGS: Create functional loading before data appears
@@ -14,6 +15,7 @@ const ProfilePic = () => {
 const AccommTileList = () => {
   const [accommData, setAccommData] = useState(null);
   const [hasAccomm, setHasAccomm] = useState(true);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     const fetchAccomms = async () => {
@@ -41,16 +43,71 @@ const AccommTileList = () => {
     fetchAccomms();
   }, []);
 
+  const handleDeleteAccommodation = async (accommodationId) => {
+    const oId = localStorage.getItem("_id");
+    const jwt = localStorage.getItem("token");
+    setDeleting(true);
+
+    try {
+      const res = await fetch(`/api/v1/auth-required-func/accommodation/${accommodationId}/${oId}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${jwt}`,
+        },
+      });
+      const data = await res.json();
+      if (res.status === 200) {
+        console.log(data.message);
+        window.location.reload();
+      } else {
+        console.error(data.error);
+      }
+    } catch (err) {
+      console.error("Accommodation deletion error.", err);
+    }
+  };
+  const handleArchiveAccommodation = async (accommodationId) => {
+    const oId = localStorage.getItem("_id");
+    const jwt = localStorage.getItem("token");
+    try {
+      const res = await fetch(`/api/v1/auth-required-func/accommodation/archive/${accommodationId}/${oId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${jwt}`,
+        },
+      });
+      const data = await res.json();
+      if (res.status === 200) {
+        console.log(`${data.message}, id: ${accommodationId}`);
+      } else {
+        console.error(data.error);
+      }
+    } catch (err) {
+      console.error("Accommodation archiving error.", err);
+    }
+  };
+
   if (hasAccomm === false) {
     return (
       <p>No Accommodations Uploaded Yet.</p>
     )
   } else {
-    const LodgingList = accommData && accommData.map(data => <FaveTileItem key={data._id} data={data} />)
+    const LodgingList = accommData && accommData.map(data => 
+    <>
+      <LodgingTileItem key={data._id} data={data} />
+      <Button variant="danger" onClick={() => handleDeleteAccommodation(data._id)} disabled={deleting}>
+        Delete
+      </Button>
+      <Button variant="primary" onClick={() => handleArchiveAccommodation(data._id)}>
+        Archive
+      </Button>
+    </>
+    )
     return (
       <>
         {LodgingList}
-
       </>
     )
   }
@@ -59,6 +116,7 @@ const AccommTileList = () => {
 const FaveTileList = () => {
   const [favData, setFavData] = useState(null);
   const [hasFav, setHasFav] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchBookmarks = async () => {
@@ -75,11 +133,12 @@ const FaveTileList = () => {
         });
         const data = await res.json();
 
-        if (data.error) {
+        if (data.error || data.length === 0) {
           setHasFav(false);
         } else {
           setFavData(data);
         }
+        setIsLoading(false);
       } catch (err) {
         console.error('Bookmark fetching error.', err);
       }
@@ -88,18 +147,28 @@ const FaveTileList = () => {
     fetchBookmarks();
   }, []);
 
-  if (hasFav === false) {
+  console.log(favData);
+
+  if (isLoading === true) {
     return (
-      <p>No Favorites Yet.</p>
+      <Spinner animation="border" variant="secondary" role="status" size="lg">
+        <span className="visually-hidden">Loading...</span>
+      </Spinner>
     )
   } else {
-    const BkmarkList = favData && favData.map(data => <FaveTileItem key={data.id} data={data} />)
-    return (
-      <>
-        {BkmarkList}
-      </>
-    )
-  }
+    if (hasFav === false) {
+      return (
+        <p>No Favorites Yet.</p>
+      )
+    } else {
+      const BkmarkList = favData && favData.map(data => <FaveTileItem key={data.id} data={data} />)
+      return (
+        <>
+          {BkmarkList}
+        </>
+      )
+    }
+  } 
 }
 
 const CheckIfOwner = () => {
@@ -111,8 +180,9 @@ const CheckIfOwner = () => {
   const [type, setAccommodationType] = useState([]);
   const [amenity, setAccommodationAmenity] = useState([]);
   const [accommData, setAccommData] = useState([]);
+  const [loadingPostResult, setLoadingPostResult] = useState(false);
   useEffect(() => {
-    const fetchAccommodations = async () => {
+      const fetchAccommodations = async () => {
       const oid = localStorage.getItem("_id");
       const jwt = localStorage.getItem("token");
 
@@ -132,7 +202,8 @@ const CheckIfOwner = () => {
       } catch (err) {
         console.error('Accommodations fetching error.', err);
       }
-    }; fetchAccommodations();
+    }; 
+    fetchAccommodations();
   }, []);
   const openModal = () => {
     setShowModal(true);
@@ -147,11 +218,13 @@ const CheckIfOwner = () => {
 
     const oId = localStorage.getItem("_id");
     const jwt = localStorage.getItem("token");
+    setLoadingPostResult(true);
 
     const formData = {
       oId, name, desc, price, location, type, amenity
     };
-    console.log(formData)
+    console.log(formData);
+
     try {
       const res = await fetch("/api/v1/auth-required-func/accommodation", {
         method: "POST",
@@ -164,74 +237,27 @@ const CheckIfOwner = () => {
       const data = await res.json();
       if (res.status === 201) {
         console.log(data.msg);
+        closeModal();
+        window.location.reload();
       } else {
         console.error(data.error);
+        alert("Creation failed; fill-up all fields.");
       }
+      setLoadingPostResult(false);
     } catch (err) {
       console.error("Accommodation creation error.", err);
     }
   };
-  const handleDeleteAccommodation = async (accommodationId) => {
-    const oId = localStorage.getItem("_id");
-    const jwt = localStorage.getItem("token");
-
-    try {
-      const res = await fetch(`/api/v1/auth-required-func/accommodation/${accommodationId}/${oId}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${jwt}`,
-        },
-      });
-      const data = await res.json();
-      if (res.status === 200) {
-        console.log(data.message);
-      } else {
-        console.error(data.error);
-      }
-    } catch (err) {
-      console.error("Accommodation deletion error.", err);
-    }
-  };
-  const handleArchiveAccommodation = async (accommodationId) => {
-    const oId = localStorage.getItem("_id");
-    const jwt = localStorage.getItem("token");
-    try {
-      const res = await fetch(`/api/v1/auth-required-func/accommodation/archive/${accommodationId}/${oId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${jwt}`,
-        },
-      });
-      const data = await res.json();
-      if (res.status === 200) {
-        console.log(data.message);
-      } else {
-        console.error(data.error);
-      }
-    } catch (err) {
-      console.error("Accommodation archiving error.", err);
-    }
-  };
+  
   const userType = localStorage.getItem("userType");
 
   if (userType === "owner") {
     return (
       <>
         <h3>Accommodations:</h3>
-        <AccommTileList />
-        {accommData.map((accommodation) => (
-          <div key={accommodation._id} className="mb-3">
-            <Button variant="danger" onClick={() => handleDeleteAccommodation(accommodation._id)}>
-              Delete
-            </Button>
-            <Button variant="primary" onClick={() => handleArchiveAccommodation(accommodation._id)}>
-              Archive
-            </Button>
-          </div>
-        ))}
-
+        <div key={accommData._id} className="mb-3">
+          <AccommTileList data={accommData} />
+        </div>
         <Button variant="primary" className="mb-3" onClick={openModal}>
           Add Accommodation
         </Button>
@@ -300,15 +326,25 @@ const CheckIfOwner = () => {
                   onChange={(e) => setAccommodationAmenity(e.target.value)}
                 />
               </Form.Group>
+              
+              <Button className="" variant="secondary" type="submit" disabled={loadingPostResult}>
+                {
+                  loadingPostResult ? (
+                    <Spinner animation="border" variant="primary" role="status" size="sm" disabled>
+                      <span className="visually-hidden">Loading...</span>
+                    </Spinner>
 
-              <Button variant="primary" type="submit">
-                Save
+                  ) :(
+                  "Save"
+                  )
+                }
               </Button>
+              
             </Form>
           </Modal.Body>
         </Modal>
-
-
+    
+      
       </>
     );
   } else {
@@ -318,6 +354,7 @@ const CheckIfOwner = () => {
 
 const UserPage = () => {
   const [userData, setUserData] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -337,6 +374,7 @@ const UserPage = () => {
         console.log(data);
         const userType = localStorage.getItem("userType");
         console.log(userType)
+        setIsLoading(false);
       } catch (err) {
         console.error('User fetching error.', err);
       }
@@ -347,20 +385,33 @@ const UserPage = () => {
   return (
     <>
       <Container className="mt-5 mb-3 pb-4 d-flex flex-column align-items-left border-bottom">
-        <Row>
-          <Col xs={2}>
-            <ProfilePic />
-          </Col>
-          <Col xs={7}>
-            <h2>{`${userData.fname} ${userData.lname}`}</h2>
-            <h5 className="lead">From Manila, Philippines</h5>
-            <h5 className="lead">Email: {`${userData.email}`}</h5>
-            <h5 className="lead">Contact Number: 09950055973 </h5>
-          </Col>
-          <Col xs={3} className="d-flex justify-content-end align-items-start">
-            <EditUserProfile key={userData.id} data={userData} />
-          </Col>
-        </Row>
+        <>
+        {
+          isLoading ? (
+            <div className="d-flex justify-content-center align-items-center">
+              <Spinner animation="border" variant="primary" role="status" size="lg">
+                <span className="visually-hidden">Loading...</span>
+              </Spinner>
+            </div>
+          ) : (
+            <Row>
+              <Col xs={2}>
+                <ProfilePic />
+              </Col>
+              <Col xs={7}>
+                <h2>{`${userData.fname} ${userData.lname}`}</h2>
+                <h5 className="lead">From Manila, Philippines</h5>
+                <h5 className="lead">Email: {`${userData.email}`}</h5>
+                <h5 className="lead">Contact Number: 09950055973 </h5>
+              </Col>
+              <Col xs={3} className="d-flex justify-content-end align-items-start">
+                <EditUserProfile key={userData.id} data={userData} />
+              </Col>
+            </Row>
+          )
+        }
+        
+        </>
       </Container>
       <Container>
         <CheckIfOwner />

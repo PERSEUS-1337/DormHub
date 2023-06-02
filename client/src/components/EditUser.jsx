@@ -3,12 +3,11 @@ import { Modal, Button , Form } from 'react-bootstrap';
 
 
 const EditUserProfile = ({data}) => {
-    const [form, setForm] = useState({"fname": data.fname, "lname": data.lname});
+    const [form, setForm] = useState({});
     const [errors, setErrors] = useState({});
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
-
     const setField = (field, value) => {
         setForm({
           ...form,
@@ -68,8 +67,8 @@ const EditUserProfile = ({data}) => {
               <Form.Group className="mb-3" controlId="fname">
                 <Form.Label>First Name</Form.Label>
                 <Form.Control
-                  // placeholder={data.fname}
-                  value={form.fname}
+                  placeholder={data.fname}
+                  defaultValue={form.fname || data.fname}
                   onChange={(e) => {
                     if(e.target.value == "" || e.target.value == null){
                       setField("fname", "");
@@ -84,8 +83,8 @@ const EditUserProfile = ({data}) => {
               <Form.Group className="mb-3" controlId="lname">
                 <Form.Label>Last Name</Form.Label>
                 <Form.Control
-                  // placeholder={data.lname}
-                  value={form.lname}
+                  placeholder={data.lname}
+                  defaultValue={form.lname || data.lname}
                   onChange={(e) => {
                     if(e.target.value == "" || e.target.value == null){
                       setField("lname", "");
@@ -93,7 +92,7 @@ const EditUserProfile = ({data}) => {
                       setField("lname", e.target.value);
                     }
                   }
-                }
+                  }
                   isInvalid={!!errors.lname}
                 />
               </Form.Group>
