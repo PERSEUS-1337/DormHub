@@ -10,7 +10,7 @@ const { Storage } = require('@google-cloud/storage');
 
 const storage = new Storage({
     projectId: 'dormhub-128-e8l',
-    keyFilename: '\middleware\\database\\dormhub-128-e8l-c813bcd1295a.json',
+    keyFilename: 'middleware/database/dormhub-128-e8l-c813bcd1295a.json',
 });
 
 const bucketName = 'dormhub-128-e8l';
@@ -236,14 +236,13 @@ const checkBookmarkExists = async (id, uId) => {
 
 // UPLOAD USER PFP
 const uploadPfpUser = async(req, res) => {
-    const { id } = req.params;
+    const { uId } = req.params;
 
-    if (!mongooseObjectId.isValid(id)) {
+    if (!mongooseObjectId.isValid(uId)) {
         return res.json({ err: 'Not a valid userid' });
     }
 
     upload.single('pfp')(req, res, (err) => {
-        console.log("pfp");
 
         if (err) {
             console.error(err);
@@ -269,10 +268,18 @@ const uploadPfpUser = async(req, res) => {
             return res.status(400).json({ error: 'Failed to upload picture.' });
         });
 
-        blobStream.on('finish', () => {
-            const publicUrl = `https://storage.googleapis.com/${bucketName}/${blob.name}`;
+        blobStream.on('finish', async () => {
+            const signedUrl = await blob.getSignedUrl({
+                action: 'read',
+                expires: '03-01-2030', // Set an appropriate expiration date
+              });
+          
+            const publicUrl = signedUrl[0];
+            // Save the publicUrl or blob.name in your database for the user.
+            
+            // const publicUrl = `https://storage.googleapis.com/${bucketName}/${blob.name}`;
 
-            User.findByIdAndUpdate(id, { pfp: publicUrl }, { new: true })
+            User.findByIdAndUpdate(uId, { pfp: publicUrl }, { new: true })
                 .then(updatedUser => {
                     // Send the updated user as the response
                     return res.status(200).json({ msg: { url: publicUrl, user: updatedUser } });
@@ -290,13 +297,13 @@ const uploadPfpUser = async(req, res) => {
 
 // GET USER PFP
 const getPfpUser = async(req, res) => {
-    const { id } = req.params;
+    const { uId } = req.params;
 
-    if (!mongooseObjectId.isValid(id)) {
+    if (!validator.default.isMongoId(uId)) {
         return res.json({ err: 'Not a valid userid' });
     }
 
-    const user = await User.findById(id);
+    const user = await User.findById(uId);
 
     if (!user) {
         return res.json({ err: 'User does not exist' });

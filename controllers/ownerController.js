@@ -10,7 +10,7 @@ const { Storage } = require('@google-cloud/storage');
 
 const storage = new Storage({
     projectId: 'dormhub-128-e8l',
-    keyFilename: '\middleware\\database\\dormhub-128-e8l-c813bcd1295a.json',
+    keyFilename: '/middleware/database/dormhub-128-e8l-c813bcd1295a.json',
 });
 
 const bucketName = 'dormhub-128-e8l';
@@ -259,9 +259,9 @@ const checkBookmarkExists = async (id, oId) => {
 
 // UPLOAD OWNER PFP
 const uploadPfpOwner = async(req, res) => {
-    const { id } = req.params;
+    const { oId } = req.params;
 
-    if (!mongooseObjectId.isValid(id)) {
+    if (!mongooseObjectId.isValid(oId)) {
         return res.json({ err: 'Not a valid ownerid' });
     }
 
@@ -292,10 +292,18 @@ const uploadPfpOwner = async(req, res) => {
             return res.status(400).json({ error: 'Failed to upload picture.' });
         });
 
-        blobStream.on('finish', () => {
-            const publicUrl = `https://storage.googleapis.com/${bucketName}/${blob.name}`;
+        blobStream.on('finish', async () => {
+            const signedUrl = await blob.getSignedUrl({
+                action: 'read',
+                expires: '03-01-2030', // Set an appropriate expiration date
+            });
+          
+            const publicUrl = signedUrl[0];
+            // Save the publicUrl or blob.name in your database for the user.
+            
+            // const publicUrl = `https://storage.googleapis.com/${bucketName}/${blob.name}`;
 
-            Owner.findByIdAndUpdate(id, { pfp: publicUrl }, { new: true })
+            Owner.findByIdAndUpdate(oId, { pfp: publicUrl }, { new: true })
                 .then(updatedOwner => {
                     // Send the updated owner as the response
                     return res.status(200).json({ msg: { url: publicUrl, owner: updatedOwner } });
@@ -313,13 +321,13 @@ const uploadPfpOwner = async(req, res) => {
 
 // GET OWNER PFP
 const getPfpOwner = async(req, res) => {
-    const { id } = req.params;
+    const { oId } = req.params;
 
-    if (!mongooseObjectId.isValid(id)) {
+    if (!mongooseObjectId.isValid(oId)) {
         return res.json({ err: 'Not a valid ownerid' });
     }
 
-    const owner = await Owner.findById(id);
+    const owner = await Owner.findById(oId);
 
     if (!owner) {
         return res.json({ err: 'Owner does not exist' });
