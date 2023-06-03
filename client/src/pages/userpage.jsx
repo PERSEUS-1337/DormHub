@@ -5,57 +5,6 @@ import EditUserProfile from "../components/EditUser";
 
 //BACKLOGS: Create functional loading before data appears
 
-const ProfilePic = () => {
-  const [hasPfp, setHasPfp] = useState(true);
-  const [pfp, setPfp] = useState(null);
-
-  useEffect(() => {
-    const fetchPfp = async () => {
-      const type = localStorage.getItem('userType');
-      const uid = localStorage.getItem('_id');
-      const jwt = localStorage.getItem('token');
-      // console.log(type);
-      // console.log(uid);
-
-      try {
-        const res = await fetch(`/api/v1/auth-required-func/${type}/pfp/${uid}`, {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${jwt}`,
-          },
-        });
-        const data = await res.json();
-        // console.log(data.pfp);
-        setPfp(data.pfp);
-
-        if (data.error) {
-          setHasPfp(false);
-        } 
-      } catch (err) {
-        console.error('PFP fetching error.', err);
-      }
-    };
-    fetchPfp();
-  }, []);
-  if (hasPfp === false) {
-    return (
-      <p>No PFP.</p>
-    )
-  } else {
-    console.log(pfp);
-    if (pfp === "null"){
-      // console.log("pfp!= " + pfp);
-      return (
-        <Image className="rounded-circle w-100 h-100" src="https://i.pinimg.com/222x/57/70/f0/5770f01a32c3c53e90ecda61483ccb08.jpg" />
-      )
-    } else {
-      return (
-        <Image className="rounded-circle w-100 h-100" src="https://pixy.org/src/364/thumbs350/3648362.jpg" />
-      )
-    }
-  }
-}
-
 const AccommTileList = () => {
   const [accommData, setAccommData] = useState(null);
   const [hasAccomm, setHasAccomm] = useState(true);
@@ -363,6 +312,8 @@ const CheckIfOwner = () => {
 
 const UserPage = () => {
   const [userData, setUserData] = useState({});
+  const [hasPfp, setHasPfp] = useState(true);
+  const [pfp, setPfp] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -385,16 +336,51 @@ const UserPage = () => {
       } catch (err) {
         console.error('User fetching error.', err);
       }
+
+      try {
+        const res = await fetch(`/api/v1/auth-required-func/${type}/pfp/${uid}`, {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${jwt}`,
+          },
+        });
+        const data = await res.json();
+        // console.log(data.pfp);
+        setPfp(data.pfp);
+
+        if (data.error) {
+          setHasPfp(false);
+        } 
+      } catch (err) {
+        console.error('PFP fetching error.', err);
+      }      
     };
     fetchData();
   }, []);
-
+  console.log(pfp);
+  console.log(userData)
   return (
     <>
       <Container className="mt-5 mb-3 pb-4 d-flex flex-column align-items-left border-bottom">
         <Row>
           <Col xs={2}>
-            {/* <ProfilePic /> */}
+          {hasPfp === false ? (
+              <p>No PFP.</p>
+            ) : (
+              <>
+                {pfp === "null" ? (
+                  <Image
+                    className="rounded-circle w-100 h-100"
+                    src="https://i.pinimg.com/222x/57/70/f0/5770f01a32c3c53e90ecda61483ccb08.jpg"
+                  />
+                ) : (
+                  <Image
+                    className="rounded-circle w-100 h-100"
+                    src={pfp}
+                  />
+                )}
+              </>
+            )}
           </Col>
           <Col xs={7}>
             <h2>{`${userData.fname} ${userData.lname}`}</h2>

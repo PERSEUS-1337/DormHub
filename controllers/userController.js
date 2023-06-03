@@ -143,7 +143,7 @@ const getBookmarkUser = async (req, res)  => {
       return res.status(404).json({err: 'USER: NON EXISTENT'});
     }
 
-    const bookmarks = user.bookmark
+    const bookmarks = user.bookmarks
 
 
     if (bookmarks.length===0) {

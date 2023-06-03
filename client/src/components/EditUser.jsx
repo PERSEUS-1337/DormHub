@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState , useRef} from 'react';
 import { Modal, Button , Form } from 'react-bootstrap';
 
 
@@ -97,7 +97,7 @@ const EditUserProfile = ({data}) => {
                   isInvalid={!!errors.lname}
                 />
               </Form.Group>
-            
+              <UploadPictureButton/>
           </Modal.Body>
             <Modal.Footer>
                 <Button variant="primary" onClick={handleClose}>
@@ -112,5 +112,33 @@ const EditUserProfile = ({data}) => {
       </>
     );
 }
+
+const UploadPictureButton = () => {
+  const [selectedFile, setSelectedFile] = useState(null);
+  const fileInputRef = useRef(null);
+
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    setSelectedFile(file);
+    // You can perform additional operations with the selected file, such as uploading it to a server
+  };
+
+  const handleClick = () => {
+    fileInputRef.current.click();
+  };
+
+  return (
+    <>
+      <input
+        type="file"
+        ref={fileInputRef}
+        style={{ display: 'none' }}
+        onChange={handleFileChange}
+      />
+      <button onClick={handleClick}>Upload Picture</button>
+      {selectedFile && <p>Selected File: {selectedFile.name}</p>}
+    </>
+  );
+};
 
 export default EditUserProfile;
