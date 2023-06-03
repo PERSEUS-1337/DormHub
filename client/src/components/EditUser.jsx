@@ -55,23 +55,34 @@ const EditUserProfile = ({data}) => {
                 console.log(body);
         });
 
-        fetch(`/api/v1/auth-required-func/${type}/upload-pfp/${oid}`, {
-          method: 'POST',
-          headers: {
-            //'Content-Type': 'multipart/form-data',
-            Authorization: `Bearer ${jwt}`
-          },
-          body: formData,
-        })
-          .then(response => response.json())
-          .then(data => {
-            // Handle the response data
-            console.log(data);
-          })
-          .catch(error => {
-            // Handle the error
-            console.error(error);
-          });
+        const image = new Image();
+        image.src = URL.createObjectURL(file);
+        image.onload = function() {
+        const width = this.width;
+        const height = this.height;
+          
+        if (width !== height) {
+          // Alert the user that the picture is not square
+          alert("Please upload a square profile picture.");
+        } else {
+            fetch(`/api/v1/auth-required-func/${type}/upload-pfp/${oid}`, {
+              method: 'POST',
+              headers: {
+                //'Content-Type': 'multipart/form-data',
+                Authorization: `Bearer ${jwt}`
+              },
+              body: formData,
+            })
+              .then(response => response.json())
+              .then(data => {
+                // Handle the response data
+                console.log(data);
+              })
+              .catch(error => {
+                // Handle the error
+                console.error(error);
+              });
+            }}
     };
   
     return (
@@ -136,6 +147,5 @@ const EditUserProfile = ({data}) => {
       </>
     );
 }
-
 
 export default EditUserProfile;
