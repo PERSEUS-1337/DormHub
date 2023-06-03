@@ -21,9 +21,9 @@ const storageBucket = storage.bucket(bucketName);
 
 const upload = multer({
     storage: multer.memoryStorage(),
-    // limits: {
-    //     fileSize: 5 * 1024 * 1024, // 5MB limit
-    // },
+    limits: {
+        fileSize: 5 * 1024 * 1024, // 5MB limit
+    },
 });
 
 // JWT
@@ -243,7 +243,7 @@ const uploadPfpUser = async(req, res) => {
     }
 
     upload.single('pfp')(req, res, (err) => {
-        console.log("pfp");
+        console.log(req.file);
 
         if (err) {
             console.error(err);
@@ -269,8 +269,16 @@ const uploadPfpUser = async(req, res) => {
             return res.status(400).json({ error: 'Failed to upload picture.' });
         });
 
-        blobStream.on('finish', () => {
-            const publicUrl = `https://storage.googleapis.com/${bucketName}/${blob.name}`;
+        blobStream.on('finish', async () => {
+            const signedUrl = await blob.getSignedUrl({
+                action: 'read',
+                expires: '03-01-2030', // Set an appropriate expiration date
+              });
+          
+            const publicUrl = signedUrl[0];
+            // Save the publicUrl or blob.name in your database for the user.
+            
+            // const publicUrl = `https://storage.googleapis.com/${bucketName}/${blob.name}`;
 
             User.findByIdAndUpdate(uId, { pfp: publicUrl }, { new: true })
                 .then(updatedUser => {

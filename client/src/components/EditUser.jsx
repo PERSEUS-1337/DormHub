@@ -40,6 +40,7 @@ const EditUserProfile = ({data}) => {
 
         const formData = new FormData();
         formData.append('pfp', file);
+        const boundary = Math.random().toString().substr(2); // Generate a random boundary
 
         fetch(`/api/v1/auth-required-func/${type}/${oid}`, {
             method: "PATCH",
@@ -57,9 +58,9 @@ const EditUserProfile = ({data}) => {
         fetch(`/api/v1/auth-required-func/${type}/upload-pfp/${oid}`, {
           method: 'POST',
           headers: {
-            "Content-Type": "application/json",
+            //'Content-Type': 'multipart/form-data',
             Authorization: `Bearer ${jwt}`
-        },
+          },
           body: formData,
         })
           .then(response => response.json())
@@ -117,9 +118,9 @@ const EditUserProfile = ({data}) => {
                   isInvalid={!!errors.lname}
                 />
               </Form.Group>
-              <Form.Group className="mb-3" controlId="pfp">
+              <Form.Group className="mb-3" controlId="pfp" encType="multipart/form-data">
                 <Form.Label>Profile Picture</Form.Label>
-                <Form.Control type="file" accept="image/*" onChange={(e) => setFile(e.target.files[0])} />
+                <Form.Control type="file" name="pfp" accept="image/*" onChange={(e) => setFile(e.target.files[0])} />
               </Form.Group>
           </Modal.Body>
             <Modal.Footer>
