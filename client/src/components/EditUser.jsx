@@ -8,6 +8,8 @@ const EditUserProfile = ({data}) => {
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+    const [file, setFile] = useState(null);
+
 
     const setField = (field, value) => {
         setForm({
@@ -36,7 +38,9 @@ const EditUserProfile = ({data}) => {
             lname: form.lname,
         };
 
-        
+        const formData = new FormData();
+        formData.append('pfp', file);
+
         fetch(`/api/v1/auth-required-func/${type}/${oid}`, {
             method: "PATCH",
             headers: {
@@ -50,7 +54,23 @@ const EditUserProfile = ({data}) => {
                 console.log(body);
         });
 
-        window.location.reload();
+        fetch(`/api/v1/auth-required-func/${type}/upload-pfp/${oid}`, {
+          method: 'POST',
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${jwt}`
+        },
+          body: formData,
+        })
+          .then(response => response.json())
+          .then(data => {
+            // Handle the response data
+            console.log(data);
+          })
+          .catch(error => {
+            // Handle the error
+            console.error(error);
+          });
     };
   
     return (
@@ -63,7 +83,7 @@ const EditUserProfile = ({data}) => {
           <Modal.Header closeButton>
             <Modal.Title>Edit Profile Details</Modal.Title>
           </Modal.Header>
-          <Form onSubmit={saveChanges}>
+          <Form onSubmit={saveChanges} encType="multipart/form-data">
           <Modal.Body>
               <Form.Group className="mb-3" controlId="fname">
                 <Form.Label>First Name</Form.Label>
@@ -97,7 +117,10 @@ const EditUserProfile = ({data}) => {
                   isInvalid={!!errors.lname}
                 />
               </Form.Group>
-              <UploadPictureButton/>
+              <Form.Group className="mb-3" controlId="pfp">
+                <Form.Label>Profile Picture</Form.Label>
+                <Form.Control type="file" accept="image/*" onChange={(e) => setFile(e.target.files[0])} />
+              </Form.Group>
           </Modal.Body>
             <Modal.Footer>
                 <Button variant="primary" onClick={handleClose}>
@@ -113,32 +136,5 @@ const EditUserProfile = ({data}) => {
     );
 }
 
-const UploadPictureButton = () => {
-  const [selectedFile, setSelectedFile] = useState(null);
-  const fileInputRef = useRef(null);
-
-  const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    setSelectedFile(file);
-    // You can perform additional operations with the selected file, such as uploading it to a server
-  };
-
-  const handleClick = () => {
-    fileInputRef.current.click();
-  };
-
-  return (
-    <>
-      <input
-        type="file"
-        ref={fileInputRef}
-        style={{ display: 'none' }}
-        onChange={handleFileChange}
-      />
-      <button onClick={handleClick}>Upload Picture</button>
-      {selectedFile && <p>Selected File: {selectedFile.name}</p>}
-    </>
-  );
-};
 
 export default EditUserProfile;

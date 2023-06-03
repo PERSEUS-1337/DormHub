@@ -259,9 +259,9 @@ const checkBookmarkExists = async (id, oId) => {
 
 // UPLOAD OWNER PFP
 const uploadPfpOwner = async(req, res) => {
-    const { id } = req.params;
+    const { oId } = req.params;
 
-    if (!mongooseObjectId.isValid(id)) {
+    if (!mongooseObjectId.isValid(oId)) {
         return res.json({ err: 'Not a valid ownerid' });
     }
 
@@ -295,7 +295,7 @@ const uploadPfpOwner = async(req, res) => {
         blobStream.on('finish', () => {
             const publicUrl = `https://storage.googleapis.com/${bucketName}/${blob.name}`;
 
-            Owner.findByIdAndUpdate(id, { pfp: publicUrl }, { new: true })
+            Owner.findByIdAndUpdate(oId, { pfp: publicUrl }, { new: true })
                 .then(updatedOwner => {
                     // Send the updated owner as the response
                     return res.status(200).json({ msg: { url: publicUrl, owner: updatedOwner } });

@@ -236,9 +236,9 @@ const checkBookmarkExists = async (id, uId) => {
 
 // UPLOAD USER PFP
 const uploadPfpUser = async(req, res) => {
-    const { id } = req.params;
+    const { uId } = req.params;
 
-    if (!mongooseObjectId.isValid(id)) {
+    if (!mongooseObjectId.isValid(uId)) {
         return res.json({ err: 'Not a valid userid' });
     }
 
@@ -272,7 +272,7 @@ const uploadPfpUser = async(req, res) => {
         blobStream.on('finish', () => {
             const publicUrl = `https://storage.googleapis.com/${bucketName}/${blob.name}`;
 
-            User.findByIdAndUpdate(id, { pfp: publicUrl }, { new: true })
+            User.findByIdAndUpdate(uId, { pfp: publicUrl }, { new: true })
                 .then(updatedUser => {
                     // Send the updated user as the response
                     return res.status(200).json({ msg: { url: publicUrl, user: updatedUser } });
