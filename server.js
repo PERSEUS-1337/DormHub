@@ -39,8 +39,8 @@ app.use(bodyParser.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
 app.use(express.json())
 
-app.use((err, req, res, next) => {
-  console.log(err);
+app.use((req, res, next) => {
+  console.info(`[${new Date().toLocaleString()}] [${req.method}] [${req.originalUrl}] [${req.ip}]`);
   next();
 });
 
