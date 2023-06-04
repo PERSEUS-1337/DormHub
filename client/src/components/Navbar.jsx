@@ -1,82 +1,79 @@
 import React, { useState, useEffect } from 'react'
-import { Navbar, Nav, Container, OverlayTrigger, Popover, Row, Spinner } from 'react-bootstrap'
+import { Navbar, Nav, Container, Dropdown, Button, OverlayTrigger, Popover, Row } from 'react-bootstrap'
 import NavItem from './NavItem'
 import { FaHeart, FaSignInAlt, FaLaughWink, FaUser, FaSignOutAlt } from 'react-icons/fa'
-import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 const handleLogout = () => {
     localStorage.clear();
 }
 
 
-const PopOver = ({ data }) => {
-    const id = localStorage.getItem("_id");
 
-    if (id) {
-        return (
-            <OverlayTrigger
-                trigger="click"
-                key="bottom"
-                placement="bottom-start"
-                rootClose
-                overlay={
-                    <Popover id={`popover-positioned-bottom-start`}>
-                        <Popover.Body>
-                            <Container>
-                                <Row>
-                                    <Nav.Link href="/user">
-                                        <label className='d-flex align-items-center' style={{cursor: "pointer"}}>
-                                            <FaLaughWink className='mx-2' color='#403234' size={20} />   
-                                            <p className='mx-2'>Profile</p>   
-                                        </label>
-                                    </Nav.Link>
-                                </Row>
-                                <Row>
-                                    <Nav.Link href="/login" onClick={handleLogout}>
-                                        <label className='d-flex align-items-center' style={{cursor: "pointer"}}>
-                                            <FaSignOutAlt className='mx-2' color='#403234' size={20} />   
-                                            <p className='mx-2'>Logout</p>   
-                                        </label>
-                                    </Nav.Link>
-                                            
-                                </Row>
-                            </Container>
-                        </Popover.Body>
-                    </Popover>
-                }
-            >
-                {
-                    data && data ? (
-                        <Nav.Link style={{ color: "white" }}>
-                            <label className='d-flex align-items-center' style={{cursor: "pointer"}}>
-                                <FaLaughWink className='mx-2' color='#ffffff' size={20} />   
-                                <p className='mx-2'>{ data }</p>   
-                            </label>
-                        </Nav.Link>
-                    ) : (
-                        <Nav.Link style={{ color: "white" }}>
-                            <label className='d-flex align-items-center' style={{cursor: "pointer"}}>
-                                <FaLaughWink className='mx-2' color='#ffffff' size={20} />   
-                                <Spinner animation="border" variant="secondary" role="status" size="sm" disabled>
-                                    <span className="visually-hidden">Loading...</span>
-                                </Spinner> 
-                            </label>
-                        </Nav.Link>
-                    )
-                }
-                
-            </OverlayTrigger>
-        )
-    } else {
-        return (
-            <Nav.Link style={{ color: "white" }} href='/login'>
-                <label className='d-flex align-items-center' style={{cursor: "pointer"}}>
-                    <FaLaughWink className='mx-2' color='#ffffff' size={20} />   
-                    <p className='mx-2'>Login</p>   
-                </label>
-            </Nav.Link>
-        )
-    }
+const PopOver = ({ data }) => {
+    // const navigateTo = useNavigate()
+    
+    // const handleLogin = ({ data }) => {
+    
+    //     if (data == {}) {
+    //         navigateTo("/user")
+    //     } else {
+    //         console.log("You're not logged in")
+    //     }
+    // }
+
+    return (
+        <OverlayTrigger
+            trigger="click"
+            key="bottom"
+            placement="bottom-start"
+            rootClose
+            overlay={
+                <Popover id={`popover-positioned-bottom-start`}>
+                    <Popover.Body>
+                        <Container>
+                            <Row>
+                                <Nav.Link href='/user'>
+                                    <label className='d-flex align-items-center' style={{cursor: "pointer"}}>
+                                        <FaLaughWink className='mx-2' color='#403234' size={20} />   
+                                        <p className='mx-2'>Profile</p>   
+                                    </label>
+                                </Nav.Link>
+                            </Row>
+                            <Row>
+                                <Nav.Link href="/login" onClick={handleLogout}>
+                                    <label className='d-flex align-items-center' style={{cursor: "pointer"}}>
+                                        <FaSignOutAlt className='mx-2' color='#403234' size={20} />   
+                                        <p className='mx-2'>Logout</p>   
+                                    </label>
+                                </Nav.Link>
+                                        
+                            </Row>
+                        </Container>
+                    </Popover.Body>
+                </Popover>
+            }
+        >
+        {
+                data && data ?
+                <Nav.Link style={{ color: "white" }}>
+                    <label className='d-flex align-items-center' style={{cursor: "pointer"}}>
+                        <FaLaughWink className='mx-2' color='#ffffff' size={20} />   
+                        <p className='mx-2'>{ data }</p>   
+                    </label>
+                </Nav.Link>
+                    :
+                <Nav.Link style={{ color: "white" }} href='/login'>
+                    <label className='d-flex align-items-center' style={{cursor: "pointer"}}>
+                        <FaLaughWink className='mx-2' color='#ffffff' size={20} />   
+                        <p className='mx-2'>Login</p>   
+                    </label>
+                </Nav.Link>
+        }
+        
+
+        </OverlayTrigger>
+    )
 }
 
 
@@ -87,7 +84,6 @@ const NavBar = () => {
     //     setIsVisible(!isVisible)
     // }
     // let url = "/login"
-    const id = localStorage.getItem("_id");
     const [userData, setUserData] = useState({});
     const [isLoading, setIsLoading] = useState(true);
 
@@ -98,7 +94,7 @@ const NavBar = () => {
         const jwt = localStorage.getItem("token");
 
         try {
-            const res = await fetch(`/api/v1/auth-required-func/${uid}`, {
+            const res = await fetch(`/api/v1/auth-required-func/${type}/${uid}`, {
             headers: {
                 "Content-Type": "application/json",
                 Authorization : `Bearer ${jwt}`
@@ -106,6 +102,7 @@ const NavBar = () => {
             });
             const data = await res.json();
             setUserData(data);
+            // setUserName(data.fname)
             setIsLoading(false);
             console.log(data);
             } catch (err) {
@@ -115,6 +112,7 @@ const NavBar = () => {
         fetchData();
         
     }, []); 
+    console.log("name: " + userData)
 
     // if (userData && userData) {
     //     url = "/user"
@@ -157,7 +155,8 @@ const NavBar = () => {
                      </Nav.Link>
                     
                     {/* {navList} */}
-                    <PopOver data={ userData.fname } />   
+                    <PopOver data={ userData.fname } />
+                    
                 </Nav>
                 </Navbar.Collapse>
             </Container>

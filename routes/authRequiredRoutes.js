@@ -16,24 +16,29 @@ const requireAuth = require('../middleware/requireAuth');
 // CONTROLLERS
 const {
     getAllUsers,
-    getAllOwners,
     getUserData,
     editUserData,
-    getBookmark,
-    addToBookmark,
-    deleteBookmark,
-    getAccommodationOwner,
-    uploadPfp,
-    getPfp
+    getBookmarkUser,
+    addToBookmarkUser,
+    deleteBookmarkUser
 } = require('../controllers/userController');
+
+const {
+    getAllOwners, 
+    getOwner,
+    getBookmarkOwner,
+    addToBookmarkOwner,
+    deleteBookmarkOwner,
+    editOwnerData,
+    getAccommodationOwner
+} = require('../controllers/ownerController');
 
 const {
     getAccommodation,
     createAccommodation,
     updateAccommodation,
     deleteAccommodation,
-    archiveAccommodation,
-    postAccommodationReview
+    archiveAccommodation
 } = require('../controllers/accommodationController');
 
 router.use(requireAuth);
@@ -47,38 +52,43 @@ router.get('/accommodation', getAccommodation);
 /*
     uId = userId
     id = accommodationId
+    oId = ownerId
 */
 
-// USER & OWNER ROUTES
+// USER ROUTES
 // GET user data
-router.get('/:uId', getUserData);
+router.get('/user/:uId', getUserData);
 // UPDATE user data
-router.patch('/:uId', editUserData); 
+router.patch('/user/:uId', editUserData); 
 // GET bookmarks
-router.get('/bookmark/:uId', getBookmark);
+router.get('/user/bookmark/:uId', getBookmarkUser)
 // ADD a bookmark
-router.patch('/bookmark/:id/:uId', addToBookmark); 
+router.patch('/user/bookmark/:id/:uId', addToBookmarkUser); 
 // DELETE bookmark
-router.delete('/bookmark/:id/:uId', deleteBookmark); 
-// POST REVIEW
-router.post('/review/:id/:uId', postAccommodationReview); 
-// POST pfp
-router.post('/upload-pfp/:uId', uploadPfp);
-// GET pfp
-router.get('/pfp/:uId', getPfp);
+router.delete('/user/bookmark/:id/:uId', deleteBookmarkUser); 
 
-// OWNER ONLY ROUTES
+// OWNER
+// GET owner data
+router.get('/owner/:oId', getOwner);
 // GET owner accommodation
-router.get('/accommodations/:uId', getAccommodationOwner);
+router.get('/owner/accommodation/:oId', getAccommodationOwner);
+// GET bookmarks
+router.get('/owner/bookmark/:oId', getBookmarkOwner)
+// UPDATE owner data
+router.patch('/owner/:oId', editOwnerData); 
+// ADD a bookmark
+router.patch('/owner/bookmark/:id/:oId', addToBookmarkOwner); 
+// DELETE bookmark
+router.delete('/owner/bookmark/:id/:oId', deleteBookmarkOwner); 
 
 // ACCOMMODATION ROUTES
 // POST a new ACCOMMODATION
 router.post('/accommodation', createAccommodation);
 // UPDATE a single ACCOMMODATION
-router.patch('/accommodation/:id/:uId', updateAccommodation);
+router.patch('/accommodation/:id/:oId', updateAccommodation);
 // UPDATE a single ACCOMMODATION
-router.patch('/accommodation/archive/:id/:uId', archiveAccommodation);
+router.patch('/accommodation/archive/:id/:oId', archiveAccommodation);
 // DELETE a single ACCOMMODATION
-router.delete('/accommodation/:id/:uId', deleteAccommodation);
+router.delete('/accommodation/:id/:oId', deleteAccommodation);
 
 module.exports = router;
