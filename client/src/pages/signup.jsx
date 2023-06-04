@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Form, Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { Form, Button, OverlayTrigger, Tooltip, Spinner } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import './style.css';
 
@@ -9,6 +9,7 @@ const Signup = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [userType, setUserType] = useState('User');
+  const [isVerifying, setIsVerifying] = useState(false);
   const navigateTo = useNavigate();
 
   const handleLoginClick = () => {
@@ -17,6 +18,7 @@ const Signup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsVerifying(true);
 
     const formData = { fname, lname, email, password, userType };
     console.log(formData);
@@ -42,6 +44,7 @@ const Signup = () => {
           if (body.token) {
             localStorage.setItem("token", body.token);
             localStorage.setItem("_id", body._id);
+            window.location.href = "/";
           } else {
             alert("Failed to log in");
           }
@@ -60,11 +63,15 @@ const Signup = () => {
       if (res.ok) {
         console.log('Registration Successful');
         console.log(fname, lname, email, password, userType);
-        login();
-        window.location.href = "/";
+        try {
+          login();
+        } catch (error) {
+          console.error(error);
+        }
       } else {
         console.error('Registration failed');
       }
+      setIsVerifying(false);
     } catch (err) {
       console.error(err);
     }
@@ -132,7 +139,21 @@ const Signup = () => {
             </Form.Select>
           </Form.Group>
           <br />
-          <Button type="submit" variant="secondary">CREATE ACCOUNT</Button>
+          <Button type="submit" variant="secondary" disabled={isVerifying}>
+            CREATE ACCOUNT
+            </Button>
+            <div>
+              {
+                isVerifying ? (
+                  <Spinner animation="border" variant="secondary" role="status" size="sm">
+                    <span className="visually-hidden">Loading...</span>
+                  </Spinner>
+                ) : (
+                  <>
+                  </>
+                )
+              }
+            </div>
           <br />
           <Button onClick={handleLoginClick} variant="light">GO TO LOGIN</Button>
         </Form>
