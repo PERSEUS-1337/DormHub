@@ -6,12 +6,6 @@ import EditUserProfile from "../components/EditUser";
 
 //BACKLOGS: Create functional loading before data appears
 
-const ProfilePic = () => {
-  return (
-    <Image className="rounded-circle w-100 h-100" src="https://i.pinimg.com/222x/57/70/f0/5770f01a32c3c53e90ecda61483ccb08.jpg" />
-  );
-}
-
 const AccommTileList = () => {
   const [accommData, setAccommData] = useState(null);
   const [hasAccomm, setHasAccomm] = useState(true);
@@ -20,9 +14,9 @@ const AccommTileList = () => {
   useEffect(() => {
     const fetchAccomms = async () => {
       const oid = localStorage.getItem("_id");
-      console.log(oid);
+      // console.log(oid);
       const jwt = localStorage.getItem("token");
-      console.log(jwt);
+      // console.log(jwt);
 
       try {
         const res = await fetch(`/api/v1/auth-required-func/owner/accommodation/${oid}`, {
@@ -223,8 +217,6 @@ const CheckIfOwner = () => {
     const formData = {
       oId, name, desc, price, location, type, amenity
     };
-    console.log(formData);
-
     try {
       const res = await fetch("/api/v1/auth-required-func/accommodation", {
         method: "POST",
@@ -355,6 +347,8 @@ const CheckIfOwner = () => {
 const UserPage = () => {
   const [userData, setUserData] = useState({});
   const [isLoading, setIsLoading] = useState(true);
+  const [hasPfp, setHasPfp] = useState(true);
+  const [pfp, setPfp] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -371,13 +365,31 @@ const UserPage = () => {
         });
         const data = await res.json();
         setUserData(data);
-        console.log(data);
+        // console.log(data);
         const userType = localStorage.getItem("userType");
         console.log(userType)
         setIsLoading(false);
       } catch (err) {
         console.error('User fetching error.', err);
       }
+
+      try {
+        const res = await fetch(`/api/v1/auth-required-func/${type}/pfp/${uid}`, {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${jwt}`,
+          },
+        });
+        const data = await res.json();
+        // console.log(data.pfp);
+        setPfp(data.pfp);
+
+        if (data.error) {
+          setHasPfp(false);
+        } 
+      } catch (err) {
+        console.error('PFP fetching error.', err);
+      }      
     };
     fetchData();
   }, []);
@@ -398,7 +410,23 @@ const UserPage = () => {
           ) : (
             <Row>
               <Col xs={2}>
-                <ProfilePic />
+                {hasPfp === false ? (
+                <p>No PFP.</p>
+              ) : (
+                <>
+                  {pfp === "null" ? (
+                    <Image
+                      className="rounded-circle w-100 h-100"
+                      src="https://i.pinimg.com/222x/57/70/f0/5770f01a32c3c53e90ecda61483ccb08.jpg"
+                    />
+                  ) : (
+                    <Image
+                      className="rounded-circle w-100 h-100"
+                      src={pfp}
+                    />
+                  )}
+                </>
+              )}
               </Col>
               <Col xs={7}>
                 <h2>{`${userData.fname} ${userData.lname}`}</h2>
