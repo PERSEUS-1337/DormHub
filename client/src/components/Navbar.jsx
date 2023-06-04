@@ -94,7 +94,7 @@ const NavBar = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-        const type = localStorage.getItem("userType");
+        // const type = localStorage.getItem("userType");
         const uid = localStorage.getItem("_id");
         const jwt = localStorage.getItem("token");
 
