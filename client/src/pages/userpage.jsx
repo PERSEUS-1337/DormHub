@@ -280,7 +280,7 @@ const CheckIfOwner = () => {
             </Form.Group>
 
             <Form.Group controlId="accommodationPrice">
-              <Form.Label>Price</Form.Label>
+              <Form.Label>Price <span className="text-muted">/month</span></Form.Label>
               <Form.Control
                 type="number"
                 placeholder="Enter price"

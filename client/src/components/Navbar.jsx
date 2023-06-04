@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Navbar, Nav, Container, OverlayTrigger, Popover, Row, Spinner } from 'react-bootstrap'
+import { Navbar, Nav, Container, OverlayTrigger, Popover, Row, Spinner, Modal } from 'react-bootstrap'
 import NavItem from './NavItem'
 import { FaHeart, FaSignInAlt, FaLaughWink, FaUser, FaSignOutAlt } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
