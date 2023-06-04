@@ -54,10 +54,6 @@ const accommodationSchema = new Schema({
     type: mongoose.Schema.Types.ObjectId,
     required: true
   },
-  // user: {
-  //   type: [mongoose.Schema.Types.ObjectId],
-  //   required: false
-  // },
   review: {
       type: [{
           rating: {
