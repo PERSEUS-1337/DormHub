@@ -21,9 +21,9 @@ const storageBucket = storage.bucket(bucketName);
 
 const upload = multer({
     storage: multer.memoryStorage(),
-    // limits: {
-    //     fileSize: 5 * 1024 * 1024, // 5MB limit
-    // },
+    limits: {
+        fileSize: 5 * 1024 * 1024, // 5MB limit
+    },
 });
 
 // JWT
@@ -143,7 +143,7 @@ const getBookmarkUser = async (req, res)  => {
       return res.status(404).json({err: 'USER: NON EXISTENT'});
     }
 
-    const bookmarks = user.bookmark
+    const bookmarks = user.bookmarks
 
 
     if (bookmarks.length===0) {
@@ -243,6 +243,7 @@ const uploadPfpUser = async(req, res) => {
     }
 
     upload.single('pfp')(req, res, (err) => {
+        console.log(req.file);
 
         if (err) {
             console.error(err);
@@ -299,7 +300,7 @@ const uploadPfpUser = async(req, res) => {
 const getPfpUser = async(req, res) => {
     const { uId } = req.params;
 
-    if (!validator.default.isMongoId(uId)) {
+    if (!mongooseObjectId.isValid(uId)) {
         return res.json({ err: 'Not a valid userid' });
     }
 

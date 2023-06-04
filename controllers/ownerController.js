@@ -21,9 +21,9 @@ const storageBucket = storage.bucket(bucketName);
 
 const upload = multer({
     storage: multer.memoryStorage(),
-    // limits: {
-    //     fileSize: 5 * 1024 * 1024, // 5MB limit
-    // },
+    limits: {
+        fileSize: 5 * 1024 * 1024, // 5MB limit
+    },
 });
 
 // JWT
@@ -166,7 +166,7 @@ const getBookmarkOwner = async (req, res)  => {
       return res.status(404).json({err: 'USER: NON EXISTENT'});
     }
 
-    const bookmarks = owner.bookmark
+    const bookmarks = owner.bookmarks
 
 
     if (bookmarks.length===0) {
@@ -296,8 +296,8 @@ const uploadPfpOwner = async(req, res) => {
             const signedUrl = await blob.getSignedUrl({
                 action: 'read',
                 expires: '03-01-2030', // Set an appropriate expiration date
-            });
-          
+              });
+
             const publicUrl = signedUrl[0];
             // Save the publicUrl or blob.name in your database for the user.
             

@@ -14,6 +14,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 
 const path = require('path');
+const multer = require('multer');
 
 // Import Routes
 const accommodationRouter = require('./routes/accommodationRouter');
@@ -34,8 +35,8 @@ app.use((req, res, next) => {
 // To serve the website directly
 app.use(express.static('client/build'));
 
-app.use(bodyParser.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(bodyParser.json({ limit: '10mb' }));
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
 app.use(express.json())
 
 app.use((err, req, res, next) => {
