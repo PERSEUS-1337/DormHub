@@ -10,7 +10,7 @@ const { Storage } = require('@google-cloud/storage');
 
 const storage = new Storage({
     projectId: 'dormhub-128-e8l',
-    keyFilename: '\middleware\\database\\dormhub-128-e8l-c813bcd1295a.json',
+    keyFilename: 'middleware/database/dormhub-128-e8l-c813bcd1295a.json',
 });
 
 const bucketName = 'dormhub-128-e8l';

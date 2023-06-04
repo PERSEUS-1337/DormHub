@@ -10,7 +10,7 @@ const { Storage } = require('@google-cloud/storage');
 
 const storage = new Storage({
     projectId: 'dormhub-128-e8l',
-    keyFilename: '\middleware\\database\\dormhub-128-e8l-c813bcd1295a.json',
+    keyFilename: '/middleware/database/dormhub-128-e8l-c813bcd1295a.json',
 });
 
 const bucketName = 'dormhub-128-e8l';
@@ -297,7 +297,7 @@ const uploadPfpOwner = async(req, res) => {
                 action: 'read',
                 expires: '03-01-2030', // Set an appropriate expiration date
               });
-          
+
             const publicUrl = signedUrl[0];
             // Save the publicUrl or blob.name in your database for the user.
             
