@@ -74,11 +74,11 @@ const HomePage = () => {
 
 
     useEffect(() => {
-        fetch("/api/v1/accommodation/all")
+        fetch("/api/v1/accommodation/all?limit=100")
         .then(res =>res.json())
         .then(data => {
             setAccommData(data);
-            
+            console.log(data);
             // console.log(data["accommodations"][2]);
         })
     }, []);
