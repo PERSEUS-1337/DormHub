@@ -134,10 +134,10 @@ const getUserData = async (req, res) => {
     let retUser = {};
     if (user.userType == "User") {
         const {fname,lname,email,bookmarks,pfp, phone, userType} = user;
-        retUser = {fname,lname,email,bookmarks,pfp,phone, userType};
+        retUser = {fname,lname,email,bookmarks,pfp,phone,userType};
     } else {
-        const {fname,lname,email,bookmarks, accommodations, pfp,phone, userType} = user;
-        retUser = {fname,lname,email,bookmarks,accommodations, pfp,phone,userType};
+        const {fname,lname,email,bookmarks,accommodations,pfp,phone, userType} = user;
+        retUser = {fname,lname,email,bookmarks,accommodations,pfp,phone,userType};
     }
     
 
