@@ -147,7 +147,7 @@ const updateAccommodation = async (req, res) => {
     const { id,uId } = req.params;
     const update = req.body; 
     
-    if (!mongooseObjectId.isValid(id) || !mongooseObjectId.isValid(uId)) {
+    if (!validator.default.isValid(id) || !validator.default.isValid(uId)) {
         return res.json({error: 'Invalid ObjectID'});
     }
 
@@ -172,7 +172,7 @@ const updateAccommodation = async (req, res) => {
 const deleteAccommodation = async (req, res) => {
     const { id,uId } = req.params;
     
-    if (!mongooseObjectId.isValid(id) || !mongooseObjectId.isValid(uId)) {
+    if (!validator.default.isValid(id) || !validator.default.isValid(uId)) {
         return res.json({error: 'Invalid ObjectID'});
     }
 
@@ -200,7 +200,7 @@ const deleteAccommodation = async (req, res) => {
 const archiveAccommodation = async (req, res) => {
   const { id, uId } = req.params;
 
-  if (!mongooseObjectId.isValid(id) || !mongooseObjectId.isValid(uId)) {
+  if (!validator.default.isValid(id) || !validator.default.isValid(uId)) {
     return res.json({ error: 'Invalid ObjectID' });
   }
 
@@ -272,7 +272,7 @@ const postAccommodationReview = async (req, res) => {
     const { id, uId } = req.params;
     const { rating, detail } = req.body;
 
-    if (!mongooseObjectId.isValid(id) || !mongooseObjectId.isValid(uId))
+    if (!validator.default.isValid(id) || !validator.default.isValid(uId))
         return res.json({ error: 'Invalid Accommodation / User ObjectID' });
 
     try {
@@ -305,7 +305,7 @@ const postAccommodationReview = async (req, res) => {
 const uploadPics = async (req, res) => {
     const { id } = req.params;
   
-    if (!mongooseObjectId.isValid(id)) {
+    if (!validator.default.isValid(id)) {
         return res.json({ err: 'Not a valid id' });
     }
   
@@ -417,7 +417,7 @@ const uploadPics = async (req, res) => {
 const getPics = async(req, res) => {
     const { id } = req.params;
 
-    if (!mongooseObjectId.isValid(id)) {
+    if (!validator.default.isValid(id)) {
         return res.json({ err: 'Not a valid id' });
     }
 
