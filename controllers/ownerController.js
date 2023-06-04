@@ -87,8 +87,8 @@ const getOwner = async (req, res) => {
       return res.status(400).json({err: 'Owner does not exist'});
     }
 
-    const {fname,lname,email,phone,bookmarks,accommodations,pfp}= owner;
-    const retOwner = {fname,lname,email,phone,bookmarks,accommodations,pfp};
+    const {fname,lname,email,phone,bookmark,accommodations,pfp}= owner;
+    const retOwner = {fname,lname,email,phone,bookmark,accommodations,pfp};
     res.status(200).json(retOwner);
 };
 
@@ -146,10 +146,10 @@ const getBookmarkOwner = async (req, res)  => {
       return res.status(404).json({err: 'USER: NON EXISTENT'});
     }
 
-    const bookmarks = owner.bookmarks
+    const bookmarks = owner.bookmark
 
 
-    if (bookmarks.length === 0) {
+    if (bookmarks.length===0) {
         res.json({error: 'BOOKMARKS: NONE'})
     } else {
         const list = await Accommodation.find({ _id: { $in: bookmarks } })
@@ -167,8 +167,6 @@ const addToBookmarkOwner = async (req, res) => {
     const owner = await Owner.findById(oId);
     const accommodation = await Accommodation.findById(id);
 
-    console.log(owner);
-
     if (!owner) {
       return res.status(404).json({err: 'USER: NON EXISTENT'});
     }
@@ -180,7 +178,7 @@ const addToBookmarkOwner = async (req, res) => {
 
     if (!status) {
         try {
-            await Owner.findByIdAndUpdate(oId, {$push:{bookmarks: id}})
+            await Owner.findByIdAndUpdate(oId, {$push:{bookmark: id}})
             res.status(200).json({ message: 'BOOKMARK: ADD SUCCESS' });
         } catch (error) {
             res.status(500).json({ error: 'BOOKMARK: ADD FAILED' });
@@ -211,7 +209,7 @@ const deleteBookmarkOwner = async (req, res) => {
 
     if (status) {
         try {
-            await Owner.findByIdAndUpdate(oId, {$pull:{bookmarks: id}})
+            await Owner.findByIdAndUpdate(oId, {$pull:{bookmark: id}})
             res.status(200).json({ message: 'Bookmark: REMOVE SUCCESS' });
         } catch (error) {
             res.status(500).json({ error: 'Bookmark: REMOVE FAILED' });
@@ -225,7 +223,7 @@ const deleteBookmarkOwner = async (req, res) => {
 const checkBookmarkExists = async (id, oId) => {
     const owner = await Owner.findOne({
         _id: oId,
-        bookmarks: { $elemMatch: { $eq: id } }
+        bookmark: { $elemMatch: { $eq: id } }
     });
 
     if (owner) {

@@ -10,21 +10,20 @@ const { Storage } = require('@google-cloud/storage');
 
 const storage = new Storage({
     projectId: 'dormhub-128-e8l',
-    keyFilename: 'middleware/database/dormhub-128-e8l-c813bcd1295a.json',
+    keyFilename: '\middleware\\database\\dormhub-128-e8l-c813bcd1295a.json',
 });
 
 const bucketName = 'dormhub-128-e8l';
 
 const multer = require('multer');
-const { use } = require('passport');
 
 const storageBucket = storage.bucket(bucketName);
 
 const upload = multer({
     storage: multer.memoryStorage(),
-    limits: {
-        fileSize: 5 * 1024 * 1024, // 5MB limit
-    },
+    // limits: {
+    //     fileSize: 5 * 1024 * 1024, // 5MB limit
+    // },
 });
 
 // JWT
@@ -33,8 +32,10 @@ const createToken = (_id) => {
 }
 
 // POST SIGNUP USER 
-const register = async (req, res) => {
-    const {fname, lname, email, password, userType} = req.body;
+const registerUser = async (req, res) => {
+    const {fname, lname, email, password} = req.body;
+  
+    const pfp = "null";
 
     try {
         const userExist = await User.findOne({email});
@@ -42,11 +43,10 @@ const register = async (req, res) => {
         // Validation
         if (userExist) throw Error('User already exists');
 
-        if (!fname || !lname || !email || !password || !userType) throw Error('All fields must be provided');
+        if (!fname || !lname || !email || !password) throw Error('All fields must be provided');
 
         if (!validator.default.isEmail(email)) throw Error('Invalid email');
     
-        
         if (!validator.default.isStrongPassword(password)) {
             throw Error('Password should be of length 8 or more and must contain an uppercase letter, a lowercase letter, a digit, and a symbol');
         }
@@ -55,17 +55,16 @@ const register = async (req, res) => {
         const salt = await bcrypt.genSalt(10);
         const hash = await bcrypt.hash(password, salt);
         
-        const user = User.create({fname, lname, email, userType, password: hash});
+        const user = User.create({fname, lname, pfp, email, password: hash});
         
-        if (user) res.redirect(307, '/api/v1/auth/login');
-        else throw Error('User not saved')
+        res.redirect(307, '/api/v1/auth/login/user');
     } catch (error) {
         res.status(400).json({err: error.message});
     }
 };
 
 // POST LOGIN USER
-const login = async (req, res) => {
+const loginUser = async (req, res) => {
     const { email, password } = req.body;
 
     try {
@@ -88,13 +87,7 @@ const login = async (req, res) => {
 
 // GET ALL USER
 const getAllUsers = async (req, res) => {
-    const all = await User.find({userType: "User"});
-    res.status(200).json({msg: all})
-};
-
-// GET ALL OWNER
-const getAllOwners = async (req, res) => {
-    const all = await User.find({userType: "Owner"});
+    const all = await User.find({});
     res.status(200).json({msg: all})
 };
 
@@ -131,21 +124,13 @@ const getUserData = async (req, res) => {
       return res.status(400).json({err: 'User does not exist'});
     }
 
-    let retUser = {};
-    if (user.userType == "User") {
-        const {fname,lname,email,bookmarks,pfp, phone, userType} = user;
-        retUser = {fname,lname,email,bookmarks,pfp,phone, userType};
-    } else {
-        const {fname,lname,email,bookmarks, accommodations, pfp,phone, userType} = user;
-        retUser = {fname,lname,email,bookmarks,accommodations, pfp,phone,userType};
-    }
-    
-
+    const {fname,lname,email,bookmark,pfp} = user;
+    const retUser = {fname,lname,email,bookmark,pfp};
     res.status(200).json(retUser);
 }
 
 // GET ALL BOOKMARKS COMPLETE with INFO
-const getBookmark = async (req, res)  => {
+const getBookmarkUser = async (req, res)  => {
     const { uId } = req.params
 
      if (!validator.default.isMongoId(uId)) {
@@ -158,7 +143,8 @@ const getBookmark = async (req, res)  => {
       return res.status(404).json({err: 'USER: NON EXISTENT'});
     }
 
-    const bookmarks = user.bookmarks;
+    const bookmarks = user.bookmark
+
 
     if (bookmarks.length===0) {
         res.json({error: 'BOOKMARKS: NONE'})
@@ -169,7 +155,7 @@ const getBookmark = async (req, res)  => {
 }
 
 // ADD ACCOMMODATION TO BOOKMARK
-const addToBookmark = async (req, res) => {
+const addToBookmarkUser = async (req, res) => {
     const { id,uId } = req.params;
     
     if (!validator.default.isMongoId(id) || !validator.default.isMongoId(uId)) {
@@ -189,7 +175,7 @@ const addToBookmark = async (req, res) => {
 
     if (!status) {
         try {
-            await User.findByIdAndUpdate(uId, {$push:{bookmarks: id}})
+            await User.findByIdAndUpdate(uId, {$push:{bookmark: id}})
             res.status(200).json({ message: 'BOOKMARK: ADD SUCCESS' });
         } catch (error) {
             res.status(500).json({ error: 'BOOKMARK: ADD FAILED' });
@@ -200,7 +186,7 @@ const addToBookmark = async (req, res) => {
 }
 
 // DELETE ACCOMMODATION FROM BOOKMARK
-const deleteBookmark = async (req, res) => {
+const deleteBookmarkUser = async (req, res) => {
     const { id,uId } = req.params;
     
     if (!validator.default.isMongoId(id) || !validator.default.isMongoId(uId)) {
@@ -220,7 +206,7 @@ const deleteBookmark = async (req, res) => {
 
     if (status) {
         try {
-            await User.findByIdAndUpdate(uId, {$pull:{bookmarks: id}})
+            await User.findByIdAndUpdate(uId, {$pull:{bookmark: id}})
             res.status(200).json({ message: 'Bookmark: REMOVE SUCCESS' });
         } catch (error) {
             res.status(500).json({ error: 'Bookmark: REMOVE FAILED' });
@@ -234,7 +220,7 @@ const deleteBookmark = async (req, res) => {
 const checkBookmarkExists = async (id, uId) => {
     const user = await User.findOne({
         _id: uId,
-        bookmarks: { $elemMatch: { $eq: id } }
+        bookmark: { $elemMatch: { $eq: id } }
     });
 
     if (user) {
@@ -248,16 +234,16 @@ const checkBookmarkExists = async (id, uId) => {
     }
 }
 
-// UPLOAD USER PFP
+// upload PFP
 const uploadPfp = async(req, res) => {
-    const { uId } = req.params;
+    const { id } = req.params;
 
     if (!validator.default.isMongoId(uId)) {
         return res.json({ err: 'Not a valid userid' });
     }
 
     upload.single('pfp')(req, res, (err) => {
-        console.log(req.file);
+        console.log("pfp");
 
         if (err) {
             console.error(err);
@@ -283,18 +269,10 @@ const uploadPfp = async(req, res) => {
             return res.status(400).json({ error: 'Failed to upload picture.' });
         });
 
-        blobStream.on('finish', async () => {
-            const signedUrl = await blob.getSignedUrl({
-                action: 'read',
-                expires: '03-01-2030', // Set an appropriate expiration date
-              });
-          
-            const publicUrl = signedUrl[0];
-            // Save the publicUrl or blob.name in your database for the user.
-            
-            // const publicUrl = `https://storage.googleapis.com/${bucketName}/${blob.name}`;
+        blobStream.on('finish', () => {
+            const publicUrl = `https://storage.googleapis.com/${bucketName}/${blob.name}`;
 
-            User.findByIdAndUpdate(uId, { pfp: publicUrl }, { new: true })
+            User.findByIdAndUpdate(id, { pfp: publicUrl }, { new: true })
                 .then(updatedUser => {
                     // Send the updated user as the response
                     return res.status(200).json({ msg: { url: publicUrl, user: updatedUser } });
@@ -310,15 +288,15 @@ const uploadPfp = async(req, res) => {
     });
 }
 
-// GET USER PFP
+// get PFP
 const getPfp = async(req, res) => {
-    const { uId } = req.params;
+    const { id } = req.params;
 
     if (!validator.default.isMongoId(uId)) {
         return res.json({ err: 'Not a valid userid' });
     }
 
-    const user = await User.findById(uId);
+    const user = await User.findById(id);
 
     if (!user) {
         return res.json({ err: 'User does not exist' });
@@ -327,41 +305,16 @@ const getPfp = async(req, res) => {
     res.json({ pfp: user.pfp });
 }
 
-// GET ACCOMMODATIONS OF OWNER
-const getAccommodationOwner = async (req, res) => {
-    const { uId } = req.params;
-
-    if (!validator.default.isMongoId(uId)) {
-      return res.status(400).json({err: 'Not a valid ownerId'});
-    }
-
-    const owner = await User.findById(uId);
-    if (!owner) {
-        return res.status(404).json({ error: 'OWNER: NOT FOUND' });
-    }
-
-    if (owner.userType != "Owner") return res.status(404).json({ error: 'OWNER: NOT AN OWNER' });
-
-    const accommodations = await Accommodation.find({owner: uId});
-    if (!accommodations) {
-        return res.status(404).json({ error: 'ACCOMMODATIONS: NOT FOUND' });
-    }
-
-    return res.status(200).json({accommodations})
-}
-
 
 module.exports = {
-    register,
-    login,
+    registerUser,
+    loginUser,
     getAllUsers,
-    getAllOwners,
     getUserData,
     editUserData,
-    getBookmark,
-    addToBookmark,
-    deleteBookmark,
+    getBookmarkUser,
+    addToBookmarkUser,
+    deleteBookmarkUser,
     uploadPfp,
-    getPfp,
-    getAccommodationOwner
+    getPfp
 };

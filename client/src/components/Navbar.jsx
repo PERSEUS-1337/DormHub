@@ -3,11 +3,12 @@ import { useNavigate } from 'react-router-dom'
 import { Navbar, Nav, Container, OverlayTrigger, Popover, Row, Spinner } from 'react-bootstrap'
 import NavItem from './NavItem'
 import { FaHeart, FaSignInAlt, FaLaughWink, FaUser, FaSignOutAlt } from 'react-icons/fa'
-import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 const handleLogout = () => {
     localStorage.clear();
 }
+
 
 
 const PopOver = ({ data }) => {
@@ -88,7 +89,6 @@ const NavBar = () => {
     //     setIsVisible(!isVisible)
     // }
     // let url = "/login"
-    const id = localStorage.getItem("_id");
     const [userData, setUserData] = useState({});
     const [isLoading, setIsLoading] = useState(true);
 
@@ -107,6 +107,7 @@ const NavBar = () => {
             });
             const data = await res.json();
             setUserData(data);
+            // setUserName(data.fname)
             setIsLoading(false);
             console.log(data);
             } catch (err) {
@@ -116,6 +117,7 @@ const NavBar = () => {
         fetchData();
         
     }, []); 
+    console.log("name: " + userData)
 
     // if (userData && userData) {
     //     url = "/user"
@@ -158,7 +160,8 @@ const NavBar = () => {
                      </Nav.Link> */}
                     
                     {/* {navList} */}
-                    <PopOver data={ userData.fname } />   
+                    <PopOver data={ userData.fname } />
+                    
                 </Nav>
                 </Navbar.Collapse>
             </Container>

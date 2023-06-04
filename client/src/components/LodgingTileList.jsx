@@ -7,7 +7,7 @@ const LodgingTileList = () => {
     const [accommData, setAccommData] = useState({});
     
     useEffect(() => {
-        fetch("/api/v1/accommodation/all")
+        fetch("/api/v1/accommodation")
         .then(res =>res.json())
         .then(data => {
             setAccommData(data);
