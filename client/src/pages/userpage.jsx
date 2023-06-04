@@ -4,8 +4,6 @@ import FaveTileItem from "../components/FaveTileItem";
 import LodgingTileItem from "../components/LodgingTileItem";
 import EditUserProfile from "../components/EditUser";
 
-//BACKLOGS: Create functional loading before data appears
-
 const AccommTileList = () => {
   const [accommData, setAccommData] = useState(null);
   const [hasAccomm, setHasAccomm] = useState(true);
@@ -14,9 +12,7 @@ const AccommTileList = () => {
   useEffect(() => {
     const fetchAccomms = async () => {
       const oid = localStorage.getItem("_id");
-      // console.log(oid);
       const jwt = localStorage.getItem("token");
-      // console.log(jwt);
 
       try {
         const res = await fetch(`/api/v1/auth-required-func/owner/accommodation/${oid}`, {

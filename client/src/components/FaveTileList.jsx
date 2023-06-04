@@ -11,7 +11,6 @@ const FaveTileList = () => {
         .then(res =>res.json())
         .then(data => {
             setAccommData(data);
-            console.log(data["accommodations"][2]);
         })
     }, []);
 
