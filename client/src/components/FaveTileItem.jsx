@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 
 // When functional, add a button for delete
 const DeleteBookmark = () => {
-    fetch('api/v1/auth/user/bookmark/:id/:uId', { // api endpoint to be modified
+    fetch('api/v1/auth/bookmark/:id/:uId', { // api endpoint to be modified
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
