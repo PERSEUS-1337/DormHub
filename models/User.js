@@ -10,8 +10,8 @@ const userSchema = new Schema({
   email: { type: String, required: true },
   password: { type: String, required: true },
   phone: { type: [String], required: false, default: [] },
-  bookmarks: { type: [mongoose.Schema.Types.ObjectId], required: false, ref: 'Listing', default: [] },
-  accommodations: { type: [mongoose.Schema.Types.ObjectId], required: false, ref: 'Listing', default: [] },
+  bookmarks: { type: [mongoose.Schema.Types.ObjectId], required: false, ref: 'accommodations', default: [] },
+  accommodations: { type: [mongoose.Schema.Types.ObjectId], required: false, ref: 'accommodations', default: [] },
 });
 
 const User = mongoose.model('User', userSchema, 'users');
