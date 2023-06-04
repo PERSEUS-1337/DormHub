@@ -84,16 +84,16 @@ const AccommTileList = () => {
       <p>No Accommodations Uploaded Yet.</p>
     )
   } else {
-    const LodgingList = accommData && accommData.map(data => 
-    <>
-      <LodgingTileItem key={data._id} data={data} />
-      <Button variant="danger" onClick={() => handleDeleteAccommodation(data._id)} disabled={deleting}>
-        Delete
-      </Button>
-      <Button variant="primary" onClick={() => handleArchiveAccommodation(data._id)}>
-        Archive
-      </Button>
-    </>
+    const LodgingList = accommData && accommData.map(data =>
+      <>
+        <LodgingTileItem key={data._id} data={data} />
+        <Button variant="danger" onClick={() => handleDeleteAccommodation(data._id)} disabled={deleting}>
+          Delete
+        </Button>
+        <Button variant="primary" onClick={() => handleArchiveAccommodation(data._id)}>
+          Archive
+        </Button>
+      </>
     )
     return (
       <>
@@ -158,7 +158,7 @@ const FaveTileList = () => {
         </>
       )
     }
-  } 
+  }
 }
 
 const CheckIfOwner = () => {
@@ -172,7 +172,7 @@ const CheckIfOwner = () => {
   const [accommData, setAccommData] = useState([]);
   const [loadingPostResult, setLoadingPostResult] = useState(false);
   useEffect(() => {
-      const fetchAccommodations = async () => {
+    const fetchAccommodations = async () => {
       const oid = localStorage.getItem("_id");
       const jwt = localStorage.getItem("token");
 
@@ -192,7 +192,7 @@ const CheckIfOwner = () => {
       } catch (err) {
         console.error('Accommodations fetching error.', err);
       }
-    }; 
+    };
     fetchAccommodations();
   }, []);
   const openModal = () => {
@@ -236,7 +236,7 @@ const CheckIfOwner = () => {
       console.error("Accommodation creation error.", err);
     }
   };
-  
+
   const userType = localStorage.getItem("userType");
 
   if (userType === "owner") {
@@ -297,11 +297,18 @@ const CheckIfOwner = () => {
               <Form.Group controlId="accommodationType">
                 <Form.Label>Type</Form.Label>
                 <Form.Control
-                  type="text"
-                  placeholder="Enter type"
+                  as="select"
                   value={type}
                   onChange={(e) => setAccommodationType(e.target.value)}
-                />
+                >
+                  <option value="apartment">Apartment</option>
+                  <option value="condominium">Condominium</option>
+                  <option value="dormitory">Dormitory</option>
+                  <option value="transient">Transient</option>
+                  <option value="hotel">Hotel</option>
+                  <option value="hostel">Hostel</option>
+                  <option value="bedspace">Bedspace</option>
+                </Form.Control>
               </Form.Group>
 
 
@@ -314,7 +321,7 @@ const CheckIfOwner = () => {
                   onChange={(e) => setAccommodationAmenity(e.target.value)}
                 />
               </Form.Group>
-              
+
               <Button className="" variant="secondary" type="submit" disabled={loadingPostResult}>
                 {
                   loadingPostResult ? (
@@ -322,17 +329,17 @@ const CheckIfOwner = () => {
                       <span className="visually-hidden">Loading...</span>
                     </Spinner>
 
-                  ) :(
-                  "Save"
+                  ) : (
+                    "Save"
                   )
                 }
               </Button>
-              
+
             </Form>
           </Modal.Body>
         </Modal>
-    
-      
+
+
       </>
     );
   } else {
