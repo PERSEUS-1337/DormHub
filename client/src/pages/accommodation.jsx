@@ -106,6 +106,7 @@ const AddToBookmarks = ({ bId }) => {
 
     function addBookmark() { 
         console.log(`Trying to add bookmark with id ${bId}`);
+        setIsLoading(true);
         fetch(`/api/v1/auth-required-func/${type}/bookmark/${bId}/${id}`, {
             method: "PATCH",
             headers: {
