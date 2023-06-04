@@ -27,7 +27,7 @@ const EditUserProfile = ({data}) => {
     
     function saveChanges(e) {
         e.preventDefault();
-        const type = localStorage.getItem("userType");
+        // const type = localStorage.getItem("userType");
         const oid = localStorage.getItem("_id");
         const jwt = localStorage.getItem("token");
 
@@ -57,33 +57,38 @@ const EditUserProfile = ({data}) => {
         });
 
         const image = new Image();
-        image.src = URL.createObjectURL(file);
-        image.onload = function() {
-        const width = this.width;
-        const height = this.height;
-          
-        if (width !== height) {
-          // Alert the user that the picture is not square
-          alert("Please upload a square profile picture.");
-        } else {
-            fetch(`/api/v1/auth-required-func/upload-pfp/${oid}`, {
-              method: 'POST',
-              headers: {
-                //'Content-Type': 'multipart/form-data',
-                Authorization: `Bearer ${jwt}`
-              },
-              body: formData,
-            })
-              .then(response => response.json())
-              .then(data => {
-                // Handle the response data
-                console.log(data);
-              })
-              .catch(error => {
-                // Handle the error
-                console.error(error);
-              });
-            }}
+        try {
+          image.src = URL.createObjectURL(file);
+          image.onload = function() {
+            const width = this.width;
+            const height = this.height;
+              
+            if (width !== height) {
+              // Alert the user that the picture is not square
+              alert("Please upload a square profile picture.");
+            } else {
+                fetch(`/api/v1/auth-required-func/upload-pfp/${oid}`, {
+                  method: 'POST',
+                  headers: {
+                    //'Content-Type': 'multipart/form-data',
+                    Authorization: `Bearer ${jwt}`
+                  },
+                  body: formData,
+                })
+                  .then(response => response.json())
+                  .then(data => {
+                    // Handle the response data
+                    console.log(data);
+                  })
+                  .catch(error => {
+                    // Handle the error
+                    console.error(error);
+                  });
+                }}
+        } catch(error) {
+          console.error(error);
+        }
+      window.location.reload();
     };
   
     return (
