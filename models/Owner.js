@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 
-const userSchema = new Schema({
+const ownerSchema = new Schema({
   fname: {
     type: String,
     required: true
@@ -13,8 +13,7 @@ const userSchema = new Schema({
   },
   pfp: {
     type: String,
-    required: false,
-    default: "null"
+    required: true
   },
   email: {
     type: String,
@@ -23,6 +22,17 @@ const userSchema = new Schema({
   password: {
     type: String,
     required: true
+  },
+  phone: {
+    type: [String],
+    required: false,
+    default: []
+  },
+  accommodations: {
+    type: [mongoose.Schema.Types.ObjectId],
+    required: false,
+    ref: 'Listing',
+    default: []
   },
   bookmark: {
     type: [mongoose.Schema.Types.ObjectId],
@@ -35,9 +45,8 @@ const userSchema = new Schema({
     required: false,
     default: "null"
   }
-}, 
-);
+});
 
-const User = mongoose.model('User', userSchema, 'users_be');
+const Owner = mongoose.model('Owner', ownerSchema, 'owner_be');
 
-module.exports = User;
+module.exports = Owner;

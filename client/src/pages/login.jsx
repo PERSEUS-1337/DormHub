@@ -4,11 +4,10 @@ import { Button, Container, Form, InputGroup } from "react-bootstrap";
 import "./style.css";
 
 const Login = () => {
-
   const [form, setForm] = useState({});
   const [errors, setErrors] = useState({});
   const [authentication, setAuthenticated] = useState(false);
-  // const [userType, setUserType] = useState("user");
+  const [userType, setUserType] = useState("user");
   const setField = (field, value) => {
     setForm({
       ...form,
@@ -29,62 +28,10 @@ const Login = () => {
   };
   useEffect(() => {
     if (authentication) {
-      window.location.href = "/";
+      navigateTo("/");
     }
   }, [authentication]);
 
-  // function login(e) {
-  //   e.preventDefault();
-  
-  //   console.log("form submitted");
-  //   console.log(form);
-  
-  //   const credentials = {
-  //     email: form.email,
-  //     password: form.password,
-  //   };
-  
-  //   const ownerLoginPromise = fetch(`/api/v1/auth/login/owner`, {
-
-  //   fetch(`/api/v1/auth/login`, {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify(credentials),
-  //   });
-  
-  //   const userLoginPromise = fetch(`/api/v1/auth/login/user`, {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify(credentials),
-  //   });
-  
-  //   Promise.all([ownerLoginPromise, userLoginPromise])
-  //     .then((responses) => Promise.all(responses.map((response) => response.json())))
-  //     .then((bodies) => {
-  //       const ownerResponse = bodies[0];
-  //       const userResponse = bodies[1];
-  
-  //       if (ownerResponse.token) {
-  //         localStorage.setItem("token", ownerResponse.token);
-  //         localStorage.setItem("userType", "owner");
-  //         console.log("owner");
-  //         localStorage.setItem("_id", ownerResponse._id);
-  //         setAuthenticated(true);
-  //       } else if (userResponse.token) {
-  //         localStorage.setItem("token", userResponse.token);
-  //         localStorage.setItem("userType", "user");
-  //         console.log("user");
-  //         localStorage.setItem("_id", userResponse._id);
-  //         setAuthenticated(true);
-  //       } else {
-  //         alert("Failed to log in");
-  //       }
-  //     });
-  // }
   function login(e) {
     e.preventDefault();
 
@@ -96,7 +43,7 @@ const Login = () => {
       password: form.password,
     };
 
-    fetch(`/api/v1/auth/login`, {
+    fetch(`/api/v1/auth/login/${userType}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -109,7 +56,8 @@ const Login = () => {
 
         if (body.token) {
           localStorage.setItem("token", body.token);
-
+          localStorage.setItem("userType", userType);
+          console.log(userType);
           localStorage.setItem("_id", body._id);
           setAuthenticated(true);
         } else {
@@ -153,7 +101,29 @@ const Login = () => {
                 </Form.Control.Feedback>
               </InputGroup>
             </Form.Group>
-
+           
+            <Form.Group controlId="formUserType">
+            <Form.Label>User Type:</Form.Label>
+            <br />
+            <Form.Check
+              inline
+              type="radio"
+              label="User"
+              name="userType"
+              value="studentuser"
+              checked={userType === 'user'}
+              onChange={() => setUserType('user')}
+            />
+            <Form.Check
+              inline
+              type="radio"
+              label="Owner"
+              name="userType"
+              value="owner"
+              checked={userType === 'owner'}
+              onChange={() => setUserType('owner')}
+            />
+          </Form.Group>
             <br />
             <Button type="submit">Login</Button>
             <br />
