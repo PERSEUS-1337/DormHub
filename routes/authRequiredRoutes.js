@@ -22,7 +22,9 @@ const {
     getBookmark,
     addToBookmark,
     deleteBookmark,
-    getAccommodationOwner
+    getAccommodationOwner,
+    uploadPfpUser,
+    getPfpUser
 } = require('../controllers/userController');
 
 const {
@@ -57,6 +59,10 @@ router.get('/bookmark/:uId', getBookmark);
 router.patch('/bookmark/:id/:uId', addToBookmark); 
 // DELETE bookmark
 router.delete('/bookmark/:id/:uId', deleteBookmark); 
+// POST pfp
+router.post('/upload-pfp/:uId', uploadPfpUser);
+// GET pfp
+router.get('/pfp/:uId', getPfpUser);
 
 // OWNER ONLY ROUTES
 // GET owner accommodation
