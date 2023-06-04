@@ -94,12 +94,12 @@ const NavBar = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-        const type = localStorage.getItem("userType");
+        // const type = localStorage.getItem("userType");
         const uid = localStorage.getItem("_id");
         const jwt = localStorage.getItem("token");
 
         try {
-            const res = await fetch(`/api/v1/auth-required-func/${type}/${uid}`, {
+            const res = await fetch(`/api/v1/auth-required-func/${uid}`, {
             headers: {
                 "Content-Type": "application/json",
                 Authorization : `Bearer ${jwt}`
