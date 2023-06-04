@@ -102,7 +102,7 @@ const getAllOwners = async (req, res) => {
 const editUserData = async (req, res) => {
     const { uId } = req.params
   
-    if (!mongooseObjectId.isValid(uId)) {
+    if (!validator.default.isMongoId(uId)) {
       return res.status(400).json({err: 'Not a valid userid'})
     }
   
@@ -148,7 +148,7 @@ const getUserData = async (req, res) => {
 const getBookmark = async (req, res)  => {
     const { uId } = req.params
 
-     if (!mongooseObjectId.isValid(uId)) {
+     if (!validator.default.isMongoId(uId)) {
         return res.json({error: 'Invalid ObjectID'});
     }
 
@@ -172,7 +172,7 @@ const getBookmark = async (req, res)  => {
 const addToBookmark = async (req, res) => {
     const { id,uId } = req.params;
     
-    if (!mongooseObjectId.isValid(id) || !mongooseObjectId.isValid(uId)) {
+    if (!validator.default.isMongoId(id) || !validator.default.isMongoId(uId)) {
         return res.json({error: 'Invalid ObjectID'});
     }
     const user = await User.findById(uId);
@@ -203,7 +203,7 @@ const addToBookmark = async (req, res) => {
 const deleteBookmark = async (req, res) => {
     const { id,uId } = req.params;
     
-    if (!mongooseObjectId.isValid(id) || !mongooseObjectId.isValid(uId)) {
+    if (!validator.default.isMongoId(id) || !validator.default.isMongoId(uId)) {
         return res.json({error: 'Invalid ObjectID'});
     }
     const user = await User.findById(uId);
@@ -252,7 +252,7 @@ const checkBookmarkExists = async (id, uId) => {
 const uploadPfp = async(req, res) => {
     const { uId } = req.params;
 
-    if (!mongooseObjectId.isValid(uId)) {
+    if (!validator.default.isMongoId(uId)) {
         return res.json({ err: 'Not a valid userid' });
     }
 
@@ -314,7 +314,7 @@ const uploadPfp = async(req, res) => {
 const getPfp = async(req, res) => {
     const { uId } = req.params;
 
-    if (!mongooseObjectId.isValid(uId)) {
+    if (!validator.default.isMongoId(uId)) {
         return res.json({ err: 'Not a valid userid' });
     }
 
