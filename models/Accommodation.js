@@ -3,10 +3,6 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const accommodationSchema = new Schema({
-  // _id: {
-  //     type: mongoose.Schema.Types.ObjectId,
-  //     required: true
-  // },
   name: {
     type: String,
     required: true
@@ -77,6 +73,6 @@ const accommodationSchema = new Schema({
   },
 }, {timestamps: true});
 
-module.exports = mongoose.model('dummy_accomodation', accommodationSchema);
+const Accommodation = mongoose.model('Accommodation', accommodationSchema, 'accommodations');
 
-// module.exports = Accomodation;
+module.exports = Accommodation
