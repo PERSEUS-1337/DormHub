@@ -72,12 +72,17 @@ const SearchBar = ({ data }) => {
         }
     }
 
-    const handleSearch = (word) => {
+    const handleSearch = () => {
         
         const newFilter = data.filter((value) => {
-                return value.name.toLowerCase().includes(word.toLowerCase())
+                return value.name.toLowerCase().includes(wordEntered.toLowerCase())
         })
-        setFilteredData(newFilter)
+        if (wordEntered == "") {
+            setFilteredData([])
+        } else {
+            setFilteredData(newFilter)
+        }
+        
         setCurrentPage(1)
 
     }
@@ -116,8 +121,8 @@ const SearchBar = ({ data }) => {
                     <Col className='px-5'>
                         <Form>
                             <Form.Group controlId="filterAccomms" className='d-flex align-items-center mx-2'>
-                                <Form.Control type="search" placeholder="Search for an accommodation..." className='m-4' onChange={handleFilter} onClick={handleFilter} value={wordEntered} />
-                                <Button className="rounded-1 mx-2" variant="secondary" onClick={e => handleSearch(e.target.value)}>Search</Button>
+                                <Form.Control type="search" placeholder="Search for an accommodation..." className='m-4' onChange={(e) => { setWordEntered(e.target.value); if (e.target.value == "") setFilteredData([])}} />
+                                <Button className="rounded-1 mx-2" variant="secondary" onClick={handleSearch}>Search</Button>
                                 <Button className="rounded-1 mx-2 text-nowrap" variant="secondary" onClick={handleViewAll}>View All</Button>
                             </Form.Group>
                         </Form>
