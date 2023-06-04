@@ -108,7 +108,10 @@ const CheckIfOwner = () => {
   const [name, setAccommodationName] = useState("");
   const [desc, setAccommodationDesc] = useState("");
   const [price, setAccommodationPrice] = useState([]);
-  const [location, setAccommodationLocation] = useState("");
+  const [vicinity, setVicinity] = useState([]);
+  const [street, setStreet] = useState([]);
+  const [barangay, setBarangay] = useState([]);
+  const [town, setTown] = useState([]);
   const [type, setAccommodationType] = useState([]);
   const [amenity, setAccommodationAmenity] = useState([]);
   const [accommData, setAccommData] = useState([]);
@@ -146,11 +149,15 @@ const CheckIfOwner = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const oId = localStorage.getItem("_id");
+    const uId = localStorage.getItem("_id");
     const jwt = localStorage.getItem("token");
 
+    const location = { 
+      vicinity, street, barangay, town 
+    };
+
     const formData = {
-      oId, name, desc, price, location, type, amenity
+      uId, name, desc, price, location, type, amenity
     };
     console.log(formData)
     try {
@@ -163,10 +170,12 @@ const CheckIfOwner = () => {
         body: JSON.stringify(formData),
       });
       const data = await res.json();
+      console.log(formData);
       if (res.status === 201) {
         console.log(data.msg);
       } else {
         console.error(data.error);
+        alert("Creation failed.", data.error);
       }
     } catch (err) {
       console.error("Accommodation creation error.", err);
@@ -176,56 +185,124 @@ const CheckIfOwner = () => {
     const oId = localStorage.getItem("_id");
     const jwt = localStorage.getItem("token");
 
-    try {
-      const res = await fetch(`/api/v1/auth-required-func/accommodation/${accommodationId}/${oId}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${jwt}`,
-        },
-      });
-      const data = await res.json();
-      if (res.status === 200) {
-        console.log(data.message);
-      } else {
-        console.error(data.error);
-      }
-    } catch (err) {
-      console.error("Accommodation deletion error.", err);
-    }
-  };
-  const handleArchiveAccommodation = async (accommodationId) => {
-    const oId = localStorage.getItem("_id");
-    const jwt = localStorage.getItem("token");
-    try {
-      const res = await fetch(`/api/v1/auth-required-func/accommodation/archive/${accommodationId}/${oId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${jwt}`,
-        },
-      });
-      const data = await res.json();
-      if (res.status === 200) {
-        console.log(data.message);
-      } else {
-        console.error(data.error);
-      }
-    } catch (err) {
-      console.error("Accommodation archiving error.", err);
-    }
-  };
-  const userType = localStorage.getItem("userType");
+  return (
+    <>
+      <h3>Accommodations:</h3>
+      <div key={accommData._id} className="mb-3">
+        <AccommTileList data={accommData} />
+      </div>
+      <Button variant="primary" className="mb-3" onClick={openModal}>
+        Add Accommodation
+      </Button>
+      <Modal show={showModal} onHide={closeModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Add Accommodation</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form onSubmit={handleSubmit}>
+            <Form.Group controlId="accommodationName">
+              <Form.Label>Accommodation Name</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter accommodation name"
+                value={name}
+                onChange={(e) => setAccommodationName(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group controlId="accommodationDesc">
+              <Form.Label>Accommodation Description</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter accommodation description"
+                value={desc}
+                onChange={(e) => setAccommodationDesc(e.target.value)}
+              />
+            </Form.Group>
 
-  if (userType === "owner") {
-    return (
-      <>
-        <h3>Accommodations:</h3>
-        <AccommTileList />
-        {accommData.map((accommodation) => (
-          <div key={accommodation._id} className="mb-3">
-            <Button variant="danger" onClick={() => handleDeleteAccommodation(accommodation._id)}>
-              Delete
+            <Form.Group controlId="accommodationPrice">
+              <Form.Label>Price</Form.Label>
+              <Form.Control
+                type="number"
+                placeholder="Enter price"
+                value={price}
+                onChange={(e) => setAccommodationPrice(e.target.value)}
+              />
+            </Form.Group>
+
+            <Form.Group controlId="locationVicinity">
+              <Form.Label>Location</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter Vicinity"
+                value={vicinity}
+                onChange={(e) => setVicinity(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group controlId="locationStreet">
+              <Form.Control
+                type="text"
+                placeholder="Enter Street"
+                value={street}
+                onChange={(e) => setStreet(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group controlId="locationBarangay">
+              <Form.Control
+                type="text"
+                placeholder="Enter Barangay"
+                value={barangay}
+                onChange={(e) => setBarangay(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group controlId="locationTown">
+              <Form.Control
+                type="text"
+                placeholder="Enter Town"
+                value={town}
+                onChange={(e) => setTown(e.target.value)}
+              />
+            </Form.Group>
+
+            <Form.Group controlId="accommodationType">
+              <Form.Label>Type</Form.Label>
+              <Form.Control
+                as="select"
+                value={type}
+                onChange={(e) => setAccommodationType(e.target.value)}
+              >
+                <option value="" ></option>
+                <option value="apartment">Apartment</option>
+                <option value="condominium">Condominium</option>
+                <option value="dormitory">Dormitory</option>
+                <option value="transient">Transient</option>
+                <option value="hotel">Hotel</option>
+                <option value="hostel">Hostel</option>
+                <option value="bedspace">Bedspace</option>
+              </Form.Control>
+            </Form.Group>
+
+
+            <Form.Group controlId="accommodationAmenity">
+              <Form.Label>Amenity</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter amenity"
+                value={amenity}
+                onChange={(e) => setAccommodationAmenity(e.target.value)}
+              />
+            </Form.Group>
+
+            <Button className="" variant="secondary" type="submit" disabled={loadingPostResult}>
+              {
+                loadingPostResult ? (
+                  <Spinner animation="border" variant="primary" role="status" size="sm" disabled>
+                    <span className="visually-hidden">Loading...</span>
+                  </Spinner>
+
+                ) : (
+                  "Save"
+                )
+              }
             </Button>
             <Button variant="primary" onClick={() => handleArchiveAccommodation(accommodation._id)}>
               Archive

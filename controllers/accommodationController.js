@@ -4,6 +4,28 @@ const mongooseObjectId = require('mongoose').Types.ObjectId;
 const validator = require('validator');
 
 
+const { Storage } = require('@google-cloud/storage');
+
+const storage = new Storage({
+    projectId: 'dormhub-128-e8l',
+    keyFilename: 'middleware/database/dormhub-128-e8l-c813bcd1295a.json',
+});
+
+const bucketName = 'dormhub-128-e8l';
+
+const multer = require('multer');
+const { use } = require('passport');
+
+const storageBucket = storage.bucket(bucketName);
+
+const upload = multer({
+    storage: multer.memoryStorage(),
+    // limits: {
+    //     fileSize: 50 * 1024 * 1024, // 50MB limit
+    // },
+});
+
+
 // GET ALL ACCOMMODATIONS
 const getAccommodation = async(req, res) => {
     // Filters
@@ -123,7 +145,7 @@ const updateAccommodation = async (req, res) => {
     const { id,oId } = req.params;
     const update = req.body; 
     
-    if (!mongooseObjectId.isValid(id) || !mongooseObjectId.isValid(oId)) {
+    if (!validator.default.isMongoId(id) || !validator.default.isMongoId(uId)) {
         return res.json({error: 'Invalid ObjectID'});
     }
 
@@ -148,7 +170,7 @@ const updateAccommodation = async (req, res) => {
 const deleteAccommodation = async (req, res) => {
     const { id,oId } = req.params;
     
-    if (!mongooseObjectId.isValid(id) || !mongooseObjectId.isValid(oId)) {
+    if (!validator.default.isMongoId(id) || !validator.default.isMongoId(uId)) {
         return res.json({error: 'Invalid ObjectID'});
     }
 
@@ -173,11 +195,11 @@ const deleteAccommodation = async (req, res) => {
 };
 
 const archiveAccommodation = async (req, res) => {
-    const { id,oId } = req.params;
-    
-    if (!mongooseObjectId.isValid(id) || !mongooseObjectId.isValid(oId)) {
-        return res.json({error: 'Invalid ObjectID'});
-    }
+  const { id, uId } = req.params;
+
+  if (!validator.default.isMongoId(id) || !validator.default.isMongoId(uId)) {
+    return res.json({ error: 'Invalid ObjectID' });
+  }
 
     try {
 
@@ -239,9 +261,12 @@ const getAccommodationReviewByUserId = async(req, res) => {
 };
 
 // POST REVIEW OF ACCOMMODATION
-const postReviewAccommodation = async(req, res) => {
-    const { id } = req.params;
-    const { rating, user, detail } = req.body;
+const postAccommodationReview = async (req, res) => {
+    const { id, uId } = req.params;
+    const { rating, detail } = req.body;
+
+    if (!validator.default.isMongoId(id) || !validator.default.isMongoId(uId))
+        return res.json({ error: 'Invalid Accommodation / User ObjectID' });
     try {
         const accommodation = await Accommodation.findById(id);
         if (!accommodation) {
@@ -289,6 +314,135 @@ const deleteReviewAccommodation = async (req, res) => {
     }
 }
 
+// UPLOAD ACCOMMODATION PICS
+const uploadPics = async (req, res) => {
+    const { id } = req.params;
+  
+    if (!validator.default.isMongoId(id)) {
+        return res.json({ err: 'Not a valid id' });
+    }
+  
+    const accommodation = await Accommodation.findById(id);
+    
+    if (!accommodation) {
+        return res.json({ err: "Accommodation doesn't exist" });
+    }
+  
+    const name = accommodation.name;
+    const existingFileUrls = accommodation.pics;
+    const folderName = `accommodation-pics/${name}`;
+  
+    try {
+        await deleteExistingFiles(existingFileUrls);
+        
+        // Ensure that the uploadedFileUrls array is populated before updating the accommodation and sending the response
+        await new Promise((resolve, reject) => {
+        upload.array('pics', 10)(req, res, (err) => {
+            if (err) {
+            console.error(err);
+            reject(new Error('Failed to upload the files'));
+            } else {
+            resolve();
+            }
+        });
+        });
+
+        if (!req.files || req.files.length === 0) {
+            return res.status(400).json({ message: 'No files uploaded' });
+        }
+
+        const files = req.files;
+        const uploadedFileUrls = [];
+
+        for (const file of files) {
+            const fileName = `${folderName}/${file.originalname.replace(/ /g, '_')}`;
+            const fileUpload = storage.bucket(bucketName).file(fileName);
+
+            await new Promise((resolve, reject) => {
+                const blobStream = fileUpload.createWriteStream({
+                metadata: {
+                    contentType: file.mimetype,
+                },
+                });
+
+                blobStream.on('error', (err) => {
+                    console.error(err);
+                    reject(new Error('Failed to upload the files'));
+                });
+
+                blobStream.on('finish', async () => {
+                    const signedUrl = await fileUpload.getSignedUrl({
+                        action: 'read',
+                        expires: '03-01-2030', // Set an appropriate expiration date
+                    });
+
+                    // Set the publicUrl to an authorized one
+                    const publicUrl = signedUrl[0];
+                    uploadedFileUrls.push(publicUrl);
+                    resolve();
+                });
+
+                blobStream.end(file.buffer);
+            });
+        }
+
+        await Accommodation.findByIdAndUpdate(id, { pics: uploadedFileUrls });
+        const updatedAccommodation = await Accommodation.findById(id);
+
+        res.status(200).json({ msg: { url: uploadedFileUrls, accommodation: updatedAccommodation } });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Failed to upload pictures' });
+    }
+  
+    async function deleteExistingFiles(existingFileUrls) {
+        for (const url of existingFileUrls) {
+            const fileName = extractFileNameFromUrl(url);
+            const file = storage.bucket(bucketName).file(fileName);
+
+            try {
+                await file.delete();
+                console.log(`Deleted file: ${fileName}`);
+            } catch (error) {
+                console.error(`Error deleting file: ${fileName}`, error);
+            }
+        }
+    }
+  
+    function extractFileNameFromUrl(url) {
+        const parts = url.split('/');
+        const folders = parts.slice(4, -1).map(folder => decodeURIComponent(folder)).join('/');
+        let fileName = parts[parts.length - 1];
+    
+        const queryParamIndex = fileName.indexOf('?');
+        if (queryParamIndex !== -1) {
+            fileName = fileName.substring(0, queryParamIndex);
+        }
+    
+        fileName = `${folders}/${fileName}`;
+    
+        return fileName;
+    }
+  };
+  
+
+// GET ACCOMMODATION PICS
+const getPics = async(req, res) => {
+    const { id } = req.params;
+
+    if (!validator.default.isMongoId(id)) {
+        return res.json({ err: 'Not a valid id' });
+    }
+
+    const accommodation = await Accommodation.findById(id);
+
+    if (!accommodation) {
+        return res.json({ err: 'Accommodation does not exist' });
+    }
+
+    res.json({ pics: accommodation.pics });
+}
+
 module.exports = {
     createAccommodation,
     getAccommodation,
@@ -297,7 +451,8 @@ module.exports = {
     // getAccommodationReviewByUserId,
     updateAccommodation,
     deleteAccommodation,
-    archiveAccommodation
-    // postReviewAccommodation,
-    // deleteReviewAccommodation
+    archiveAccommodation,
+    postAccommodationReview,
+    uploadPics,
+    getPics
 }
