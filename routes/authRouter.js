@@ -5,11 +5,6 @@ const rateLimit = require("express-rate-limit");
 // CONTROLLERS
 const { register,login, uploadPfp, getPfp, getAllUsers, getAllOwners } = require('../controllers/userController');
 
-const {
-    getAccommodation,
-    getAccommodationById
-} = require('../controllers/accommodationController');
-
 const limiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour in milliseconds
   max: 100, // maximum number of requests
@@ -21,8 +16,6 @@ router.use(limiter);
 // SAMPLE: Get data to test
 router.get('/users', getAllUsers);
 router.get('/owners', getAllOwners);
-router.get('/accommodation', getAccommodation);
-router.get('/accommodation/:id', getAccommodationById);
 
 // POST: Register a user
 router.post('/register', register);

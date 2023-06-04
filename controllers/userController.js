@@ -46,6 +46,7 @@ const register = async (req, res) => {
 
         if (!validator.default.isEmail(email)) throw Error('Invalid email');
     
+        
         if (!validator.default.isStrongPassword(password)) {
             throw Error('Password should be of length 8 or more and must contain an uppercase letter, a lowercase letter, a digit, and a symbol');
         }
@@ -188,7 +189,7 @@ const addToBookmark = async (req, res) => {
 
     if (!status) {
         try {
-            await User.findByIdAndUpdate(uId, {$push:{bookmark: id}})
+            await User.findByIdAndUpdate(uId, {$push:{bookmarks: id}})
             res.status(200).json({ message: 'BOOKMARK: ADD SUCCESS' });
         } catch (error) {
             res.status(500).json({ error: 'BOOKMARK: ADD FAILED' });
