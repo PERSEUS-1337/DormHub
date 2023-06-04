@@ -166,7 +166,10 @@ const CheckIfOwner = () => {
   const [name, setAccommodationName] = useState("");
   const [desc, setAccommodationDesc] = useState("");
   const [price, setAccommodationPrice] = useState([]);
-  const [location, setAccommodationLocation] = useState("");
+  const [vicinity, setVicinity] = useState([]);
+  const [street, setStreet] = useState([]);
+  const [barangay, setBarangay] = useState([]);
+  const [town, setTown] = useState([]);
   const [type, setAccommodationType] = useState([]);
   const [amenity, setAccommodationAmenity] = useState([]);
   const [accommData, setAccommData] = useState([]);
@@ -206,12 +209,16 @@ const CheckIfOwner = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const oId = localStorage.getItem("_id");
+    const uId = localStorage.getItem("_id");
     const jwt = localStorage.getItem("token");
     setLoadingPostResult(true);
 
+    const location = { 
+      vicinity, street, barangay, town 
+    };
+
     const formData = {
-      oId, name, desc, price, location, type, amenity
+      uId, name, desc, price, location, type, amenity
     };
     try {
       const res = await fetch("/api/v1/auth-required-func/accommodation", {
@@ -223,13 +230,14 @@ const CheckIfOwner = () => {
         body: JSON.stringify(formData),
       });
       const data = await res.json();
+      console.log(formData);
       if (res.status === 201) {
         console.log(data.msg);
         closeModal();
         window.location.reload();
       } else {
         console.error(data.error);
-        alert("Creation failed; fill-up all fields.");
+        alert("Creation failed.", data.error);
       }
       setLoadingPostResult(false);
     } catch (err) {
@@ -281,13 +289,37 @@ const CheckIfOwner = () => {
               />
             </Form.Group>
 
-            <Form.Group controlId="accommodationLocation">
+            <Form.Group controlId="locationVicinity">
               <Form.Label>Location</Form.Label>
               <Form.Control
                 type="text"
-                placeholder="Enter location"
-                value={location}
-                onChange={(e) => setAccommodationLocation(e.target.value)}
+                placeholder="Enter Vicinity"
+                value={vicinity}
+                onChange={(e) => setVicinity(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group controlId="locationStreet">
+              <Form.Control
+                type="text"
+                placeholder="Enter Street"
+                value={street}
+                onChange={(e) => setStreet(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group controlId="locationBarangay">
+              <Form.Control
+                type="text"
+                placeholder="Enter Barangay"
+                value={barangay}
+                onChange={(e) => setBarangay(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group controlId="locationTown">
+              <Form.Control
+                type="text"
+                placeholder="Enter Town"
+                value={town}
+                onChange={(e) => setTown(e.target.value)}
               />
             </Form.Group>
 
@@ -298,6 +330,7 @@ const CheckIfOwner = () => {
                 value={type}
                 onChange={(e) => setAccommodationType(e.target.value)}
               >
+                <option value="" ></option>
                 <option value="apartment">Apartment</option>
                 <option value="condominium">Condominium</option>
                 <option value="dormitory">Dormitory</option>
