@@ -220,7 +220,7 @@ const deleteBookmark = async (req, res) => {
 
     if (status) {
         try {
-            await User.findByIdAndUpdate(uId, {$pull:{bookmark: id}})
+            await User.findByIdAndUpdate(uId, {$pull:{bookmarks: id}})
             res.status(200).json({ message: 'Bookmark: REMOVE SUCCESS' });
         } catch (error) {
             res.status(500).json({ error: 'Bookmark: REMOVE FAILED' });
@@ -234,7 +234,7 @@ const deleteBookmark = async (req, res) => {
 const checkBookmarkExists = async (id, uId) => {
     const user = await User.findOne({
         _id: uId,
-        bookmark: { $elemMatch: { $eq: id } }
+        bookmarks: { $elemMatch: { $eq: id } }
     });
 
     if (user) {
@@ -326,7 +326,6 @@ const getPfp = async(req, res) => {
 
     res.json({ pfp: user.pfp });
 }
-
 
 // GET ACCOMMODATIONS OF OWNER
 const getAccommodationOwner = async (req, res) => {

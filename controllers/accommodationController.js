@@ -67,7 +67,7 @@ const getAccommodationById = async (req, res) => {
 
 // POST ACCOMMODATION
 const createAccommodation = async (req, res) => {
-    const { uId, name, desc, price, location, type, archived, amenity } = req.body;
+    const { uId, name, desc, price, location, type, amenity } = req.body;
 
     if (!validator.default.isMongoId(uId)) {
       return res.status(400).json({err: 'Not a valid ownerId'});
@@ -102,7 +102,6 @@ const createAccommodation = async (req, res) => {
         archived: false,
         amenity: amenity,
         owner: uId,
-        user: [], // Set default value to empty
         review: []
     });
 
@@ -175,36 +174,41 @@ const deleteAccommodation = async (req, res) => {
     }
 };
 
+
 const archiveAccommodation = async (req, res) => {
-    const { id,uId } = req.params;
-    
-    if (!mongooseObjectId.isValid(id) || !mongooseObjectId.isValid(uId)) {
-        return res.json({error: 'Invalid ObjectID'});
+  const { id, uId } = req.params;
+
+  if (!mongooseObjectId.isValid(id) || !mongooseObjectId.isValid(uId)) {
+    return res.json({ error: 'Invalid ObjectID' });
+  }
+
+  try {
+    const accommodation = await Accommodation.findById(id);
+
+    if (accommodation.owner != uId || !accommodation) {
+      throw Error('Invalid Accommodation/owner');
     }
 
-    try {
+    const newArchiveStatus = !accommodation.archived;
 
-        const accommodation = await Accommodation.findById(id);
-        if (accommodation.owner != uId || !accommodation) {
-            throw Error('Invalid Accommodation/owner');
-        }
+    const toggleAccommodation = await Accommodation.findOneAndUpdate(
+      { _id: id, owner: uId },
+      { archived: newArchiveStatus },
+      { new: true }
+    );
 
-        const archiveAccommodation = await Accommodation.findOneAndUpdate(
-            { _id: id, owner: uId },
-            { archived: true },
-            { new: true }
-        );
-
-        if (!archiveAccommodation) {
-            return res.status(404).json({ error: 'Accommodation not found' });
-        }
-
-        res.status(200).json({ message: 'Accommodation archived successfully' });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Server error' });
+    if (!toggleAccommodation) {
+      return res.status(404).json({ error: 'Accommodation not found' });
     }
+
+    const message = newArchiveStatus ? 'Accommodation archived successfully' : 'Accommodation unarchived successfully';
+    res.status(200).json({ message });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Server error' });
+  }
 };
+
 
 // GET REVIEWS OF ACOMMODATION
 const getAccommodationReview = async(req, res) => {
