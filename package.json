@@ -6,10 +6,10 @@
   "scripts": {
     "dev": "nodemon server.js",
     "client": "cd client && npm run start",
-    "start": "concurrently --kill-others-on-fail \"npm run dev\" \"npm run client\"",
+    "start": "node server.js",
     "build-client": "cd client && npm run build",
     "install-dependencies": "cd client && npm install && cd .. && npm install",
-    "deploy": "cd client && npm run build && cd .. && npm run start-server"
+    "deploy": "cd client && npm run build && cd .. && npm run start"
   },
   "author": "CMSC 128 - E8L",
   "license": "ISC",
