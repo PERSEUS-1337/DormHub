@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState , useRef} from 'react';
 import { Modal, Button , Form } from 'react-bootstrap';
 
 
 const EditUserProfile = ({data}) => {
-    const [form, setForm] = useState({"fname": data.fname, "lname": data.lname});
+    const [form, setForm] = useState({});
     const [errors, setErrors] = useState({});
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+    const [file, setFile] = useState(null);
+
 
     const setField = (field, value) => {
         setForm({
@@ -25,7 +27,7 @@ const EditUserProfile = ({data}) => {
     
     function saveChanges(e) {
         e.preventDefault();
-        const type = localStorage.getItem("userType");
+        // const type = localStorage.getItem("userType");
         const oid = localStorage.getItem("_id");
         const jwt = localStorage.getItem("token");
 
@@ -34,10 +36,14 @@ const EditUserProfile = ({data}) => {
         const details = {
             fname: form.fname,
             lname: form.lname,
+            phone: form.phone,
         };
 
-        
-        fetch(`/api/v1/auth-required-func/${type}/${oid}`, {
+        const formData = new FormData();
+        formData.append('pfp', file);
+        const boundary = Math.random().toString().substr(2); // Generate a random boundary
+
+        fetch(`/api/v1/auth-required-func/${oid}`, {
             method: "PATCH",
             headers: {
                 "Content-Type": "application/json",
@@ -50,7 +56,39 @@ const EditUserProfile = ({data}) => {
                 console.log(body);
         });
 
-        window.location.reload();
+        const image = new Image();
+        try {
+          image.src = URL.createObjectURL(file);
+          image.onload = function() {
+            const width = this.width;
+            const height = this.height;
+              
+            if (width !== height) {
+              // Alert the user that the picture is not square
+              alert("Please upload a square profile picture.");
+            } else {
+                fetch(`/api/v1/auth-required-func/upload-pfp/${oid}`, {
+                  method: 'POST',
+                  headers: {
+                    //'Content-Type': 'multipart/form-data',
+                    Authorization: `Bearer ${jwt}`
+                  },
+                  body: formData,
+                })
+                  .then(response => response.json())
+                  .then(data => {
+                    // Handle the response data
+                    console.log(data);
+                  })
+                  .catch(error => {
+                    // Handle the error
+                    console.error(error);
+                  });
+                }}
+        } catch(error) {
+          console.error(error);
+        }
+      window.location.reload();
     };
   
     return (
@@ -63,13 +101,13 @@ const EditUserProfile = ({data}) => {
           <Modal.Header closeButton>
             <Modal.Title>Edit Profile Details</Modal.Title>
           </Modal.Header>
-          <Form onSubmit={saveChanges}>
+          <Form onSubmit={saveChanges} encType="multipart/form-data">
           <Modal.Body>
               <Form.Group className="mb-3" controlId="fname">
                 <Form.Label>First Name</Form.Label>
                 <Form.Control
-                  // placeholder={data.fname}
-                  value={form.fname}
+                  placeholder={data.fname}
+                  defaultValue={form.fname || data.fname}
                   onChange={(e) => {
                     if(e.target.value == "" || e.target.value == null){
                       setField("fname", "");
@@ -84,8 +122,8 @@ const EditUserProfile = ({data}) => {
               <Form.Group className="mb-3" controlId="lname">
                 <Form.Label>Last Name</Form.Label>
                 <Form.Control
-                  // placeholder={data.lname}
-                  value={form.lname}
+                  placeholder={data.lname}
+                  defaultValue={form.lname || data.lname}
                   onChange={(e) => {
                     if(e.target.value == "" || e.target.value == null){
                       setField("lname", "");
@@ -93,11 +131,30 @@ const EditUserProfile = ({data}) => {
                       setField("lname", e.target.value);
                     }
                   }
-                }
+                  }
                   isInvalid={!!errors.lname}
                 />
               </Form.Group>
-            
+              <Form.Group className="mb-3" controlId="phone">
+                <Form.Label>Contact Number</Form.Label>
+                <Form.Control
+                  placeholder={data.phone}
+                  defaultValue={form.phone || data.phone}
+                  onChange={(e) => {
+                    if(e.target.value == "" || e.target.value == null){
+                      setField("phone", "");
+                    }else{
+                      setField("phone", e.target.value);
+                    }
+                  }
+                  }
+                />
+              </Form.Group>
+                  
+              <Form.Group className="mb-3" controlId="pfp" encType="multipart/form-data">
+                <Form.Label>Profile Picture</Form.Label>
+                <Form.Control type="file" name="pfp" accept="image/*" onChange={(e) => setFile(e.target.files[0])} />
+              </Form.Group>
           </Modal.Body>
             <Modal.Footer>
                 <Button variant="primary" onClick={handleClose}>

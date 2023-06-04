@@ -1,5 +1,5 @@
 import './accom-style.css';
-import { Button, Row, Col, Carousel, Container, Modal } from 'react-bootstrap';
+import { Button, Row, Col, Carousel, Container, Spinner, Modal } from 'react-bootstrap';
 import React, { useState, useEffect } from "react";
 import { ReadStarRating, StarRating } from '../components/StarRating';
 import { useLocation } from 'react-router-dom';
@@ -60,17 +60,19 @@ function ImageModal(props) {
         </Modal>
     );
 }
+
 const AddToBookmarks = ({ bId }) => {
-    const type = localStorage.getItem("userType");
+    // const type = localStorage.getItem("userType");
     const id = localStorage.getItem("_id");
     const jwt = localStorage.getItem("token");
 
     const [fetchedData, setFetchedData] = useState([]);
     const [containsValue, setContainsValue] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         try {
-            fetch(`/api/v1/auth-required-func/${type}/bookmark/${id}`, {
+            fetch(`/api/v1/auth-required-func/bookmark/${id}`, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization : `Bearer ${jwt}`
@@ -80,11 +82,12 @@ const AddToBookmarks = ({ bId }) => {
             .then(data => {
                 console.log(data);
                 setFetchedData(data);
+                setIsLoading(false);
             })
         } catch (err) {
             console.log(err);
         }
-    }, []);
+    }, [id, jwt]);
 
     useEffect(() => {
         try {
@@ -94,50 +97,61 @@ const AddToBookmarks = ({ bId }) => {
                 setContainsValue(false);
             }
         } catch (err) {
-            setContainsValue(true);
+            setContainsValue(false);
         }
         
         console.log(containsValue);
-    }, [fetchedData]);
+    }, [fetchedData, bId, containsValue]);
+
 
     function addBookmark() { 
         console.log(`Trying to add bookmark with id ${bId}`);
-        fetch(`/api/v1/auth-required-func/${type}/bookmark/${bId}/${id}`, {
+        setIsLoading(true);
+        fetch(`/api/v1/auth-required-func/bookmark/${bId}/${id}`, {
             method: "PATCH",
             headers: {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${jwt}`
             },
-                body: JSON.stringify(bId),
         })
             .then((response) => response.json())
             .then((body) => {
                 console.log(body);
+                window.location.reload();
         });
     };
+    
 
-    if (type && containsValue == false) {
+    if (!isLoading && id && containsValue === false) {
         return(
             <div className="map" style={{ margin: '0px', padding: '0px' }}>
                 <Button type="button" onClick={addBookmark} variant="light">Bookmark</Button>
             </div>
         );
-    } else if (type && containsValue === true) {
+    } else if (!isLoading && id && containsValue === true) {
         return(
             <p>Already Bookmarked.</p>
         );
-    } else {
+    } else if (!isLoading) {
         return(
             <p>Please log-in to bookmark!</p>
         );
+    } else {
+        return(
+            <Container className="d-flex align-items-center justify-content-center">
+                <Spinner animation="border" role="status" size="lg">
+                <span className="visually-hidden">Loading...</span>
+                </Spinner>
+            </Container>
+        )
     }
     
 }
-
+ 
 const Details = (data) => {
 
     return (
-        <Container className="desc_accom">
+        <Container className="desc_accom border-bottom pb-4">
             <h3 className='accomTitle'>{data.accomData.name}</h3>
             <Row className="accomRating">
                 <Col className='' lg={1}>
@@ -175,9 +189,7 @@ const Details = (data) => {
                     <p>{data.accomData.location}</p>
                 </Col>
                 <Col sm={2}>
-                    <div className="map" style={{ margin: '0px', padding: '0px' }}>
-                        <Button type="button">View Map</Button>
-                    </div>
+                    <AddToBookmarks bId={data.accomData._id}/>
                 </Col>
             </Row>
             <Row id="price" className="detail">
@@ -186,7 +198,7 @@ const Details = (data) => {
                 </Col>
                 <Col sm={11}>
                     {
-                        data.accomData.price.length == 1 ?
+                        data.accomData.price.length === 1 ?
                             <p >Php {data.accomData.price[0]} per month</p>
                             :
                             <p >Php {data.accomData.price[0]} - Php {data.accomData.price[1]} per month</p>
@@ -217,7 +229,7 @@ const Review = (data) => {
 
 
 function Accommodation(props) {
-    const location = useLocation()
+    const location = useLocation();
 
     return (<>
         <Slideshow />

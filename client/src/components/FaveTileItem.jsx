@@ -1,28 +1,41 @@
-import React from 'react'
-import { Container, Row, Col, Button, Image } from 'react-bootstrap'
+import { React, useState } from 'react'
+import { Container, Row, Col, Button, Image, Spinner } from 'react-bootstrap'
 import { useNavigate } from 'react-router-dom'
 
-// When functional, add a button for delete
-const DeleteBookmark = () => {
-    fetch('api/v1/auth/user/bookmark/:id/:uId', { // api endpoint to be modified
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-      .then(response => {
-        if (response.ok) {
-          return response.json();
-        } 
-        throw response;
-      })
-      .catch(error => {
-        console.error("Error fetching data: ", error);
-      });
-};
 
 const FaveTileItem = ({ data }) => {
-    const navigate = useNavigate()
+    const [isLoading, setIsLoading] = useState(false);
+    const navigate = useNavigate();
+
+    const bId = data._id;
+
+    function ReloadComponent() {
+        window.location.reload();
+    }
+ 
+    function DeleteBookmark() {
+        setIsLoading(true);
+        const type = localStorage.getItem('userType');
+        const id = localStorage.getItem('_id');
+            const jwt = localStorage.getItem('token');
+        
+            fetch(`api/v1/auth-required-func/${type}/bookmark/${bId}/${id}`, {
+              method: 'DELETE',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${jwt}`,
+              },
+            })
+            .then(res =>res.json())
+            .then((body) => {
+                console.log(body);
+
+                if(!body.error) {
+                    ReloadComponent();
+                    setIsLoading(false);
+                }
+            })
+    }
 
     const navigateToLodge = (data) => {
         navigate('/accommodation', {state: {data}})
@@ -46,9 +59,27 @@ const FaveTileItem = ({ data }) => {
                             :
                             <h3 className='my-4'>PHP {data.price[0]} - {data.price[1]}</h3>
                         }
-                        <div className="justify-content-end mt-2">
-                            <Button variant="secondary" onClick={() => navigateToLodge(data)} className='mb-5'>Check</Button>
-                        </div>
+                        <Col>
+                            <div className="justify-content-end ms-auto">
+                                <Button variant="secondary" onClick={() => navigateToLodge(data)} className='mb-5'>Check</Button>
+                            </div>
+                        </Col>
+                        <Col>
+                            {
+                                isLoading ? (
+                                    <div className="d-flex justify-content-center align-items-center">
+                                        <Spinner animation="border" variant="primary" role="status" size="lg">
+                                            <span className="visually-hidden">Loading...</span>
+                                        </Spinner>
+                                    </div>
+                                ) : (
+                                    <div className="justify-content-end ms-auto">
+                                        <Button variant="light" onClick={DeleteBookmark} className='mb-5'>Remove</Button>
+                                    </div>
+                                )
+                            }
+                            
+                        </Col>
                     </Row>
                     
                 </Col>

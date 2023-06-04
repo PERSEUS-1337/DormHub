@@ -3,32 +3,47 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const accommodationSchema = new Schema({
-  _id: {
-      type: mongoose.Schema.Types.ObjectId,
-      required: true
-  },
+  // _id: {
+  //     type: mongoose.Schema.Types.ObjectId,
+  //     required: true
+  // },
   name: {
     type: String,
     required: true
   },
   desc: {
-      type: String,
-      required: true
+    type: String,
+    required: true
   },
   pics: {
-      type: [String],
+    type: [String],
   },
   price: {
     type: [Number],
     required: true
   },
   location: {
-    type: String,
+    type: {
+      vicinity: {
+        type: String,
+      },
+      street: {
+        type: String,
+      },
+      barangay: {
+        type: String,
+        required: true
+      },
+      town: {
+        type: String,
+        required: true
+      }
+    },
     required: true
   },
   type: {
     type: [String],
-    enum: ["apartment", "condominium", "dormitory", "transient", "hotel", "hostel", "bedspace"],
+    enum: ["apartment", "condominium", "dormitory", "transient", "hotel", "hostel", "bedspace", "others"],
     required: true
   },
   archived: {
@@ -42,10 +57,6 @@ const accommodationSchema = new Schema({
   owner: {
     type: mongoose.Schema.Types.ObjectId,
     required: true
-  },
-  user: {
-    type: [mongoose.Schema.Types.ObjectId],
-    required: false
   },
   review: {
       type: [{
@@ -62,11 +73,7 @@ const accommodationSchema = new Schema({
               type: String,
               required: true
           },
-          liked: {
-              type: Boolean
-          }
       }],
-      // required: true
   },
 }, {timestamps: true});
 
