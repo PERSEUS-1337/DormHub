@@ -7,7 +7,7 @@ const FaveTileList = () => {
     const [accommData, setAccommData] = useState({});
     
     useEffect(() => {
-        fetch("/api/v1/accommodation")
+        fetch("/api/v1/accommodation/all")
         .then(res =>res.json())
         .then(data => {
             setAccommData(data);

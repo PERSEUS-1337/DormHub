@@ -43,7 +43,7 @@ const EditUserProfile = ({data}) => {
         formData.append('pfp', file);
         const boundary = Math.random().toString().substr(2); // Generate a random boundary
 
-        fetch(`/api/v1/auth-required-func/${type}/${oid}`, {
+        fetch(`/api/v1/auth-required-func/${oid}`, {
             method: "PATCH",
             headers: {
                 "Content-Type": "application/json",
@@ -66,7 +66,7 @@ const EditUserProfile = ({data}) => {
           // Alert the user that the picture is not square
           alert("Please upload a square profile picture.");
         } else {
-            fetch(`/api/v1/auth-required-func/${type}/upload-pfp/${oid}`, {
+            fetch(`/api/v1/auth-required-func/upload-pfp/${oid}`, {
               method: 'POST',
               headers: {
                 //'Content-Type': 'multipart/form-data',

@@ -72,7 +72,7 @@ const AddToBookmarks = ({ bId }) => {
 
     useEffect(() => {
         try {
-            fetch(`/api/v1/auth-required-func/${type}/bookmark/${id}`, {
+            fetch(`/api/v1/auth-required-func/bookmark/${id}`, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization : `Bearer ${jwt}`
@@ -107,7 +107,7 @@ const AddToBookmarks = ({ bId }) => {
     function addBookmark() { 
         console.log(`Trying to add bookmark with id ${bId}`);
         setIsLoading(true);
-        fetch(`/api/v1/auth-required-func/${type}/bookmark/${bId}/${id}`, {
+        fetch(`/api/v1/auth-required-func/bookmark/${bId}/${id}`, {
             method: "PATCH",
             headers: {
                 "Content-Type": "application/json",

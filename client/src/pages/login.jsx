@@ -44,7 +44,7 @@ const Login = () => {
       password: form.password,
     };
   
-    const ownerLoginPromise = fetch(`/api/v1/auth/login/owner`, {
+    const userLoginPromise = fetch(`/api/v1/auth/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -52,15 +52,7 @@ const Login = () => {
       body: JSON.stringify(credentials),
     });
   
-    const userLoginPromise = fetch(`/api/v1/auth/login/user`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(credentials),
-    });
-  
-    Promise.all([ownerLoginPromise, userLoginPromise])
+    Promise.all([userLoginPromise])
       .then((responses) => Promise.all(responses.map((response) => response.json())))
       .then((bodies) => {
         const ownerResponse = bodies[0];

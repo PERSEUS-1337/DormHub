@@ -15,7 +15,7 @@ const AccommTileList = () => {
       const jwt = localStorage.getItem("token");
 
       try {
-        const res = await fetch(`/api/v1/auth-required-func/owner/accommodation/${oid}`, {
+        const res = await fetch(`/api/v1/auth-required-func/accommodations/${oid}`, {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${jwt}`
@@ -115,7 +115,7 @@ const FaveTileList = () => {
       const jwt = localStorage.getItem('token');
 
       try {
-        const res = await fetch(`/api/v1/auth-required-func/${type}/bookmark/${uid}`, {
+        const res = await fetch(`/api/v1/auth-required-func/bookmark/${uid}`, {
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${jwt}`,
@@ -177,7 +177,7 @@ const CheckIfOwner = () => {
       const jwt = localStorage.getItem("token");
 
       try {
-        const res = await fetch(`/api/v1/auth-required-func/owner/accommodation/${oid}`, {
+        const res = await fetch(`/api/v1/auth-required-func/accommodations/${oid}`, {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${jwt}`,
@@ -360,7 +360,7 @@ const UserPage = () => {
       const jwt = localStorage.getItem("token");
 
       try {
-        const res = await fetch(`/api/v1/auth-required-func/${type}/${uid}`, {
+        const res = await fetch(`/api/v1/auth-required-func/${uid}`, {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${jwt}`
@@ -377,7 +377,7 @@ const UserPage = () => {
       }
 
       try {
-        const res = await fetch(`/api/v1/auth-required-func/${type}/pfp/${uid}`, {
+        const res = await fetch(`/api/v1/auth-required-func/pfp/${uid}`, {
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${jwt}`,
