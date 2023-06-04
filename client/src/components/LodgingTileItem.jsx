@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Container, Row, Col, Button, Image } from 'react-bootstrap'
-import { FaHeart } from 'react-icons/fa'
+import { FaArrowRight, FaHeart } from 'react-icons/fa'
 import { useNavigate, Link } from 'react-router-dom'
 
 const LodgingTileItem = ({ data }) => {
@@ -19,7 +19,13 @@ const LodgingTileItem = ({ data }) => {
                 </Col>
                 <Col className='border'>
                     <h2 className='my-4'>{data.name}</h2>
-                    <p>{data.rating} STARS</p>
+                    {
+                        data.rating > 1 ?
+                            <p><b><span className='h4'>{data.rating}</span></b> STARS</p>
+                            :
+                            <p><b><span className='h4'>{data.rating}</span></b> STAR</p>
+                    }
+                    
                 </Col>
                 <Col>
                     <Row>
@@ -30,16 +36,16 @@ const LodgingTileItem = ({ data }) => {
                                 :
                                 <h3 className='my-4'>PHP {data.price[0]} - {data.price[1]}</h3>
                             }
-                            <FaHeart
+                            {/* <FaHeart
                                 size={35}
                                 onClick={() => setIsBookmarked(!isBookmarked)}
                                 color={isBookmarked ? "#8b0000" : "#b8bac2"}
                                 style={{ cursor: 'pointer' }}
-                            />
+                            /> */}
                         </Col>
 
                         <div className="d-flex justify-content-center">
-                            <Button onClick={() => navigateToLodge(data)} className='mb-4'>check</Button>
+                            <Button onClick={() => navigateToLodge(data)} className='mb-4'>View Details   <FaArrowRight /></Button>
                         </div>
                     </Row>
                     
