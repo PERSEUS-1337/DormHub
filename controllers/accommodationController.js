@@ -246,55 +246,38 @@ const getAccommodationReviewByUserId = async(req, res) => {
 };
 
 // POST REVIEW OF ACCOMMODATION
-const postReviewAccommodation = async(req, res) => {
-    const { id } = req.params;
-    const { rating, user, detail } = req.body;
+const postAccommodationReview = async (req, res) => {
+    const { id, uId } = req.params;
+    const { rating, detail } = req.body;
+
+    if (!mongooseObjectId.isValid(id) || !mongooseObjectId.isValid(uId))
+        return res.json({ error: 'Invalid Accommodation / User ObjectID' });
+
     try {
         const accommodation = await Accommodation.findById(id);
-        if (!accommodation) {
-            return res.status(404).json({ error: "Accommodation not found" });
-        }
+        const user = await User.findById(uId);
+
+        if (!accommodation)
+            return res.status(404).json({ error: 'Accommodation not found' });
+
+        if (!user)
+            return res.status(404).json({ error: 'User not found' });
+        
         const review = {
             rating: rating,
-            user: user,
-            detail: detail
+            user: uId,
+            detail: detail,
         };
+
         accommodation.review.push(review);
         await accommodation.save();
-        res.status(201).json(accommodation);
+
+        res.status(200).json({ message: 'Review posted successfully' });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: "Server error" });
+        res.status(500).json({ error: 'Server error' });
     }
-}
-
-// DELETE REVIEW OF ACCOMMODATOION
-const deleteReviewAccommodation = async (req, res) => {
-    const { id, uId } = req.params;
-    
-    try {
-        const accommodation = await Accommodation.findById(id);
-
-        if (!accommodation) {
-            return res.status(404).json({ error: "Accommodation not found" });
-        }
-        
-        const reviewIndex = accommodation.review.findIndex((review) => review.user.toString() === uId);
-        
-        if (reviewIndex === -1) {
-            return res.status(404).json({ error: "Review not found" });
-        }
-
-        accommodation.review.splice(reviewIndex, 1);
-
-        await accommodation.save();
-
-        res.status(200).json({ message: "Review deleted successfully" });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: "Server error" });
-    }
-}
+};
 
 module.exports = {
     createAccommodation,
@@ -304,7 +287,6 @@ module.exports = {
     // getAccommodationReviewByUserId,
     updateAccommodation,
     deleteAccommodation,
-    archiveAccommodation
-    // postReviewAccommodation,
-    // deleteReviewAccommodation
+    archiveAccommodation,
+    postAccommodationReview
 }

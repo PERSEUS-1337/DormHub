@@ -32,7 +32,8 @@ const {
     createAccommodation,
     updateAccommodation,
     deleteAccommodation,
-    archiveAccommodation
+    archiveAccommodation,
+    postAccommodationReview
 } = require('../controllers/accommodationController');
 
 router.use(requireAuth);
@@ -59,6 +60,8 @@ router.get('/bookmark/:uId', getBookmark);
 router.patch('/bookmark/:id/:uId', addToBookmark); 
 // DELETE bookmark
 router.delete('/bookmark/:id/:uId', deleteBookmark); 
+// POST REVIEW
+router.post('/review/:id/:uId', postAccommodationReview); 
 // POST pfp
 router.post('/upload-pfp/:uId', uploadPfp);
 // GET pfp
