@@ -3,38 +3,14 @@ import { Container, Col, Row, Form, Button, Alert, Spinner, Pagination} from 're
 import LodgingTileItem from './LodgingTileItem';
 
 const SearchBar = ({ data }) => {
-    const [viewAll, setViewAll] = useState(false)
     const [isLoading, setIsLoading] = useState(data);
     const [filteredData, setFilteredData] = useState([])
+    const [showSuggestions, setShowSuggestions] = useState([])
     const [wordEntered, setWordEntered] = useState("")
     const [show, setShow] = useState(false)
     const [currentPage, setCurrentPage] = useState(1)
     const itemsPerPage = 3
 
-    const handleFilter = (e) => {
-        try {
-
-            const searchedWord = e.target.value
-            setWordEntered(searchedWord)
-
-            const newFilter = data.filter((value) => {
-                return value.name.toLowerCase().includes(searchedWord.toLowerCase())
-            })
-
-            if (searchedWord === "") {
-                setFilteredData([])
-            } else {
-                setFilteredData(newFilter)
-            }
-            setCurrentPage(1)
-
-
-        } catch (error) {
-            console.log(error)
-            setShow(true)
-
-        }
-    }
     const clearInput = () => {
         setFilteredData([])
         setWordEntered("")
@@ -86,25 +62,7 @@ const SearchBar = ({ data }) => {
         setCurrentPage(1)
 
     }
-    // const returnResults = () => {
-    //     return (<>
-    //         {
-    //             filteredData.length != 0 && (
-    //                 <Container className='rounded-3 mt-4' style={{ background: "#ffffff" }}>
-    //                     {filteredData.slice(0, 10).map((value, key) => {
-    //                         return (
-    //                             <LodgingTileItem key={value.id} data={value} />
-    //                             // <p key={key._id}>{value.name}</p>
-                        
-    //                         )
-    //                     })
-    //                     }
-    //                 </Container>
-    //             )
-    //         }
-    //     </>)
-    // }
-
+    
         if (show) {
             return (
                 <Alert variant="danger" onClose={() => dismissAlert()} dismissible className='mt-3 mx-3' style={{ caretColor: "transparent" }}>
@@ -119,9 +77,9 @@ const SearchBar = ({ data }) => {
             <Container className='mt-4'>
                 <Row>
                     <Col className='px-5'>
-                        <Form>
+                        <Form onSubmit={(e) => { e.preventDefault(); handleSearch(e)}}>
                             <Form.Group controlId="filterAccomms" className='d-flex align-items-center mx-2'>
-                                <Form.Control type="search" placeholder="Search for an accommodation..." className='m-4' onChange={(e) => { setWordEntered(e.target.value); if (e.target.value == "") setFilteredData([])}} />
+                                <Form.Control type="search" placeholder="Search for an accommodation..." className='m-4' onChange={(e) => { setWordEntered(e.target.value); if (e.target.value == "") setFilteredData([]);}} />
                                 <Button className="rounded-1 mx-2" variant="secondary" onClick={handleSearch}>Search</Button>
                                 <Button className="rounded-1 mx-2 text-nowrap" variant="secondary" onClick={handleViewAll}>View All</Button>
                             </Form.Group>
