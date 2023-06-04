@@ -8,7 +8,7 @@ const Login = () => {
   const [form, setForm] = useState({});
   const [errors, setErrors] = useState({});
   const [authentication, setAuthenticated] = useState(false);
-  const [userType, setUserType] = useState("user");
+  // const [userType, setUserType] = useState("user");
   const setField = (field, value) => {
     setForm({
       ...form,
@@ -33,86 +33,90 @@ const Login = () => {
     }
   }, [authentication]);
 
+  // function login(e) {
+  //   e.preventDefault();
+  
+  //   console.log("form submitted");
+  //   console.log(form);
+  
+  //   const credentials = {
+  //     email: form.email,
+  //     password: form.password,
+  //   };
+  
+  //   const ownerLoginPromise = fetch(`/api/v1/auth/login/owner`, {
+
+  //   fetch(`/api/v1/auth/login`, {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify(credentials),
+  //   });
+  
+  //   const userLoginPromise = fetch(`/api/v1/auth/login/user`, {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify(credentials),
+  //   });
+  
+  //   Promise.all([ownerLoginPromise, userLoginPromise])
+  //     .then((responses) => Promise.all(responses.map((response) => response.json())))
+  //     .then((bodies) => {
+  //       const ownerResponse = bodies[0];
+  //       const userResponse = bodies[1];
+  
+  //       if (ownerResponse.token) {
+  //         localStorage.setItem("token", ownerResponse.token);
+  //         localStorage.setItem("userType", "owner");
+  //         console.log("owner");
+  //         localStorage.setItem("_id", ownerResponse._id);
+  //         setAuthenticated(true);
+  //       } else if (userResponse.token) {
+  //         localStorage.setItem("token", userResponse.token);
+  //         localStorage.setItem("userType", "user");
+  //         console.log("user");
+  //         localStorage.setItem("_id", userResponse._id);
+  //         setAuthenticated(true);
+  //       } else {
+  //         alert("Failed to log in");
+  //       }
+  //     });
+  // }
   function login(e) {
     e.preventDefault();
-  
+
     console.log("form submitted");
     console.log(form);
-  
+
     const credentials = {
       email: form.email,
       password: form.password,
     };
-  
-    const userLoginPromise = fetch(`/api/v1/auth/login`, {
+
+    fetch(`/api/v1/auth/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(credentials),
-    });
-  
-    Promise.all([userLoginPromise])
-      .then((responses) => Promise.all(responses.map((response) => response.json())))
-      .then((bodies) => {
-        const ownerResponse = bodies[0];
-        const userResponse = bodies[1];
-  
-        if (ownerResponse.token) {
-          localStorage.setItem("token", ownerResponse.token);
-          localStorage.setItem("userType", "owner");
-          console.log("owner");
-          localStorage.setItem("_id", ownerResponse._id);
-          setAuthenticated(true);
-        } else if (userResponse.token) {
-          localStorage.setItem("token", userResponse.token);
-          localStorage.setItem("userType", "user");
-          console.log("user");
-          localStorage.setItem("_id", userResponse._id);
+    })
+      .then((response) => response.json())
+      .then((body) => {
+        console.log(body);
+
+        if (body.token) {
+          localStorage.setItem("token", body.token);
+
+          localStorage.setItem("_id", body._id);
           setAuthenticated(true);
         } else {
           alert("Failed to log in");
         }
       });
   }
-
-  /* can use this if backend is updated
-  function login(e) {
-  e.preventDefault();
-
-  console.log("form submitted");
-  console.log(form);
-
-  const credentials = {
-    email: form.email,
-    password: form.password,
-  };
-
-  fetch(`/api/v1/auth/login`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(credentials),
-  })
-    .then((response) => response.json())
-    .then((body) => {
-      console.log(body);
-
-      if (body.token) {
-        localStorage.setItem("token", body.token);
-        const userType = body.owner ? "owner" : "user";
-        localStorage.setItem("userType", userType);
-        console.log(userType);
-
-        localStorage.setItem("_id", body._id);
-        setAuthenticated(true);
-      } else {
-        alert("Failed to log in");
-      }
-    });
-}
-  */ 
 
   return (
     <>

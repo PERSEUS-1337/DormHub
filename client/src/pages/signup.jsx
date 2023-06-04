@@ -8,7 +8,7 @@ const Signup = () => {
   const [lname, setlName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [userType, setUserType] = useState('user');
+  const [userType, setUserType] = useState('User');
   const navigateTo = useNavigate();
 
   const handleLoginClick = () => {
@@ -18,7 +18,8 @@ const Signup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const formData = { fname, lname, email, password };
+    const formData = { fname, lname, email, password, userType };
+    console.log(formData);
 
     function login() {
   
@@ -27,7 +28,7 @@ const Signup = () => {
         password: formData.password,
       };
   
-      fetch(`/api/v1/auth/login/${userType}`, {
+      fetch(`/api/v1/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -40,8 +41,6 @@ const Signup = () => {
   
           if (body.token) {
             localStorage.setItem("token", body.token);
-            localStorage.setItem("userType", userType);
-            console.log(userType);
             localStorage.setItem("_id", body._id);
           } else {
             alert("Failed to log in");
@@ -128,8 +127,8 @@ const Signup = () => {
               value={userType}
               onChange={(e) => setUserType(e.target.value)}
             >
-              <option value="user">User</option>
-              <option value="owner">Owner</option>
+              <option value="User">User</option>
+              <option value="Owner">Owner</option>
             </Form.Select>
           </Form.Group>
           <br />

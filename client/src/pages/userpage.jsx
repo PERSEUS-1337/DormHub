@@ -110,7 +110,7 @@ const FaveTileList = () => {
 
   useEffect(() => {
     const fetchBookmarks = async () => {
-      const type = localStorage.getItem('userType');
+      // const type = localStorage.getItem('userType');
       const uid = localStorage.getItem('_id');
       const jwt = localStorage.getItem('token');
 
@@ -237,114 +237,108 @@ const CheckIfOwner = () => {
     }
   };
 
-  const userType = localStorage.getItem("userType");
+  return (
+    <>
+      <h3>Accommodations:</h3>
+      <div key={accommData._id} className="mb-3">
+        <AccommTileList data={accommData} />
+      </div>
+      <Button variant="primary" className="mb-3" onClick={openModal}>
+        Add Accommodation
+      </Button>
+      <Modal show={showModal} onHide={closeModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Add Accommodation</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form onSubmit={handleSubmit}>
+            <Form.Group controlId="accommodationName">
+              <Form.Label>Accommodation Name</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter accommodation name"
+                value={name}
+                onChange={(e) => setAccommodationName(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group controlId="accommodationDesc">
+              <Form.Label>Accommodation Description</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter accommodation description"
+                value={desc}
+                onChange={(e) => setAccommodationDesc(e.target.value)}
+              />
+            </Form.Group>
 
-  if (userType === "owner") {
-    return (
-      <>
-        <h3>Accommodations:</h3>
-        <div key={accommData._id} className="mb-3">
-          <AccommTileList data={accommData} />
-        </div>
-        <Button variant="primary" className="mb-3" onClick={openModal}>
-          Add Accommodation
-        </Button>
-        <Modal show={showModal} onHide={closeModal}>
-          <Modal.Header closeButton>
-            <Modal.Title>Add Accommodation</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <Form onSubmit={handleSubmit}>
-              <Form.Group controlId="accommodationName">
-                <Form.Label>Accommodation Name</Form.Label>
-                <Form.Control
-                  type="text"
-                  placeholder="Enter accommodation name"
-                  value={name}
-                  onChange={(e) => setAccommodationName(e.target.value)}
-                />
-              </Form.Group>
-              <Form.Group controlId="accommodationDesc">
-                <Form.Label>Accommodation Description</Form.Label>
-                <Form.Control
-                  type="text"
-                  placeholder="Enter accommodation description"
-                  value={desc}
-                  onChange={(e) => setAccommodationDesc(e.target.value)}
-                />
-              </Form.Group>
+            <Form.Group controlId="accommodationPrice">
+              <Form.Label>Price</Form.Label>
+              <Form.Control
+                type="number"
+                placeholder="Enter price"
+                value={price}
+                onChange={(e) => setAccommodationPrice(e.target.value)}
+              />
+            </Form.Group>
 
-              <Form.Group controlId="accommodationPrice">
-                <Form.Label>Price</Form.Label>
-                <Form.Control
-                  type="number"
-                  placeholder="Enter price"
-                  value={price}
-                  onChange={(e) => setAccommodationPrice(e.target.value)}
-                />
-              </Form.Group>
+            <Form.Group controlId="accommodationLocation">
+              <Form.Label>Location</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter location"
+                value={location}
+                onChange={(e) => setAccommodationLocation(e.target.value)}
+              />
+            </Form.Group>
 
-              <Form.Group controlId="accommodationLocation">
-                <Form.Label>Location</Form.Label>
-                <Form.Control
-                  type="text"
-                  placeholder="Enter location"
-                  value={location}
-                  onChange={(e) => setAccommodationLocation(e.target.value)}
-                />
-              </Form.Group>
-
-              <Form.Group controlId="accommodationType">
-                <Form.Label>Type</Form.Label>
-                <Form.Control
-                  as="select"
-                  value={type}
-                  onChange={(e) => setAccommodationType(e.target.value)}
-                >
-                  <option value="apartment">Apartment</option>
-                  <option value="condominium">Condominium</option>
-                  <option value="dormitory">Dormitory</option>
-                  <option value="transient">Transient</option>
-                  <option value="hotel">Hotel</option>
-                  <option value="hostel">Hostel</option>
-                  <option value="bedspace">Bedspace</option>
-                </Form.Control>
-              </Form.Group>
+            <Form.Group controlId="accommodationType">
+              <Form.Label>Type</Form.Label>
+              <Form.Control
+                as="select"
+                value={type}
+                onChange={(e) => setAccommodationType(e.target.value)}
+              >
+                <option value="apartment">Apartment</option>
+                <option value="condominium">Condominium</option>
+                <option value="dormitory">Dormitory</option>
+                <option value="transient">Transient</option>
+                <option value="hotel">Hotel</option>
+                <option value="hostel">Hostel</option>
+                <option value="bedspace">Bedspace</option>
+              </Form.Control>
+            </Form.Group>
 
 
-              <Form.Group controlId="accommodationAmenity">
-                <Form.Label>Amenity</Form.Label>
-                <Form.Control
-                  type="text"
-                  placeholder="Enter amenity"
-                  value={amenity}
-                  onChange={(e) => setAccommodationAmenity(e.target.value)}
-                />
-              </Form.Group>
+            <Form.Group controlId="accommodationAmenity">
+              <Form.Label>Amenity</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter amenity"
+                value={amenity}
+                onChange={(e) => setAccommodationAmenity(e.target.value)}
+              />
+            </Form.Group>
 
-              <Button className="" variant="secondary" type="submit" disabled={loadingPostResult}>
-                {
-                  loadingPostResult ? (
-                    <Spinner animation="border" variant="primary" role="status" size="sm" disabled>
-                      <span className="visually-hidden">Loading...</span>
-                    </Spinner>
+            <Button className="" variant="secondary" type="submit" disabled={loadingPostResult}>
+              {
+                loadingPostResult ? (
+                  <Spinner animation="border" variant="primary" role="status" size="sm" disabled>
+                    <span className="visually-hidden">Loading...</span>
+                  </Spinner>
 
-                  ) : (
-                    "Save"
-                  )
-                }
-              </Button>
+                ) : (
+                  "Save"
+                )
+              }
+            </Button>
 
-            </Form>
-          </Modal.Body>
-        </Modal>
+          </Form>
+        </Modal.Body>
+      </Modal>
 
 
-      </>
-    );
-  } else {
-    return null;
-  }
+    </>
+  );
 };
 
 const UserPage = () => {
@@ -355,7 +349,7 @@ const UserPage = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const type = localStorage.getItem("userType");
+      // const type = localStorage.getItem("userType");
       const uid = localStorage.getItem("_id");
       const jwt = localStorage.getItem("token");
 
@@ -369,8 +363,8 @@ const UserPage = () => {
         const data = await res.json();
         setUserData(data);
         // console.log(data);
-        const userType = localStorage.getItem("userType");
-        console.log(userType)
+        // const userType = localStorage.getItem("userType");
+        // console.log(userType)
         setIsLoading(false);
       } catch (err) {
         console.error('User fetching error.', err);
@@ -434,7 +428,7 @@ const UserPage = () => {
               <Col xs={7}>
                 <h2>{`${userData.fname} ${userData.lname}`}</h2>
                 {/* TO ADD: USER TYPE */}
-                {/* <h5 className="lead">From Manila, Philippines</h5> */}
+                <h5 className="lead">{`${userData.userType}`}</h5>
                 <h5 className="lead">Email: {`${userData.email}`}</h5>
                 <h5 className="lead">Contact Number: {
                   userData.phone.length === 0 || userData.phone[0] === "" ? (
@@ -454,7 +448,15 @@ const UserPage = () => {
         </>
       </Container>
       <Container>
-        <CheckIfOwner />
+        {
+          userData.userType === "Owner" ? (
+            // console.log("Owner"),
+            <CheckIfOwner />
+          ) : (
+            <></>
+          )
+        }
+        
         <h3>Favorites:</h3>
         <FaveTileList />
       </Container>

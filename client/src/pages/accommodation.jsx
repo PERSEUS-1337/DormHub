@@ -62,7 +62,7 @@ function ImageModal(props) {
 }
 
 const AddToBookmarks = ({ bId }) => {
-    const type = localStorage.getItem("userType");
+    // const type = localStorage.getItem("userType");
     const id = localStorage.getItem("_id");
     const jwt = localStorage.getItem("token");
 
@@ -87,7 +87,7 @@ const AddToBookmarks = ({ bId }) => {
         } catch (err) {
             console.log(err);
         }
-    }, [id, jwt, type]);
+    }, [id, jwt]);
 
     useEffect(() => {
         try {
@@ -122,13 +122,13 @@ const AddToBookmarks = ({ bId }) => {
     };
     
 
-    if (!isLoading && type && containsValue === false) {
+    if (!isLoading && id && containsValue === false) {
         return(
             <div className="map" style={{ margin: '0px', padding: '0px' }}>
                 <Button type="button" onClick={addBookmark} variant="light">Bookmark</Button>
             </div>
         );
-    } else if (!isLoading && type && containsValue === true) {
+    } else if (!isLoading && id && containsValue === true) {
         return(
             <p>Already Bookmarked.</p>
         );
