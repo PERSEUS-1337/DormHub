@@ -42,7 +42,7 @@ const AccomCards = () => {
             <Row md={4} className="g-3 row mx-auto">
             {/* BACKLOG: Retrieve highest rating top 3 accommodations */}
             {accommData.accommodations && accommData.accommodations.slice(0,3).map( data => (
-                <Col key={data.id} className="col mx-auto" style={{cursor: "pointer"}}>
+                <Col key={data.id} className="col mx-auto">
                 <Card className="bg-info" onClick={() => toAccomm(data)}>
                     {/* Added static src to test UI */}
                     <Card.Img variant="top" src="https://www.home-designing.com/wp-content/uploads/2016/02/luxury-gray-and-wood-bedroom.jpg" />

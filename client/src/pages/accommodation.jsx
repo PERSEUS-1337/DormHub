@@ -172,8 +172,7 @@ const Details = (data) => {
                     <img src="../../assets/icons/location.jpg" alt="test1" />
                 </Col>
                 <Col sm={9}>
-                    <p>{data.accomData.location.vicinity}: {data.accomData.location.town}, {data.accomData.location.barangay}, {data.accomData.location.street}
-                    </p>
+                    <p>{data.accomData.location}</p>
                 </Col>
                 <Col sm={2}>
                     <div className="map" style={{ margin: '0px', padding: '0px' }}>
