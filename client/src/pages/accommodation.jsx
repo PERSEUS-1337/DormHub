@@ -248,7 +248,7 @@ const CheckIfLoggedIn = ({ accommodationId }) => {
             });
             const data = await res.json();
             console.log(data);
-            if (res.status === 201) {
+            if (res.status === 200) {
                 console.log(data.msg);
                 // closeModal();
             } else {
@@ -257,7 +257,6 @@ const CheckIfLoggedIn = ({ accommodationId }) => {
         } catch (err){
             console.error("Review POST error.", err);
         }
-        window.location.reload();
     };
     return (
         <>
@@ -284,7 +283,6 @@ const Review = (data) => {
         </Container>
     );
 }
-
 
 function Accommodation(props) {
     const location = useLocation();
