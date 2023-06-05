@@ -280,7 +280,6 @@ const Review = (data) => {
     );
 }
 
-
 function Accommodation(props) {
     const location = useLocation();
     const isLoggedIn = localStorage.getItem("_id") && localStorage.getItem("token");
