@@ -35,7 +35,8 @@ const {
     archiveAccommodation,
     postAccommodationReview,
     uploadPics,
-    getPics
+    getPics,
+    deleteAccommodationReviews
 } = require('../controllers/accommodationController');
 
 router.use(requireAuth);
@@ -83,9 +84,12 @@ router.patch('/accommodation/archive/:id/:uId', archiveAccommodation);
 // DELETE a single ACCOMMODATION
 router.delete('/accommodation/:id/:uId', deleteAccommodation);
 // UPLOAD accommodation pics
-router.post('/accommodation/upload/:id/', uploadPics)
+router.post('/accommodation/upload/:id', uploadPics)
 // GET pics
-router.get('/accommodation/pics/:id/', getPics)
+router.get('/accommodation/pics/:id', getPics)
+
+// ADMIN ONLY
+router.delete('/accommodation/review/:id', deleteAccommodationReviews)
 
 
 module.exports = router;

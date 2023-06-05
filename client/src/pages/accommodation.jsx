@@ -1,5 +1,5 @@
 import './accom-style.css';
-import { Button, Row, Col, Carousel, Container, Spinner, Modal } from 'react-bootstrap';
+import { Button, Row, Col, Carousel, Container, Spinner, Modal, Form } from 'react-bootstrap';
 import React, { useState, useEffect } from "react";
 import { ReadStarRating, StarRating } from '../components/StarRating';
 import { useLocation } from 'react-router-dom';
@@ -162,12 +162,7 @@ const Details = (data) => {
                 </Col>
             </Row>
 
-            <p id="accommDetail">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-                tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-                quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-                culpa qui officia deserunt mollit anim id est laborum.</p>
+            <p id="accommDetail">{data.accomData.desc}</p>
 
             <Row id="amenity" className="detail">
                 <Col sm={1}>
@@ -219,6 +214,63 @@ const Details = (data) => {
 }
 
 
+const CheckIfLoggedIn = ({ accommodationId }) => {
+    const [rating, setRating] = useState("");
+    const [detail, setDetail] = useState("");
+
+    const handleRatingChange = (newRating) => {
+        setRating(newRating)
+    }
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        const uId = localStorage.getItem("_id");
+        const jwt = localStorage.getItem("token");
+        
+        const formData = { rating, detail };
+        
+        // const params = { id, uId };
+
+        try {
+            const res = await fetch(`/api/v1/auth-required-func/review/${accommodationId}/${uId}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${jwt}`
+                },
+                body: JSON.stringify(formData),
+            });
+            const data = await res.json();
+            console.log(data);
+            if (res.status === 200) {
+                console.log(data.msg);
+                // closeModal();
+            } else {
+                console.log("error")
+            }
+        } catch (err){
+            console.error("Review POST error.", err);
+        }
+        //window.location.reload();
+    };
+    return (
+        <>
+        <Container className='desc_accom reviewContainer'>
+            <Form onSubmit = {handleSubmit}>
+                <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
+                    <Form.Label>Write a review!</Form.Label>
+                    <StarRating rating={rating} setRating={handleRatingChange}/>
+                    <Form.Control as="textarea" rows={3} type="text" value={detail} onChange={(e) => setDetail(e.target.value)}/>
+                </Form.Group>
+                <Button className="" variant="secondary" type="submit" >Submit Review</Button>
+            </Form>
+        </Container>
+        </>
+    );
+}
+
+
 const Review = (data) => {
     return (
         <Container className='desc_accom reviewContainer'>
@@ -228,14 +280,19 @@ const Review = (data) => {
     );
 }
 
-
 function Accommodation(props) {
     const location = useLocation();
-
+    const isLoggedIn = localStorage.getItem("_id") && localStorage.getItem("token");
     return (<>
         <Slideshow />
         {/* <ReadStarRating rate={location.state.data} /> */}
         <Details accomData={location.state.data} />
+        {isLoggedIn ? (
+            console.log("id" + location.state.data._id),
+            <CheckIfLoggedIn accommodationId={location.state.data._id} />
+        ) : (
+            <></>
+        )}
         <Review reviewData={location.state.data} />
     </>
     );
