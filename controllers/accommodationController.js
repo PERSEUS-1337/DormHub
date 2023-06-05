@@ -289,6 +289,7 @@ const postAccommodationReview = async (req, res) => {
             rating: rating,
             user: uId,
             detail: detail,
+            createdAt: new Date()
         };
 
         accommodation.review.push(review);
@@ -300,6 +301,35 @@ const postAccommodationReview = async (req, res) => {
         res.status(500).json({ error: 'Server error' });
     }
 };
+
+const deleteAccommodationReviews = async (req, res) => {
+  const { id } = req.params;
+  console.log(id)
+  try {
+    // Find the accommodation by ID
+    if (!validator.default.isMongoId(id)) {
+        return res.json({ err: 'Not a valid id' });
+    }
+
+    const accommodation = await Accommodation.findById(id);
+
+    if (!accommodation) {
+      return res.status(404).json({ error: 'Accommodation not found' });
+    }
+
+    // Delete all reviews
+    accommodation.review = [];
+
+    // Save the updated accommodation
+    await accommodation.save();
+
+    res.status(200).json({ message: 'Reviews deleted successfully' });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
 
 // UPLOAD ACCOMMODATION PICS
 const uploadPics = async (req, res) => {
@@ -440,6 +470,7 @@ module.exports = {
     deleteAccommodation,
     archiveAccommodation,
     postAccommodationReview,
+    deleteAccommodationReviews,
     uploadPics,
     getPics
 }
