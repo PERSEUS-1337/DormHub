@@ -8,6 +8,7 @@ const AccommTileList = () => {
   const [accommData, setAccommData] = useState(null);
   const [hasAccomm, setHasAccomm] = useState(true);
   const [deleting, setDeleting] = useState(false);
+  const [archiving, setArchiving] = useState(false);
 
   useEffect(() => {
     const fetchAccomms = async () => {
@@ -37,7 +38,7 @@ const AccommTileList = () => {
     const oId = localStorage.getItem("_id");
     const jwt = localStorage.getItem("token");
     setDeleting(true);
-
+    setArchiving(true);
     try {
       const res = await fetch(`/api/v1/auth-required-func/accommodation/${accommodationId}/${oId}`, {
         method: "DELETE",
@@ -60,6 +61,8 @@ const AccommTileList = () => {
   const handleArchiveAccommodation = async (accommodationId) => {
     const oId = localStorage.getItem("_id");
     const jwt = localStorage.getItem("token");
+    setArchiving(true);
+    setDeleting(true);
     try {
       const res = await fetch(`/api/v1/auth-required-func/accommodation/archive/${accommodationId}/${oId}`, {
         method: "PATCH",
@@ -71,6 +74,7 @@ const AccommTileList = () => {
       const data = await res.json();
       if (res.status === 200) {
         console.log(`${data.message}, id: ${accommodationId}`);
+        window.location.reload();
       } else {
         console.error(data.error);
       }
@@ -90,8 +94,14 @@ const AccommTileList = () => {
         <Button variant="danger" onClick={() => handleDeleteAccommodation(data._id)} disabled={deleting}>
           Delete
         </Button>
-        <Button variant="primary" onClick={() => handleArchiveAccommodation(data._id)}>
-          Archive
+        <Button className="m-1" variant="primary" onClick={() => handleArchiveAccommodation(data._id)} disabled={archiving}>
+          {
+            data.archived === false ? (
+              `Archive`
+            ) : (
+              `Unarchive`
+            )
+          }
         </Button>
       </>
     )
@@ -272,6 +282,7 @@ const CheckIfOwner = () => {
             <Form.Group controlId="accommodationDesc">
               <Form.Label>Accommodation Description</Form.Label>
               <Form.Control
+                as="textarea"
                 type="text"
                 placeholder="Enter accommodation description"
                 value={desc}

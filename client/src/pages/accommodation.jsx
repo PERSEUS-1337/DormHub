@@ -162,12 +162,7 @@ const Details = (data) => {
                 </Col>
             </Row>
 
-            <p id="accommDetail">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-                tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-                quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-                culpa qui officia deserunt mollit anim id est laborum.</p>
+            <p id="accommDetail">{data.accomData.desc}</p>
 
             <Row id="amenity" className="detail">
                 <Col sm={1}>
@@ -248,7 +243,7 @@ const CheckIfLoggedIn = ({ accommodationId }) => {
             });
             const data = await res.json();
             console.log(data);
-            if (res.status === 201) {
+            if (res.status === 200) {
                 console.log(data.msg);
                 // closeModal();
             } else {
@@ -257,7 +252,7 @@ const CheckIfLoggedIn = ({ accommodationId }) => {
         } catch (err){
             console.error("Review POST error.", err);
         }
-        window.location.reload();
+        //window.location.reload();
     };
     return (
         <>
