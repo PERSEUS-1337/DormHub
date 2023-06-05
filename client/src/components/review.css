@@ -1,0 +1,20 @@
+.reviewTile{
+    height: 300px !important;
+}
+
+.reviewDetail{
+    height: 100px;
+    text-align: center;
+    font-style: italic;
+    /* border: 1px solid black; */
+}
+
+.reviewRating{
+    text-align: center !important;
+}
+
+.reviewInput{
+    width: 85% !important;
+    text-align: justify;
+    margin: auto;
+}

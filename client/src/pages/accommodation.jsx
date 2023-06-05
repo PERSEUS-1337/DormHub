@@ -75,15 +75,15 @@ const AddToBookmarks = ({ bId }) => {
             fetch(`/api/v1/auth-required-func/bookmark/${id}`, {
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization : `Bearer ${jwt}`
+                    Authorization: `Bearer ${jwt}`
                 },
             })
-            .then(res =>res.json())
-            .then(data => {
-                console.log(data);
-                setFetchedData(data);
-                setIsLoading(false);
-            })
+                .then(res => res.json())
+                .then(data => {
+                    // console.log(data);
+                    setFetchedData(data);
+                    setIsLoading(false);
+                })
         } catch (err) {
             console.log(err);
         }
@@ -99,12 +99,12 @@ const AddToBookmarks = ({ bId }) => {
         } catch (err) {
             setContainsValue(false);
         }
-        
-        console.log(containsValue);
+
+        // console.log(containsValue);
     }, [fetchedData, bId, containsValue]);
 
 
-    function addBookmark() { 
+    function addBookmark() {
         console.log(`Trying to add bookmark with id ${bId}`);
         setIsLoading(true);
         fetch(`/api/v1/auth-required-func/bookmark/${bId}/${id}`, {
@@ -118,36 +118,36 @@ const AddToBookmarks = ({ bId }) => {
             .then((body) => {
                 console.log(body);
                 window.location.reload();
-        });
+            });
     };
-    
+
 
     if (!isLoading && id && containsValue === false) {
-        return(
+        return (
             <div className="map" style={{ margin: '0px', padding: '0px' }}>
                 <Button type="button" onClick={addBookmark} variant="light">Bookmark</Button>
             </div>
         );
     } else if (!isLoading && id && containsValue === true) {
-        return(
+        return (
             <p>Already Bookmarked.</p>
         );
     } else if (!isLoading) {
-        return(
+        return (
             <p>Please log-in to bookmark!</p>
         );
     } else {
-        return(
+        return (
             <Container className="d-flex align-items-center justify-content-center">
                 <Spinner animation="border" role="status" size="lg">
-                <span className="visually-hidden">Loading...</span>
+                    <span className="visually-hidden">Loading...</span>
                 </Spinner>
             </Container>
         )
     }
-    
+
 }
- 
+
 const Details = (data) => {
 
     return (
@@ -185,7 +185,7 @@ const Details = (data) => {
                     </p>
                 </Col>
                 <Col sm={2}>
-                    <AddToBookmarks bId={data.accomData._id}/>
+                    <AddToBookmarks bId={data.accomData._id} />
                 </Col>
             </Row>
             <Row id="price" className="detail">
@@ -227,9 +227,9 @@ const CheckIfLoggedIn = ({ accommodationId }) => {
 
         const uId = localStorage.getItem("_id");
         const jwt = localStorage.getItem("token");
-        
+
         const formData = { rating, detail };
-        
+
         // const params = { id, uId };
 
         try {
@@ -249,50 +249,76 @@ const CheckIfLoggedIn = ({ accommodationId }) => {
             } else {
                 console.log("error")
             }
-        } catch (err){
+        } catch (err) {
             console.error("Review POST error.", err);
         }
         //window.location.reload();
     };
     return (
         <>
-        <Container className='desc_accom reviewContainer'>
-            <Form onSubmit = {handleSubmit}>
-                <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
-                    <Form.Label>Write a review!</Form.Label>
-                    <StarRating rating={rating} setRating={handleRatingChange}/>
-                    <Form.Control as="textarea" rows={3} type="text" value={detail} onChange={(e) => setDetail(e.target.value)}/>
-                </Form.Group>
-                <Button className="" variant="secondary" type="submit" >Submit Review</Button>
-            </Form>
-        </Container>
+            <Container className='desc_accom reviewContainer mb-5'>
+                <Form onSubmit={handleSubmit}>
+                    <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
+                        <Row>
+                            <Col lg={6} className='text-end'>
+                                <Form.Label>
+                                    <h5 className='mt-2'>Review Accommodation</h5>
+                                </Form.Label>
+                            </Col>
+                            <Col lg={6} className=''>
+                                <StarRating rating={rating} setRating={handleRatingChange} />
+                            </Col>
+                            {/* <Col lg={4}></Col> */}
+                        </Row>
+
+                        <Form.Control as="textarea" className='reviewInput' rows={3} type="text" value={detail} onChange={(e) => setDetail(e.target.value)} />
+                    </Form.Group>
+                    <div className='text-center'>
+                        <Button className="fw-bold" variant="secondary" type="submit" >Submit Review</Button>
+                    </div>
+                </Form>
+            </Container>
         </>
     );
 }
 
 
 const Review = (data) => {
+    const isLoggedIn = localStorage.getItem("_id") && localStorage.getItem("token");
+
     return (
-        <Container className='desc_accom reviewContainer'>
-            <h3 className='reviewTitle'>Reviews:</h3>
-            <ReviewList data={data.reviewData} />
-        </Container>
+        <>
+            <Container className='desc_accom reviewContainer'>
+                <h4 className='reviewTitle'>Accommodation Reviews:</h4>
+                {
+                
+                    data.reviewData.review.length > 0 ?    
+                    <ReviewList data={data.reviewData} />
+                    :
+                    <Container className='text-center mt-5'>
+                        <h6>No Reviews Yet =(</h6>
+                    </Container>
+                
+                
+                },
+
+                {isLoggedIn ? (
+                    // console.log("id" + location.state.data._id),
+                    <CheckIfLoggedIn accommodationId={data._id} />
+                ) : (
+                    <></>
+                )}
+            </Container>
+        </>
     );
 }
 
 function Accommodation(props) {
     const location = useLocation();
-    const isLoggedIn = localStorage.getItem("_id") && localStorage.getItem("token");
     return (<>
         <Slideshow />
         {/* <ReadStarRating rate={location.state.data} /> */}
         <Details accomData={location.state.data} />
-        {isLoggedIn ? (
-            console.log("id" + location.state.data._id),
-            <CheckIfLoggedIn accommodationId={location.state.data._id} />
-        ) : (
-            <></>
-        )}
         <Review reviewData={location.state.data} />
     </>
     );
