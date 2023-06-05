@@ -30,6 +30,10 @@ const ReviewTileItem = ({ data }) => {
         console.log("Error")
     }
     
+    const dateTime = new Date(data.createdAt)
+
+    const date = dateTime.toLocaleDateString(); // Get the date portion
+    const time = dateTime.toLocaleTimeString(); // Get the time portion
 
     console.log("data rating" + data.rating)
     return(
@@ -39,7 +43,7 @@ const ReviewTileItem = ({ data }) => {
                     <ReadStarRating rate={data} />
                     <p className='my-4'>{data.detail}</p>
                     <h6><b>{user}</b></h6>
-                    <p>Date of <b>review</b>: </p>
+                    <p>{date}, {time}</p>
                     
                 </Col>
             </Row>
