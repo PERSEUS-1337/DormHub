@@ -1,24 +1,41 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Container, Row, Col, Button, Image } from 'react-bootstrap'
 import { FaArrowRight, FaHeart } from 'react-icons/fa'
 import { useNavigate, Link } from 'react-router-dom'
 
 const LodgingTileItem = ({ data }) => {
-    const [isBookmarked, setIsBookmarked] = useState(false)
-    const navigate = useNavigate()
+    // const [isBookmarked, setIsBookmarked] = useState(false);
+    const [isArchived, setIsArchived] = useState('');
+    const navigate = useNavigate();
 
     const navigateToLodge = (data) => {
         navigate('/accommodation', {state: {data}})
     }
+    
+    useEffect(() => {
+        if (data.archived) {
+            setIsArchived('border rounded mb-3 bg-info');
+        } else {
+            setIsArchived('border rounded mb-3');
+        }
+    }, [data]);
+    
 
     return (
-        <Container className='border rounded mb-3'>
+        <Container className={isArchived}>
             <Row>
                 <Col>
                     <Image className='img-thumbnail border-0' src={data.img_src} alt='Lodge Photo' rounded />
                 </Col>
                 <Col className='border'>
-                    <h2 className='my-4'>{data.name}</h2>
+                    {
+                        data.archived ? (
+                            <h2 className='my-4'>{data.name} (archived)</h2>
+                        ) : (
+                            <h2 className='my-4'>{data.name}</h2>
+                        )
+                    }
+                    
                     {
                         data.rating > 1 ?
                             <p><b><span className='h4'>{data.rating}</span></b> STARS</p>
