@@ -28,7 +28,7 @@ const upload = multer({
 // GET ALL ACCOMMODATIONS
 const getAccommodation = async(req, res) => {
     // Filters
-    const { search, sort, location } = req.query;
+    const { search, sort } = req.query;
 
     // Object for the filters
     const queryObject = { archived: false };
@@ -47,8 +47,6 @@ const getAccommodation = async(req, res) => {
         if (sort === 'z-a') accommodation = accommodation.sort('-name');
         if (sort === 'price-high') accommodation = accommodation.sort('price');
         if (sort === 'price-low') accommodation = accommodation.sort('-price');
-        if (sort === 'rate-high') accommodation = accommodation.sort('-rating');
-        if (sort === 'rate-low') accommodation = accommodation.sort('rating');
 
         // Setting of pages of accomodation, this is the limiter
         const page = Number(req.query.page) || 1;
@@ -61,17 +59,14 @@ const getAccommodation = async(req, res) => {
         const accommodations = await accommodation;
         const totalAccommodations = await Accommodation.countDocuments(queryObject);
         const numOfPages = Math.ceil(totalAccommodations / limit);
-
     
-        if (!totalAccommodations) {
+        if (!totalAccommodations)
             throw { code: 404, msg: api.ACCOMMODATION_NOT_FOUND };
-        }
 
         console.info(api.GET_ACCOMMODATION_SUCCESSFUL);
         return res.status(200).json({
             accommodations,
-            totalAccommodations,
-            numOfPages
+            totalAccommodations
         })
 
         
@@ -87,7 +82,6 @@ const getAccommodationById = async (req, res) => {
     const { id } = req.params;
 
     try {
-
         if (!validator.default.isMongoId(oId)) {
             throw { code: 404, msg: api.ACCOMMODATION_ID_INVALID };
         }
@@ -96,13 +90,11 @@ const getAccommodationById = async (req, res) => {
             .where('archived')
             .equals(false);
 
-    
         if (!accommodation) 
             throw { code: 404, msg: api.ACCOMMODATION_NOT_FOUND };
 
         console.info(api.GET_ACCOMMODATION_BY_ID_SUCCESS);
-        return res.status(200).json(accommodation)
-
+        return res.status(200).json({msg: api.GET_ACCOMMODATION_BY_ID_SUCCESS, accommodation: accommodation})
     } catch (err) {
         console.error(api.GET_ACCOMMODATION_BY_ID_ERROR, err.msg || err);
         return res.status(err.code || 500).json({ err: err.msg || api.INTERNAL_ERROR })
@@ -160,7 +152,6 @@ const createAccommodation = async (req, res) => {
 
         console.info(api.CREATE_ACCOMMODATION_SUCCESS);
         return res.status(201).json({msg: api.ACCOMMODATION_CREATED});
-
     } catch (err) {
         console.error(api.CREATE_ACCOMMODATION_ERROR, err.msg || err);
         return res.status(err.code || 500).json({ err: err.msg || api.INTERNAL_ERROR })
@@ -193,7 +184,6 @@ const updateAccommodation = async (req, res) => {
 
         console.info(api.UPDATE_ACCOMMODATION_SUCCESS);
         return res.status(200).json({ msg: api.ACCOMMODATION_UPDATED });
-
     } catch (err) {
         console.error(api.UPDATE_ACCOMMODATION_ERROR, err.msg || err);
         return res.status(err.code || 500).json({ err: err.msg || api.INTERNAL_ERROR })
@@ -207,12 +197,12 @@ const deleteAccommodation = async (req, res) => {
     
     try {
 
-        if (!validator.default.isMongoId(id) || !validator.default.isMongoId(oId)) {
+        if (!validator.default.isMongoId(id) || !validator.default.isMongoId(uId)) {
             throw { code: 400, msg: api.OBJECT_ID_INVALID};
         }
 
         const accommodation = await Accommodation.findById(id);
-        if (accommodation.owner != oId || !accommodation) {
+        if (accommodation.owner != uId || !accommodation) {
             throw { code: 400, msg: api.INVALID_ACCOMMODATION_OWNER};
         }
 
@@ -224,7 +214,6 @@ const deleteAccommodation = async (req, res) => {
 
         console.info(api.DELETE_ACCOMMODATION_SUCCESS);
         return res.status(200).json({ msg: api.ACCOMMODATION_DELETED });
-
     } catch (err) {
         console.error(api.DELETE_ACCOMMODATION_ERROR, err.msg || err);
         return res.status(err.code || 500).json({ err: err.msg || api.INTERNAL_ERROR })
@@ -255,8 +244,8 @@ const archiveAccommodation = async (req, res) => {
         if (!toggleAccommodation)
             throw { code: 404, msg: api.ACCOMMODATION_NOT_FOUND };
 
-        const message = newArchiveStatus ? 'Accommodation archived successfully' : 'Accommodation unarchived successfully';
-        return res.status(200).json({ message });
+        const msg = newArchiveStatus ? 'Accommodation archived successfully' : 'Accommodation unarchived successfully';
+        return res.status(200).json({ msg });
   } catch (err) {
     console.error(api.ARCHIVE_ACCOMMODATION_ERROR, err.msg || err);
     return res.status(err.code || 500).json({ err: err.msg || api.INTERNAL_ERROR })
@@ -459,17 +448,21 @@ const uploadPics = async (req, res) => {
 const getPics = async(req, res) => {
     const { id } = req.params;
 
-    if (!validator.default.isMongoId(id)) {
-        return res.json({ err: 'Not a valid id' });
+    try {
+        if (!validator.default.isMongoId(id))
+            throw { code: 404, msg: api.ACCOMMODATION_ID_INVALID };
+    
+        const accommodation = await Accommodation.findById(id);
+    
+        if (!accommodation)
+            throw { code: 404, msg: api.ACCOMMODATION_NOT_FOUND };
+        
+        console.info(api.GET_PICS_SUCCESS);
+        res.status(200).json({msg:api.GET_PICS_SUCCESS,  pics: accommodation.pics });
+    } catch (err) {
+        console.error(api.GET_PICS_ERROR, err.msg || err);
+        return res.status(err.code || 500).json({ err: err.msg || api.INTERNAL_ERROR })
     }
-
-    const accommodation = await Accommodation.findById(id);
-
-    if (!accommodation) {
-        return res.json({ err: 'Accommodation does not exist' });
-    }
-
-    res.json({ pics: accommodation.pics });
 }
 
 
