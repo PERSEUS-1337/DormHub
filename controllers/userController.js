@@ -55,10 +55,11 @@ const register = async (req, res) => {
         const salt = await bcrypt.genSalt(10);
         const hash = await bcrypt.hash(password, salt);
         
-        const user = User.create({fname, lname, email, userType, password: hash});
+        const user = await User.create({fname, lname, email, userType, password: hash});
         
         if (user) {
             console.info(api.REGISTER_SUCCESS);
+            // res.status(201).json({msg: api.REGISTER_SUCCESS, user: (await user)._id, token})
             res.redirect(307, '/api/v1/auth/login');
         }
         else throw { code: 400, msg: api.USER_NOT_SAVED };
@@ -77,10 +78,11 @@ const login = async (req, res) => {
             throw {code: 400, msg: api.INVALID_EMAIL};
 
         const user = await User.findOne({ email });
-        if (!user) throw Error(api.USER_ID_INVALID);
+        if (!user)
+            throw Error(api.INVALID_EMAIL);
 
         // checks password match
-        const matchPass = bcrypt.compare(password, user.password);
+        const matchPass = await bcrypt.compare(password, user.password);
 
         if (!matchPass) {
             throw Error(api.INCORRECT_PASSWORD);
@@ -145,7 +147,7 @@ const editUserData = async (req, res) => {
 // GET USER
 const getUserData = async (req, res) => {
     const { uId } = req.params;
-    
+    console.log(uId)
     try {
 
         if (!validator.default.isMongoId(uId)) {
@@ -214,21 +216,31 @@ const addToBookmark = async (req, res) => {
         if (!validator.default.isMongoId(id) || !validator.default.isMongoId(uId)) {
             throw { code: 400, msg: api.OBJECT_ID_INVALID };
         }
+
         const user = await User.findById(uId);
         const accommodation = await Accommodation.findById(id);
 
-        if (!user) {
-        throw { code: 404, msg: api.USER_NOT_FOUND };
+        if (!user)
+            throw { code: 404, msg: api.USER_NOT_FOUND };
+        
+        if (!accommodation)
+            throw { code: 404, msg: api.ACCOMMODATION_NOT_FOUND };
+        
+        // const status = await checkBookmarkExists(id, uId);
+
+        const bookmarkData = {
+            id: id,
+            name: accommodation.name,
+            pics: accommodation.pics,
+            price: accommodation.price
         }
 
-        if (!accommodation) {
-        throw { code: 404, msg: api.ACCOMMODATION_NOT_FOUND };
-        }
-        const status = await checkBookmarkExists(id, uId);
-
-        if (!status) {
+        if (true) {
             try {
-                await User.findByIdAndUpdate(uId, {$push:{bookmark: id}})
+                await User.findByIdAndUpdate(
+                    uId,
+                    {$push:{bookmarks: bookmarkData}},
+                    {new: true})
                 console.info(api.BOOKMARK_SUCCESSFUL);
                 return res.status(200).json({ msg: api.BOOKMARK_SUCCESSFUL });
             } catch (error) {

@@ -112,23 +112,21 @@ const createAccommodation = async (req, res) => {
         }
 
         // Check if the owner exists
-        const owner = await Owner.findById(uId);
-        if (!owner) {
+        const owner = await User.findById(uId);
+        if (!owner)
             throw { code: 404, msg: api.OWNER_NOT_FOUND };
-        }
 
         if (owner.userType != "Owner") 
-        throw {code: 400, msg: api.NOT_AN_OWNER}
+            throw {code: 400, msg: api.NOT_AN_OWNER}
         
         const accommodationExist = await Accommodation.findOne({name});
-        if (accommodationExist) {
+        if (accommodationExist)
             throw { code: 400, msg: api.ACCOMMODATION_ALREADY_EXISTS };
-        }
+        
 
-        if (!name || !desc ||  !price || !location || !type || !amenity)  {
+        if (!name || !desc ||  !price || !location || !type || !amenity)
             throw {code: 400, msg: api.FIELDS_MISSING };
-        }
-
+        
         // Create the accommodation with default or empty values
         const accommodation = new Accommodation({
             name: name,
@@ -147,8 +145,21 @@ const createAccommodation = async (req, res) => {
         const savedAccommodation = await accommodation.save();
 
         // Update the owner's accommodations
-        owner.accommodations.push(savedAccommodation._id);
-        await owner.save();
+        // owner.accommodations.push(savedAccommodation._id);
+
+        const accommodationData = {
+            id: savedAccommodation._id,
+            name: savedAccommodation.name,
+            pics: savedAccommodation.pics,
+            price: savedAccommodation.price
+        }
+
+        await User.findByIdAndUpdate(
+                    uId,
+                    {$push:{accommodations: accommodationData}},
+                    {new: true})
+
+        // await owner.save();
 
         console.info(api.CREATE_ACCOMMODATION_SUCCESS);
         return res.status(201).json({msg: api.ACCOMMODATION_CREATED});
@@ -317,6 +328,8 @@ const postAccommodationReview = async (req, res) => {
         const review = {
             rating: rating,
             user: uId,
+            fname: user.fname,
+            lname: user.lname,
             detail: detail,
             createdAt: new Date()
         };
@@ -466,6 +479,78 @@ const getPics = async(req, res) => {
 }
 
 
+// ADMIN FUNCTION
+const deleteAllReviews = async (req, res) => {
+    try {
+        const { id } = req.params;
+        console.log(id)
+        const result = await Accommodation.updateOne(
+        { _id: id },
+        { $set: { review: [] } }
+        );
+
+        if (result.nModified === 0)
+        // No reviews were deleted, accommodation may not exist
+            throw {code: 404, msg: api.DELETE_REVIEW_ACCOMMODATION_ERROR}
+
+        console.info(api.DELETE_REVIEW_ACCOMMODATION_SUCCESS);
+        return res.status(201).json({msg: api.DELETE_REVIEW_ACCOMMODATION_SUCCESS});
+    } catch (err) {
+        console.error(api.DELETE_REVIEW_ACCOMMODATION_ERROR, err.msg || err);
+        return res.status(err.code || 500).json({ err: err.msg || api.INTERNAL_ERROR })
+    }
+};
+
+
+const changeAccommodationOwner = async (accommodationId, newOwnerId) => {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
+    try {
+        const options = { session };
+
+        // Find the accommodation to update
+        const accommodation = await Accommodation.findById(accommodationId, null, options);
+        if (!accommodation)
+            throw new Error('Accommodation not found');
+        
+
+        // Find the current owner of the accommodation
+        const currentOwnerId = accommodation.owner;
+
+        // Update the owner of the accommodation
+        accommodation.owner = newOwnerId;
+        await accommodation.save(options);
+
+        // Update the accommodations array of the new owner
+        await User.updateOne(
+            { _id: newOwnerId },
+            { $push: { accommodations: { id: accommodationId, name: accommodation.name, pics: accommodation.pics, price: accommodation.price } } },
+            options
+        );
+
+        // Update the accommodations array of the current owner
+        await User.updateOne(
+            { _id: currentOwnerId },
+            { $pull: { accommodations: { id: accommodationId } } },
+            options
+        );
+
+        await session.commitTransaction();
+        session.endSession();
+
+        console.log('Accommodation owner changed successfully');
+    } catch (error) {
+        await session.abortTransaction();
+        session.endSession();
+        console.error(api.DELETE_REVIEW_ACCOMMODATION_ERROR, err.msg || err);
+        return res.status(err.code || 500).json({ err: err.msg || api.INTERNAL_ERROR })
+    }
+};
+
+
+
+
 module.exports = {
     createAccommodation,
     getAccommodation,
@@ -475,5 +560,6 @@ module.exports = {
     archiveAccommodation,
     postAccommodationReview,
     uploadPics,
-    getPics
+    getPics,
+    deleteAllReviews
 }
