@@ -89,7 +89,7 @@ router.post('/accommodation/upload/:id', uploadPics)
 router.get('/accommodation/pics/:id', getPics)
 
 // ADMIN ONLY
-router.delete('/accommodation/review/:id', deleteAccommodationReviews)
+// router.delete('/accommodation/review/:id', deleteAccommodationReviews)
 
 
 module.exports = router;

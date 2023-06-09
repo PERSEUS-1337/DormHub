@@ -1,6 +1,6 @@
 const User = require('../models/User');
 const Accommodation = require('../models/Accommodation');
-const mongooseObjectId = require('mongoose').Types.ObjectId;
+const api = require('../middleware/apiMessages');
 
 const validator = require('validator');
 const bcrypt = require('bcrypt');
@@ -34,21 +34,21 @@ const createToken = (_id) => {
 
 // POST SIGNUP USER 
 const register = async (req, res) => {
-    const {fname, lname, email, password, userType} = req.body;
-
     try {
+        const {fname, lname, email, password, userType} = req.body;
+
+        if (!fname || !lname || !email || !password || !userType)
+            throw {code: 400, msg: api.FIELDS_MISSING};
+
         const userExist = await User.findOne({email});
         
         // Validation
-        if (userExist) throw Error('User already exists');
+        if (userExist) throw { code: 400, msg: api.USER_ALREADY_EXISTS };
 
-        if (!fname || !lname || !email || !password || !userType) throw Error('All fields must be provided');
+        if (!validator.default.isEmail(email)) throw { code: 400, msg: api.INVALID_EMAIL };
 
-        if (!validator.default.isEmail(email)) throw Error('Invalid email');
-    
-        
         if (!validator.default.isStrongPassword(password)) {
-            throw Error('Password should be of length 8 or more and must contain an uppercase letter, a lowercase letter, a digit, and a symbol');
+            throw { code: 400, msg: api.WEAK_PASSWORD };
         }
       
         // Password encryption before storing in DB
@@ -57,10 +57,15 @@ const register = async (req, res) => {
         
         const user = User.create({fname, lname, email, userType, password: hash});
         
-        if (user) res.redirect(307, '/api/v1/auth/login');
-        else throw Error('User not saved')
-    } catch (error) {
-        res.status(400).json({err: error.message});
+        if (user) {
+            console.info(api.REGISTER_SUCCESS);
+            res.redirect(307, '/api/v1/auth/login');
+        }
+        else throw { code: 400, msg: api.USER_NOT_SAVED };
+
+    } catch (err) {
+        console.error(api.REGISTER_ERROR, err.msg || err);
+        return res.status(err.code || 500).json({err: err.msg || api.INTERNAL_ERROR})
     }
 };
 
@@ -69,102 +74,138 @@ const login = async (req, res) => {
     const { email, password } = req.body;
 
     try {
+        if (!validator.default.isEmail(email))
+            throw {code: 400, msg: api.INVALID_EMAIL};
+
         const user = await User.findOne({ email });
-        if (!user) throw Error('Incorrect email / User does not exist!');
+        if (!user) throw Error(api.USER_ID_INVALID);
 
         // checks password match
         const matchPass = bcrypt.compare(password, user.password);
 
         if (!matchPass) {
-            throw Error('Incorrect password');
+            throw Error(api.INCORRECT_PASSWORD);
         }
 
         const token = createToken(user._id);
-        res.status(200).json({msg: 'logged in successfully!', _id: user._id, token: token});
-    } catch (error) {
-        res.status(400).json({err: error.message});
+        console.info(api.LOGIN_SUCCESSFUL);
+        return res.status(200).json({ msg: api.LOGIN_SUCCESSFUL, _id: user._id, token: token});
+
+    } catch (err) {
+        console.error(api.LOGIN_ERROR, err.msg || err);
+        return res.status(err.code || 500).json({err: err.msg || api.INTERNAL_ERROR})
     }
 };
 
 // GET ALL USER
 const getAllUsers = async (req, res) => {
-    const all = await User.find({userType: "User"});
-    res.status(200).json({msg: all})
+    try {
+        const all = await User.find({userType: "User"});
+        console.info(api.GET_ALL_USERS_SUCCESSFUL)
+        return res.status(200).json({msg: all})
+    } catch (err) {
+        console.error(api.GET_ALL_USERS_ERROR, err.msg || err);
+        return res.status(err.code || 500).json({err: err.msg || api.INTERNAL_ERROR})
+    }
 };
 
 // GET ALL OWNER
 const getAllOwners = async (req, res) => {
-    const all = await User.find({userType: "Owner"});
-    res.status(200).json({msg: all})
+    try {
+        const all = await User.find({userType: "Owner"});
+        console.info(api.GET_ALL_OWNERS_SUCCESSFUL);
+        return res.status(200).json({msg: all})
+    } catch (err) {
+        console.error(api.GET_ALL_OWNERS_ERROR, err.msg || err);
+        return res.status(err.code || 500).json({err: err.msg || api.INTERNAL_ERROR})
+    }
 };
 
 // UPDATE USER
 const editUserData = async (req, res) => {
     const { uId } = req.params
   
-    if (!validator.default.isMongoId(uId)) {
-      return res.status(400).json({err: 'Not a valid userid'})
-    }
-  
-    const user = await User.findByIdAndUpdate(uId, {
-        ...req.body
-    });
+    try {
+        if (!validator.default.isMongoId(uId))
+            throw { code: 400, msg: api.USER_ID_INVALID };
+        
+        const user = await User.findByIdAndUpdate(uId, {
+            ...req.body
+        });
+    
+        if (!user)
+          throw { code: 404, msg: api.USER_NOT_FOUND };
+        
+        console.info(api.EDIT_USER_DATA_SUCCESSFUL);
+        return res.status(201).json({ msg: api.EDIT_USER_DATA_SUCCESSFUL})
 
-    if (!user) {
-      return res.status(400).json({err: 'User does not exist'})
+    } catch (err) {
+        console.error(api.EDIT_USER_DATA_ERROR, err.msg || err);
+        return res.status(err.code || 500).json({ err: err.msg || api.INTERNAL_ERROR });
     }
-
-    res.status(200).json({msg: "EDIT: SUCCESSFUL", user: user})
 }
 
 // GET USER
 const getUserData = async (req, res) => {
     const { uId } = req.params;
-  
-    if (!validator.default.isMongoId(uId)) {
-      return res.status(400).json({err: 'Not a valid userid'});
-    }
-  
-    const user = await User.findById(uId);
-  
-    if (!user) {
-      return res.status(400).json({err: 'User does not exist'});
-    }
-
-    let retUser = {};
-    if (user.userType == "User") {
-        const {fname,lname,email,bookmarks,pfp, phone, userType} = user;
-        retUser = {fname,lname,email,bookmarks,pfp,phone,userType};
-    } else {
-        const {fname,lname,email,bookmarks,accommodations,pfp,phone, userType} = user;
-        retUser = {fname,lname,email,bookmarks,accommodations,pfp,phone,userType};
-    }
     
+    try {
 
-    res.status(200).json(retUser);
+        if (!validator.default.isMongoId(uId)) {
+        throw { code: 400, msg: api.USER_ID_INVALID };
+        }
+    
+        const user = await User.findById(uId);
+    
+        if (!user) {
+        throw { code: 404, msg: api.USER_NOT_FOUND };
+        }
+
+        let retUser = {};
+        if (user.userType == "User") {
+            const {fname,lname,email,bookmarks,pfp, phone, userType} = user;
+            retUser = {fname,lname,email,bookmarks,pfp,phone,userType};
+        } else {
+            const {fname,lname,email,bookmarks,accommodations,pfp,phone, userType} = user;
+            retUser = {fname,lname,email,bookmarks,accommodations,pfp,phone,userType};
+        }
+        
+        console.info(api.GET_USER_DATA_SUCCESSFUL);
+        return res.status(200).json({msg: api.GET_USER_DATA_SUCCESSFUL, user: retUser});
+
+    } catch (err) {
+        console.error(api.GET_USER_DATA_ERROR, err.msg || err);
+        return res.status(err.code || 500).json({ err: err.msg || api.INTERNAL_ERROR });
+    }
 }
 
 // GET ALL BOOKMARKS COMPLETE with INFO
 const getBookmark = async (req, res)  => {
     const { uId } = req.params
 
-     if (!validator.default.isMongoId(uId)) {
-        return res.json({error: 'Invalid ObjectID'});
-    }
+    try {
+        if (!validator.default.isMongoId(uId)) {
+            throw { code: 400, mgs: api.OBJECT_ID_INVALID };
+        }
 
-    const user = await User.findById(uId);
+        const user = await User.findById(uId);
 
-    if (!user) {
-      return res.status(404).json({err: 'USER: NON EXISTENT'});
-    }
+        if (!user) {
+        throw { code: 404, msg: api.USER_NOT_FOUND };
+        }
 
-    const bookmarks = user.bookmarks;
+        const bookmarks = user.bookmarks;
 
-    if (bookmarks.length===0) {
-        res.json({error: 'BOOKMARKS: NONE'})
-    } else {
-        const list = await Accommodation.find({ _id: { $in: bookmarks } })
-        res.json(list)
+        if (bookmarks.length===0) {
+            throw { code: 404, msg: api.BOOKMARKS_NOT_FOUND};
+        } else {
+            const list = await Accommodation.find({ _id: { $in: bookmarks } })
+            console.info(api.GET_BOOKMARK_SUCCESSFUL);
+            return res.json(list)
+        }
+    } catch (err) {
+        console.error(api.GET_BOOKMARK_ERROR, err.msg || err);
+        return res.status(err.code || 500).json({ err: err.msg || api.INTERNAL_ERROR });
     }
 }
 
@@ -172,30 +213,38 @@ const getBookmark = async (req, res)  => {
 const addToBookmark = async (req, res) => {
     const { id,uId } = req.params;
     
-    if (!validator.default.isMongoId(id) || !validator.default.isMongoId(uId)) {
-        return res.json({error: 'Invalid ObjectID'});
-    }
-    const user = await User.findById(uId);
-    const accommodation = await Accommodation.findById(id);
+    try {
 
-    if (!user) {
-      return res.status(404).json({err: 'USER: NON EXISTENT'});
-    }
-
-    if (!accommodation) {
-      return res.status(404).json({err: 'ACCOMMODATION: NON EXISTENT'});
-    }
-    const status = await checkBookmarkExists(id, uId);
-
-    if (!status) {
-        try {
-            await User.findByIdAndUpdate(uId, {$push:{bookmarks: id}})
-            res.status(200).json({ message: 'BOOKMARK: ADD SUCCESS' });
-        } catch (error) {
-            res.status(500).json({ error: 'BOOKMARK: ADD FAILED' });
+        if (!validator.default.isMongoId(id) || !validator.default.isMongoId(uId)) {
+            throw { code: 400, msg: api.OBJECT_ID_INVALID };
         }
-    } else {
-        res.status(200).json({ message: 'BOOKMARK: ALREADY EXISTS' });
+        const user = await User.findById(uId);
+        const accommodation = await Accommodation.findById(id);
+
+        if (!user) {
+        throw { code: 404, msg: api.USER_NOT_FOUND };
+        }
+
+        if (!accommodation) {
+        throw { code: 404, msg: api.ACCOMMODATION_NOT_FOUND };
+        }
+        const status = await checkBookmarkExists(id, uId);
+
+        if (!status) {
+            try {
+                await User.findByIdAndUpdate(uId, {$push:{bookmark: id}})
+                console.info(api.BOOKMARK_SUCCESSFUL);
+                return res.status(200).json({ msg: api.BOOKMARK_SUCCESSFUL });
+            } catch (error) {
+                throw { code: 500, msg: api.INTERNAL_ERROR };
+            }
+        } else {
+            throw { code: 400, msg: api.BOOKMARK_ALREADY_EXISTS };
+        }
+
+    } catch (err) {
+        console.error(api.ADD_TO_BOOKMARK_ERROR, err.msg || err);
+        return res.status(err.code || 500).json({ err: err.msg || api.INTERNAL_ERROR });
     }
 }
 
@@ -203,30 +252,39 @@ const addToBookmark = async (req, res) => {
 const deleteBookmark = async (req, res) => {
     const { id,uId } = req.params;
     
-    if (!validator.default.isMongoId(id) || !validator.default.isMongoId(uId)) {
-        return res.json({error: 'Invalid ObjectID'});
-    }
-    const user = await User.findById(uId);
-    const accommodation = await Accommodation.findById(id);
+    try {
 
-    if (!user) {
-      return res.status(404).json({err: 'USER: NON EXISTENT'});
-    }
-
-    if (!accommodation) {
-      return res.status(404).json({err: 'ACCOMMODATION: NON EXISTENT'});
-    }
-    const status = await checkBookmarkExists(id, uId);
-
-    if (status) {
-        try {
-            await User.findByIdAndUpdate(uId, {$pull:{bookmarks: id}})
-            res.status(200).json({ message: 'Bookmark: REMOVE SUCCESS' });
-        } catch (error) {
-            res.status(500).json({ error: 'Bookmark: REMOVE FAILED' });
+        if (!validator.default.isMongoId(id) || !validator.default.isMongoId(uId)) {
+            throw { code: 400, msg: api.OBJECT_ID_INVALID };
         }
-    } else {
-        res.status(200).json({ message: 'Bookmark: ALREADY REMOVED' });
+        const user = await User.findById(uId);
+        const accommodation = await Accommodation.findById(id);
+
+        if (!user) {
+        throw { code: 404, msg: api.USER_NOT_FOUND };
+        }
+
+        if (!accommodation) {
+        throw { code: 404, msg: api.ACCOMMODATION_NOT_FOUND };
+        }
+
+        const status = await checkBookmarkExists(id, uId);
+
+        if (status) {
+            try {
+                await User.findByIdAndUpdate(uId, {$pull:{bookmarks: id}})
+                console.info(api.BOOKMARK_REMOVE_SUCCESSFUL);
+                res.status(200).json({ msg: api.BOOKMARK_REMOVE_SUCCESSFUL });
+            } catch (error) {
+                throw { code: 500, msg: api.INTERNAL_ERROR };
+            }
+        } else {
+            throw { code: 400, msg: api.USER_NOT_IN_BOOKMARK };
+        }
+
+    } catch (err) {
+        console.error(api.DELETE_BOOKMARK_ERROR, err.msg || err);
+        return res.status(err.code || 500).json({ err: err.msg || api.INTERNAL_ERROR });
     }
 }
 
@@ -252,104 +310,124 @@ const checkBookmarkExists = async (id, uId) => {
 const uploadPfp = async(req, res) => {
     const { uId } = req.params;
 
-    if (!validator.default.isMongoId(uId)) {
-        return res.json({ err: 'Not a valid userid' });
-    }
+    try {
 
-    upload.single('pfp')(req, res, (err) => {
-        console.log(req.file);
-
-        if (err) {
-            console.error(err);
-            return res.status(400).json({ error: 'Failed to upload picture.' });
+        if (!validator.default.isMongoId(uId)) {
+            throw { code: 400, msg: api.USER_ID_INVALID };
         }
 
-        if (!req.file) {
-            return res.status(400).json({ error: 'No picture provided.' });
-        }
+        upload.single('pfp')(req, res, (err) => {
+            console.log(req.file);
 
-        const folderName = 'pfp';
+            if (err) {
+                console.error(err);
+                throw { code: 400, msg: api.FAILED_TO_UPLOAD_PICTURE };
+            }
 
-        const fileName = `${folderName}/${req.file.originalname.replace(/ /g, '_')}`;
+            if (!req.file) {
+                throw { code: 400, msg: api.NO_PICTURE_PROVIDED };
+            }
 
-        const blob = storageBucket.file(fileName);
-        const blobStream = blob.createWriteStream({
-            resumable: false,
-            contentType: req.file.mimetype,
-        });
+            const folderName = 'pfp';
 
-        blobStream.on('error', (err) => {
-            console.error(err);
-            return res.status(400).json({ error: 'Failed to upload picture.' });
-        });
+            const fileName = `${folderName}/${req.file.originalname.replace(/ /g, '_')}`;
 
-        blobStream.on('finish', async () => {
-            const signedUrl = await blob.getSignedUrl({
-                action: 'read',
-                expires: '03-01-2030', // Set an appropriate expiration date
-              });
-          
-            const publicUrl = signedUrl[0];
-            // Save the publicUrl or blob.name in your database for the user.
-            
-            // const publicUrl = `https://storage.googleapis.com/${bucketName}/${blob.name}`;
+            const blob = storageBucket.file(fileName);
+            const blobStream = blob.createWriteStream({
+                resumable: false,
+                contentType: req.file.mimetype,
+            });
 
-            User.findByIdAndUpdate(uId, { pfp: publicUrl }, { new: true })
-                .then(updatedUser => {
-                    // Send the updated user as the response
-                    return res.status(200).json({ msg: { url: publicUrl, user: updatedUser } });
-                })
-                .catch(error => {
-                    // Handle the error
-                    console.log(error);
-                    res.status(500).json({ error: 'Failed to update profile picture' });
+            blobStream.on('error', (err) => {
+                console.error(err);
+                throw { code: 400, msg: api.FAILED_TO_UPLOAD_PICTURE };
+            });
+
+            blobStream.on('finish', async () => {
+                const signedUrl = await blob.getSignedUrl({
+                    action: 'read',
+                    expires: '03-01-2030', // Set an appropriate expiration date
                 });
+            
+                const publicUrl = signedUrl[0];
+                // Save the publicUrl or blob.name in your database for the user.
+                
+                // const publicUrl = `https://storage.googleapis.com/${bucketName}/${blob.name}`;
+
+                User.findByIdAndUpdate(uId, { pfp: publicUrl }, { new: true })
+                    .then(updatedUser => {
+                        // Send the updated user as the response
+                        console.info(api.UPLOAD_PFP_SUCCESSFUL);
+                        return res.status(200).json({ msg: { url: publicUrl, user: updatedUser } });
+                    })
+                    .catch(error => {
+                        // Handle the error
+                        throw { code: 400, msg: api.FAILED_TO_UPLOAD_PICTURE };
+                    });
+            });
+
+            blobStream.end(req.file.buffer);
         });
 
-        blobStream.end(req.file.buffer);
-    });
+    } catch (err) {
+        console.error(api.UPLOAD_PFP_ERROR, err.msg || err);
+        return res.status(err.code || 500).json({ err: err.msg || api.INTERNAL_ERROR });
+    }
 }
 
 // GET USER PFP
 const getPfp = async(req, res) => {
     const { uId } = req.params;
+    try {
 
-    if (!validator.default.isMongoId(uId)) {
-        return res.json({ err: 'Not a valid userid' });
+        if (!validator.default.isMongoId(uId)) {
+            throw { code: 400, msg: api.USER_ID_INVALID };
+        }
+
+        const user = await User.findById(uId);
+
+        if (!user) {
+            throw { code: 404, msg: api.USER_NOT_FOUND };
+        }
+
+        console.info(api.GET_PFP_SUCCESSFUL)
+        return res.json({ pfp: user.pfp });
+
+    } catch (err) {
+        console.error(api.GET_PFP_ERROR, err.msg || err);
+        return res.status(err.code || 500).json({ err: err.msg || api.INTERNAL_ERROR });
     }
-
-    const user = await User.findById(uId);
-
-    if (!user) {
-        return res.json({ err: 'User does not exist' });
-    }
-
-    res.json({ pfp: user.pfp });
 }
 
 // GET ACCOMMODATIONS OF OWNER
 const getAccommodationOwner = async (req, res) => {
     const { uId } = req.params;
+    
+    try {
+        if (!validator.default.isMongoId(uId)) {
+        throw { code: 400, msg: api.OWNER_ID_INVALID };
+        }
 
-    if (!validator.default.isMongoId(uId)) {
-      return res.status(400).json({err: 'Not a valid ownerId'});
+        const owner = await User.findById(uId);
+        if (!owner) {
+            throw { code: 404, msg: api.OWNER_NOT_FOUND };
+        }
+
+        if (owner.userType != "Owner") throw { code: 400, msg: api.NOT_AN_OWNER };
+
+        const accommodations = await Accommodation.find({owner: uId});
+        if (!accommodations) {
+            throw { code: 404, msg: api.ACCOMMODATION_NOT_FOUND };
+        }
+
+        console.info(api.GET_ACCOMMODATION_OWNER_SUCCESSFUL);
+        return res.status(200).json({accommodations})
+
+    } catch (err) {
+        console.error(api.GET_ACCOMMODATION_OWNER_ERROR, err.msg || err);
+        return res.status(err.code || 500).json({ err: err.msg || api.INTERNAL_ERROR });
     }
-
-    const owner = await User.findById(uId);
-    if (!owner) {
-        return res.status(404).json({ error: 'OWNER: NOT FOUND' });
-    }
-
-    if (owner.userType != "Owner") return res.status(404).json({ error: 'OWNER: NOT AN OWNER' });
-
-    const accommodations = await Accommodation.find({owner: uId});
-    if (!accommodations) {
-        return res.status(404).json({ error: 'ACCOMMODATIONS: NOT FOUND' });
-    }
-
-    return res.status(200).json({accommodations})
 }
-
 
 module.exports = {
     register,
