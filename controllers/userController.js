@@ -62,7 +62,6 @@ const register = async (req, res) => {
             res.redirect(307, '/api/v1/auth/login');
         }
         else throw { code: 400, msg: api.USER_NOT_SAVED };
-
     } catch (err) {
         console.error(api.REGISTER_ERROR, err.msg || err);
         return res.status(err.code || 500).json({err: err.msg || api.INTERNAL_ERROR})
@@ -90,7 +89,6 @@ const login = async (req, res) => {
         const token = createToken(user._id);
         console.info(api.LOGIN_SUCCESSFUL);
         return res.status(200).json({ msg: api.LOGIN_SUCCESSFUL, _id: user._id, token: token});
-
     } catch (err) {
         console.error(api.LOGIN_ERROR, err.msg || err);
         return res.status(err.code || 500).json({err: err.msg || api.INTERNAL_ERROR})
@@ -102,7 +100,7 @@ const getAllUsers = async (req, res) => {
     try {
         const all = await User.find({userType: "User"});
         console.info(api.GET_ALL_USERS_SUCCESSFUL)
-        return res.status(200).json({msg: all})
+        return res.status(200).json({msg:api.GET_ALL_USERS_SUCCESSFUL, users: all})
     } catch (err) {
         console.error(api.GET_ALL_USERS_ERROR, err.msg || err);
         return res.status(err.code || 500).json({err: err.msg || api.INTERNAL_ERROR})
@@ -114,7 +112,7 @@ const getAllOwners = async (req, res) => {
     try {
         const all = await User.find({userType: "Owner"});
         console.info(api.GET_ALL_OWNERS_SUCCESSFUL);
-        return res.status(200).json({msg: all})
+        return res.status(200).json({msg:api.GET_ALL_OWNERS_SUCCESSFUL, owners: all})
     } catch (err) {
         console.error(api.GET_ALL_OWNERS_ERROR, err.msg || err);
         return res.status(err.code || 500).json({err: err.msg || api.INTERNAL_ERROR})
@@ -138,7 +136,6 @@ const editUserData = async (req, res) => {
         
         console.info(api.EDIT_USER_DATA_SUCCESSFUL);
         return res.status(201).json({ msg: api.EDIT_USER_DATA_SUCCESSFUL})
-
     } catch (err) {
         console.error(api.EDIT_USER_DATA_ERROR, err.msg || err);
         return res.status(err.code || 500).json({ err: err.msg || api.INTERNAL_ERROR });
@@ -172,7 +169,6 @@ const getUserData = async (req, res) => {
         
         console.info(api.GET_USER_DATA_SUCCESSFUL);
         return res.status(200).json({msg: api.GET_USER_DATA_SUCCESSFUL, user: retUser});
-
     } catch (err) {
         console.error(api.GET_USER_DATA_ERROR, err.msg || err);
         return res.status(err.code || 500).json({ err: err.msg || api.INTERNAL_ERROR });
@@ -201,7 +197,7 @@ const getBookmark = async (req, res)  => {
         } else {
             const list = await Accommodation.find({ _id: { $in: bookmarks } })
             console.info(api.GET_BOOKMARK_SUCCESSFUL);
-            return res.json(list)
+            return res.status(200).json({msg:api.GET_BOOKMARK_SUCCESSFUL, list: list})
         }
     } catch (err) {
         console.error(api.GET_BOOKMARK_ERROR, err.msg || err);
@@ -421,8 +417,7 @@ const getAccommodationOwner = async (req, res) => {
         }
 
         console.info(api.GET_ACCOMMODATION_OWNER_SUCCESSFUL);
-        return res.status(200).json({accommodations})
-
+        return res.status(200).json({msg:api.GET_ACCOMMODATION_OWNER_SUCCESSFUL, accommodations: accommodations})
     } catch (err) {
         console.error(api.GET_ACCOMMODATION_OWNER_ERROR, err.msg || err);
         return res.status(err.code || 500).json({ err: err.msg || api.INTERNAL_ERROR });
