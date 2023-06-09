@@ -107,12 +107,12 @@ const createAccommodation = async (req, res) => {
 
     try {
 
-        if (!validator.default.isMongoId(oId)) {
-            throw {code: 400, msg: api.ACCOMMODATION_ID_INVALID };
+        if (!validator.default.isMongoId(uId)) {
+            throw {code: 400, msg: api.OWNER_ID_INVALID };
         }
 
         // Check if the owner exists
-        const owner = await Owner.findById(oId);
+        const owner = await Owner.findById(uId);
         if (!owner) {
             throw { code: 404, msg: api.OWNER_NOT_FOUND };
         }
