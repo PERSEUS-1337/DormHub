@@ -82,7 +82,7 @@ const getAccommodationById = async (req, res) => {
     const { id } = req.params;
 
     try {
-        if (!validator.default.isMongoId(oId)) {
+        if (!validator.default.isMongoId(id)) {
             throw { code: 404, msg: api.ACCOMMODATION_ID_INVALID };
         }
 
@@ -466,6 +466,29 @@ const getPics = async(req, res) => {
 }
 
 
+// ADMIN FUNCTION
+const deleteAllReviews = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const result = await Accommodation.updateOne(
+        { _id: id },
+        { $set: { review: [] } }
+        );
+
+        if (result.nModified === 0)
+        // No reviews were deleted, accommodation may not exist
+            throw {code: 404, msg: api.DELETE_REVIEW_ACCOMMODATION_ERROR}
+
+        console.info(api.DELETE_REVIEW_ACCOMMODATION_SUCCESS);
+        return res.status(201).json({msg: api.DELETE_REVIEW_ACCOMMODATION_SUCCESS});
+    } catch (err) {
+        console.error(api.DELETE_REVIEW_ACCOMMODATION_ERROR, err.msg || err);
+        return res.status(err.code || 500).json({ err: err.msg || api.INTERNAL_ERROR })
+    }
+};
+
+
+
 module.exports = {
     createAccommodation,
     getAccommodation,
@@ -475,5 +498,6 @@ module.exports = {
     archiveAccommodation,
     postAccommodationReview,
     uploadPics,
-    getPics
+    getPics,
+    deleteAllReviews
 }

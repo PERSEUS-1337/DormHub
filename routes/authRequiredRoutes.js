@@ -36,7 +36,7 @@ const {
     postAccommodationReview,
     uploadPics,
     getPics,
-    deleteAccommodationReviews
+    deleteAllReviews
 } = require('../controllers/accommodationController');
 
 router.use(requireAuth);
@@ -89,7 +89,7 @@ router.post('/accommodation/upload/:id', uploadPics)
 router.get('/accommodation/pics/:id', getPics)
 
 // ADMIN ONLY
-// router.delete('/accommodation/review/:id', deleteAccommodationReviews)
+router.delete('/accommodation/review/:id', deleteAllReviews)
 
 
 module.exports = router;
