@@ -74,6 +74,9 @@ router.get('/pfp/:uId', getPfp);
 // GET owner accommodation
 router.get('/accommodations/:uId', getAccommodationOwner);
 
+// ADMIN ONLY
+router.delete('/accommodation/review/:id', deleteAllReviews)
+
 // ACCOMMODATION ROUTES
 // POST a new ACCOMMODATION
 router.post('/accommodation', createAccommodation);
@@ -88,8 +91,6 @@ router.post('/accommodation/upload/:id', uploadPics)
 // GET pics
 router.get('/accommodation/pics/:id', getPics)
 
-// ADMIN ONLY
-router.delete('/accommodation/review/:id', deleteAllReviews)
 
 
 module.exports = router;
