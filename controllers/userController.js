@@ -47,6 +47,8 @@ const register = async (req, res) => {
 
         if (!validator.default.isEmail(email)) throw { code: 400, msg: api.INVALID_EMAIL };
 
+        if (fname.trim() == "" || lname.trim() == "") throw { code: 400, msg: api.EMPTY_FIELD}
+
         if (!validator.default.isStrongPassword(password)) {
             throw { code: 400, msg: api.WEAK_PASSWORD };
         }
@@ -123,11 +125,20 @@ const getAllOwners = async (req, res) => {
 
 // UPDATE USER
 const editUserData = async (req, res) => {
-    const { uId } = req.params
+    // const { uId } = req.params
+    const {uId, fname, lname, phone, email} = req.body;
   
     try {
         if (!validator.default.isMongoId(uId))
             throw { code: 400, msg: api.USER_ID_INVALID };
+
+        const u1 = await User.findById(uId);
+        if (!u1) throw { code: 400, msg: api.USER_NOT_FOUND};
+
+        if (!uId || !fname || !lname || !phone || !email ) throw { code: 400, msg: api.FIELDS_MISSING };
+
+        if (fname.trim() == "" || lname.trim() == "") throw { code: 400, msg: api.EMPTY_FIELD}
+        
         
         const user = await User.findByIdAndUpdate(uId, {
             ...req.body

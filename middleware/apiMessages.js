@@ -30,6 +30,7 @@ module.exports = {
     NO_FILES_UPLOADED: "No files uploaded.",
     
     //Miscellaneous
+    EMPTY_FIELD: "Empty characters",
     INVALID_ACCOMMODATION_OWNER: "Invalid accommodation owner.",
     FIELDS_MISSING: "All fields must be provided.",
     BOOKMARKS_NOT_FOUND: "There are no bookmarks.",
