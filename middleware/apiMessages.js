@@ -31,6 +31,7 @@ module.exports = {
     
     //Miscellaneous
     EMPTY_FIELD: "Empty characters",
+    INVALID_PHONE: "Invalid phone number",
     INVALID_ACCOMMODATION_OWNER: "Invalid accommodation owner.",
     FIELDS_MISSING: "All fields must be provided.",
     BOOKMARKS_NOT_FOUND: "There are no bookmarks.",

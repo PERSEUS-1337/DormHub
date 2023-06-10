@@ -17,6 +17,7 @@ const bucketName = 'dormhub-128-e8l';
 
 const multer = require('multer');
 const { use } = require('passport');
+const { locales } = require('validator/lib/isIBAN');
 
 const storageBucket = storage.bucket(bucketName);
 
@@ -125,20 +126,31 @@ const getAllOwners = async (req, res) => {
 
 // UPDATE USER
 const editUserData = async (req, res) => {
-    // const { uId } = req.params
-    const {uId, fname, lname, phone, email} = req.body;
+    const { uId } = req.params
+    // NOTE: phone is an ARRAY!
+    const { fname, lname, phone, email} = req.body;
   
     try {
         if (!validator.default.isMongoId(uId))
             throw { code: 400, msg: api.USER_ID_INVALID };
 
-        const u1 = await User.findById(uId);
-        if (!u1) throw { code: 400, msg: api.USER_NOT_FOUND};
-
         if (!uId || !fname || !lname || !phone || !email ) throw { code: 400, msg: api.FIELDS_MISSING };
 
-        if (fname.trim() == "" || lname.trim() == "") throw { code: 400, msg: api.EMPTY_FIELD}
-        
+        if (fname.trim() == "" || lname.trim() == "") throw { code: 400, msg: api.EMPTY_FIELD};
+
+        phone.forEach((element) => {
+            if (!validator.default.isMobilePhone(element, 'en-PH')) {
+                throw { code: 400, msg: api.INVALID_PHONE};
+            }
+            
+        });
+
+        if (!validator.default.isEmail(email)) throw {code: 400, msg: api.INVALID_EMAIL};
+
+        const emailExist = await User.findOne({email});
+
+        // ensures that email is not owned && if it does it should match the orig 
+        if (emailExist && emailExist._id != uId) throw {code: 400, msg: api.USER_ALREADY_EXISTS};
         
         const user = await User.findByIdAndUpdate(uId, {
             ...req.body
@@ -151,7 +163,7 @@ const editUserData = async (req, res) => {
         return res.status(201).json({ msg: api.EDIT_USER_DATA_SUCCESSFUL})
     } catch (err) {
         console.error(api.EDIT_USER_DATA_ERROR, err.msg || err);
-        return res.status(err.code || 500).json({ err: err.msg || api.INTERNAL_ERROR });
+        return res.status(err.code || 500).json({ err: err.msg || api.INTERNAL_ERROR});
     }
 }
 
