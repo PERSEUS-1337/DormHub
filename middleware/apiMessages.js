@@ -30,7 +30,9 @@ module.exports = {
     NO_FILES_UPLOADED: "No files uploaded.",
     
     //Miscellaneous
+    INVALID_PRICE: "Invalid price",
     EMPTY_FIELD: "Empty characters",
+    EMPTY_ARRAY: "Empty array",
     INVALID_PHONE: "Invalid phone number",
     INVALID_ACCOMMODATION_OWNER: "Invalid accommodation owner.",
     FIELDS_MISSING: "All fields must be provided.",

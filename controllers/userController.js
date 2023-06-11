@@ -170,7 +170,6 @@ const editUserData = async (req, res) => {
 // GET USER
 const getUserData = async (req, res) => {
     const { uId } = req.params;
-    console.log(uId)
     try {
 
         if (!validator.default.isMongoId(uId)) {
