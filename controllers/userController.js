@@ -81,15 +81,12 @@ const login = async (req, res) => {
             throw {code: 400, msg: api.INVALID_EMAIL};
 
         const user = await User.findOne({ email });
-        if (!user)
-            throw Error(api.INVALID_EMAIL);
+        if (!user) throw {code: 400, msg: api.INVALID_EMAIL};
 
         // checks password match
         const matchPass = await bcrypt.compare(password, user.password);
 
-        if (!matchPass) {
-            throw Error(api.INCORRECT_PASSWORD);
-        }
+        if (!matchPass) throw {code: 400, msg: api.INCORRECT_PASSWORD};
 
         const token = createToken(user._id);
         console.info(api.LOGIN_SUCCESSFUL);
@@ -156,13 +153,48 @@ const editUserData = async (req, res) => {
             ...req.body
         });
     
-        if (!user)
-          throw { code: 404, msg: api.USER_NOT_FOUND };
+        if (!user) throw { code: 404, msg: api.USER_NOT_FOUND };
         
         console.info(api.EDIT_USER_DATA_SUCCESSFUL);
         return res.status(201).json({ msg: api.EDIT_USER_DATA_SUCCESSFUL})
     } catch (err) {
         console.error(api.EDIT_USER_DATA_ERROR, err.msg || err);
+        return res.status(err.code || 500).json({ err: err.msg || api.INTERNAL_ERROR});
+    }
+}
+
+const resetPassword = async (req, res) => {
+    const { uId } = req.params;
+    const { oldPassword, newPass, newPass2  } = req.body;
+
+    try {
+        if (!validator.default.isMongoId(uId)) throw { code: 400, msg: api.USER_ID_INVALID };      
+
+        if (!oldPassword || !newPass || !newPass2 ) throw {code: 400, msg: api.FIELDS_MISSING};
+        
+        const user = await User.findById(uId);
+    
+        if (!user) throw { code: 404, msg: api.USER_NOT_FOUND };
+
+        // checks password match
+        const matchPass = await bcrypt.compare(oldPassword, user.password);
+
+        if (!matchPass) throw {code: 400, msg: api.INCORRECT_PASSWORD};
+
+        if (!validator.default.isStrongPassword(newPass)) throw { code: 400, msg: api.WEAK_PASSWORD };
+        if (newPass != newPass2) throw {code: 400, msg: api.MISMATCHED_PASS};
+
+        // Password encryption before storing in DB
+        const salt = await bcrypt.genSalt(10);
+        const hash = await bcrypt.hash(newPass, salt);
+        
+        const resetPass = await User.findByIdAndUpdate(uId, {"$set": {password: hash}});
+        if (!resetPass) throw { code: 404, msg: api.USER_NOT_FOUND };
+      
+        console.info(api.RESET_PASSWORD_SUCCESSFUL);
+        return res.status(201).json({ msg: api.RESET_PASSWORD_SUCCESSFUL})
+    } catch (err) {
+        console.error(api.RESET_PASSWORD_ERROR, err.msg || err);
         return res.status(err.code || 500).json({ err: err.msg || api.INTERNAL_ERROR});
     }
 }
@@ -215,11 +247,17 @@ const getBookmark = async (req, res)  => {
         }
 
         const bookmarks = user.bookmarks;
+        // below makes an array of id (Accom) from bookmarks
+        let bId = [];
+        bookmarks.forEach((element) => {
+            bId.push(element.id);
+        });
+
 
         if (bookmarks.length===0) {
             throw { code: 404, msg: api.BOOKMARKS_NOT_FOUND};
         } else {
-            const list = await Accommodation.find({ _id: { $in: bookmarks } })
+            const list = await Accommodation.find({ _id: { $in: bId } })
             console.info(api.GET_BOOKMARK_SUCCESSFUL);
             return res.status(200).json({msg:api.GET_BOOKMARK_SUCCESSFUL, list: list})
         }
@@ -470,5 +508,6 @@ module.exports = {
     deleteBookmark,
     uploadPfp,
     getPfp,
-    getAccommodationOwner
+    getAccommodationOwner,
+    resetPassword
 };

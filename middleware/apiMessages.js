@@ -30,6 +30,7 @@ module.exports = {
     NO_FILES_UPLOADED: "No files uploaded.",
     
     //Miscellaneous
+    MISMATCHED_PASS: "Mismatched new password",
     INVALID_PRICE: "Invalid price",
     EMPTY_FIELD: "Empty characters",
     EMPTY_ARRAY: "Empty array",
@@ -78,6 +79,7 @@ module.exports = {
     GET_PFP_ERROR: "getPfp error",
     NOT_AN_OWNER: "Not an owner",
     GET_ACCOMMODATION_OWNER_ERROR: "getAccommodationOwner error",
+    RESET_PASSWORD_ERROR: "password reset error",
 
     //Messages
     //	Accommodations
@@ -96,6 +98,7 @@ module.exports = {
     EDITED_SUCCESSFULLY: "Edited successfully!",
     FETCH_SUCCESSFUL: "Fetch successful",
     CREATE_SUCCESSFUL: "Create successful",
+    RESET_PASSWORD_SUCCESSFUL: "Password reset successful",
 
     //accommodation controller
     GET_ACCOMMODATION_SUCCESS: "getAccommodation successful",
