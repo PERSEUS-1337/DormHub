@@ -35,14 +35,14 @@ const ReviewTileItem = ({ data }) => {
     const date = dateTime.toLocaleDateString(); // Get the date portion
     const time = dateTime.toLocaleTimeString(); // Get the time portion
 
-    console.log("data rating" + data.rating)
+    console.log("Data ", data)
     return(
         <Container className='d-flex justify-content-center'>
             <Row key={data._id}>
                 <Col style={{background: "white"  }} className='border rounded border-1 border-primary d-flex flex-column justify-content-start'>
                     <ReadStarRating rate={data} />
                     <p className='my-4'>{data.detail}</p>
-                    <h6><b>{user}</b></h6>
+                    <h6><b>{data.fname} {data.lname}</b></h6>
                     <p>{date}, {time}</p>
                     
                 </Col>
