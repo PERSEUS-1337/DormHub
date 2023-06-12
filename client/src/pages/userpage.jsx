@@ -483,6 +483,9 @@ const UserPage = () => {
                     <Image
                       className="rounded-circle w-100 h-100"
                       src={pfp}
+                      roundedCircle
+                      fluid
+                      style={{objectFit:'contain', maxWidth:"auto", height:"aut0"}}
                     />
                   )}
                 </>
