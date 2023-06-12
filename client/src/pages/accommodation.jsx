@@ -252,7 +252,7 @@ const CheckIfLoggedIn = ({ accommodationId }) => {
         } catch (err){
             console.error("Review POST error.", err);
         }
-        //window.location.reload();
+        window.location.reload();
     };
     return (
         <>
