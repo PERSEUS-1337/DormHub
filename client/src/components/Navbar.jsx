@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Navbar, Nav, Container, OverlayTrigger, Popover, Row, Spinner } from 'react-bootstrap'
+import { Navbar, Nav, Container, OverlayTrigger, Popover, Row, Spinner, Modal } from 'react-bootstrap'
 import NavItem from './NavItem'
 import { FaHeart, FaSignInAlt, FaLaughWink, FaUser, FaSignOutAlt } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
@@ -94,12 +94,12 @@ const NavBar = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-        const type = localStorage.getItem("userType");
+        // const type = localStorage.getItem("userType");
         const uid = localStorage.getItem("_id");
         const jwt = localStorage.getItem("token");
 
         try {
-            const res = await fetch(`/api/v1/auth-required-func/${type}/${uid}`, {
+            const res = await fetch(`/api/v1/auth-required-func/${uid}`, {
             headers: {
                 "Content-Type": "application/json",
                 Authorization : `Bearer ${jwt}`

@@ -3,10 +3,6 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const accommodationSchema = new Schema({
-  // _id: {
-  //     type: mongoose.Schema.Types.ObjectId,
-  //     required: true
-  // },
   name: {
     type: String,
     required: true
@@ -56,27 +52,39 @@ const accommodationSchema = new Schema({
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
+    ref: 'users',
     required: true
   },
-  review: {
-      type: [{
-          rating: {
-              type: Number,
-              enum: [1, 2, 3, 4, 5],
-              required: true
-          },
-          user: {
-              type: mongoose.Schema.Types.ObjectId,
-              required: true
-          },
-          detail: {
-              type: String,
-              required: true
-          },
-      }],
-  },
+  review: [{
+    rating: {
+      type: Number,
+      enum: [1, 2, 3, 4, 5],
+      required: true
+    },
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'users',
+      required: true
+    },
+    fname: { 
+      type: String,
+      required: true
+    },
+    lname: {
+      type: String,
+      required: true
+    }, 
+    detail: {
+      type: String,
+      required: true
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now
+    }
+  }],
 }, {timestamps: true});
 
-module.exports = mongoose.model('dummy_accomodation', accommodationSchema);
+const Accommodation = mongoose.model('Accommodation', accommodationSchema, 'accommodations');
 
-// module.exports = Accomodation;
+module.exports = Accommodation
