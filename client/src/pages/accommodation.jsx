@@ -1,7 +1,7 @@
 import './accom-style.css';
 import { Button, Row, Col, Carousel, Container, Spinner, Modal, Form } from 'react-bootstrap';
 import React, { useState, useEffect } from "react";
-import { ReadStarRating, StarRating } from '../components/StarRating';
+import { ReadStarRating, StarRating, AccomStarRating } from '../components/StarRating';
 import { useLocation } from 'react-router-dom';
 import ReviewList from '../components/ReviewTile';
 
@@ -149,7 +149,10 @@ const AddToBookmarks = ({ bId }) => {
 }
  
 const Details = (data) => {
-
+    // console.log("Details", data.accomData.review[0])
+    const reviewValues = data.accomData.review.map(review => review.rating);
+    const total = reviewValues.reduce((accumulator, value) => accumulator + value, 0);
+    const count = data.accomData.review.length
     return (
         <Container className="desc_accom border-bottom pb-4">
             <h3 className='accomTitle'>{data.accomData.name}</h3>
@@ -158,7 +161,7 @@ const Details = (data) => {
                     <h5 className='ratingTitle'>Rating: </h5>
                 </Col>
                 <Col>
-                    <ReadStarRating rate={data.accomData} />
+                    <AccomStarRating rate={Math.floor(total/count)} />
                 </Col>
             </Row>
 
