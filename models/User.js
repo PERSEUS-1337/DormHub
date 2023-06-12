@@ -3,11 +3,15 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
-  fname: {
+  fname: { 
     type: String,
     required: true
   },
   lname: {
+    type: String,
+    required: true
+  },
+  userType: {
     type: String,
     required: true
   },
@@ -24,20 +28,51 @@ const userSchema = new Schema({
     type: String,
     required: true
   },
-  bookmark: {
-    type: [mongoose.Schema.Types.ObjectId],
+  phone: {
+    type: [String],
     required: false,
-    ref: 'Listing', 
     default: []
   },
-  pfp: {
-    type: String,
-    required: false,
-    default: "null"
-  }
-}, 
-);
+  bookmarks: [{
+    id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'accommodations',
+      required: true
+    },
+    name: {
+      type: String,
+      required: true
+    },
+    pics: {
+      type: [String],
+      required: true
+    },
+    price: {
+      type: [Number],
+      required: true
+    }
+  }],
+  accommodations: [{
+    id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'accommodations',
+      required: true
+    },
+    name: {
+      type: String,
+      required: true
+    },
+    pics: {
+      type: [String],
+      required: true
+    },
+    price: {
+      type: [Number],
+      required: true
+    }
+  }],
+});
 
-const User = mongoose.model('User', userSchema, 'users_be');
+const User = mongoose.model('User', userSchema, 'users');
 
 module.exports = User;

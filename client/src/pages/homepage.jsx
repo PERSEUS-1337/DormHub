@@ -41,10 +41,11 @@ const AccomCards = () => {
             <Row md={4} className="g-3 row mx-auto">
             {/* BACKLOG: Retrieve highest rating top 3 accommodations */}
             {accommData.accommodations && accommData.accommodations.slice(0,3).map( data => (
-                <Col key={data.id} className="col mx-auto">
+                // console.log(data._id),
+                <Col key={data._id} className="col mx-auto" style={{cursor: "pointer"}}>
                 <Card className="bg-info" onClick={() => toAccomm(data)}>
                     {/* Added static src to test UI */}
-                    <Card.Img variant="top" src="https://www.home-designing.com/wp-content/uploads/2016/02/luxury-gray-and-wood-bedroom.jpg" />
+                    <Card.Img variant="top" src={data.pics[0]} alt="NO AVAILABLE PICTURE"/>
                 <Card.Body>
                         <Card.Title>{data.name}</Card.Title>
                         {
@@ -74,11 +75,11 @@ const HomePage = () => {
 
 
     useEffect(() => {
-        fetch("/api/v1/accommodation/all")
+        fetch("/api/v1/accommodation/all?limit=100")
         .then(res =>res.json())
         .then(data => {
             setAccommData(data);
-            
+            console.log(data);
             // console.log(data["accommodations"][2]);
         })
     }, []);

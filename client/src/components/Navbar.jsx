@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { Navbar, Nav, Container, OverlayTrigger, Popover, Row, Spinner } from 'react-bootstrap'
+import { useNavigate } from 'react-router-dom'
+import { Navbar, Nav, Container, OverlayTrigger, Popover, Row, Spinner, Modal } from 'react-bootstrap'
 import NavItem from './NavItem'
 import { FaHeart, FaSignInAlt, FaLaughWink, FaUser, FaSignOutAlt } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
@@ -27,7 +28,7 @@ const PopOver = ({ data }) => {
                                 <Row>
                                     <Nav.Link href="/user">
                                         <label className='d-flex align-items-center' style={{cursor: "pointer"}}>
-                                            <FaLaughWink className='mx-2' color='#403234' size={20} />   
+                                            <FaLaughWink className='mx-2' color='primary' size={20} />   
                                             <p className='mx-2'>Profile</p>   
                                         </label>
                                     </Nav.Link>
@@ -35,7 +36,7 @@ const PopOver = ({ data }) => {
                                 <Row>
                                     <Nav.Link href="/login" onClick={handleLogout}>
                                         <label className='d-flex align-items-center' style={{cursor: "pointer"}}>
-                                            <FaSignOutAlt className='mx-2' color='#403234' size={20} />   
+                                            <FaSignOutAlt className='mx-2' color='primary' size={20} />   
                                             <p className='mx-2'>Logout</p>   
                                         </label>
                                     </Nav.Link>
@@ -94,12 +95,12 @@ const NavBar = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-        const type = localStorage.getItem("userType");
+        // const type = localStorage.getItem("userType");
         const uid = localStorage.getItem("_id");
         const jwt = localStorage.getItem("token");
 
         try {
-            const res = await fetch(`/api/v1/auth-required-func/${type}/${uid}`, {
+            const res = await fetch(`/api/v1/auth-required-func/${uid}`, {
             headers: {
                 "Content-Type": "application/json",
                 Authorization : `Bearer ${jwt}`
@@ -149,7 +150,7 @@ const NavBar = () => {
                 <Nav className="ms-auto d-flex align-items-center">
 
                         
-                    <Nav.Link style={{color: "white"}} href={ userData && userData ? "/user" : "/login" }>
+                    {/* <Nav.Link style={{color: "white"}} href={ userData && userData ? "/user" : "/login" }>
                         <label className='d-flex align-items-center' style={{cursor: "pointer"}}>
                             <FaHeart className='mx-2'
                             color='#ffffff'
@@ -157,7 +158,7 @@ const NavBar = () => {
                             />
                             <p className='mx-2'>Favorites</p>   
                         </label>
-                     </Nav.Link>
+                     </Nav.Link> */}
                     
                     {/* {navList} */}
                     <PopOver data={ userData.fname } />   

@@ -3,32 +3,43 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const accommodationSchema = new Schema({
-  // _id: {
-  //     type: mongoose.Schema.Types.ObjectId,
-  //     required: true
-  // },
   name: {
     type: String,
     required: true
   },
   desc: {
-      type: String,
-      required: true
+    type: String,
+    required: true
   },
   pics: {
-      type: [String],
+    type: [String],
   },
   price: {
     type: [Number],
     required: true
   },
   location: {
-    type: String,
+    type: {
+      vicinity: {
+        type: String,
+      },
+      street: {
+        type: String,
+      },
+      barangay: {
+        type: String,
+        required: true
+      },
+      town: {
+        type: String,
+        required: true
+      }
+    },
     required: true
   },
   type: {
     type: [String],
-    enum: ["apartment", "condominium", "dormitory", "transient", "hotel", "hostel", "bedspace"],
+    enum: ["apartment", "condominium", "dormitory", "transient", "hotel", "hostel", "bedspace", "others"],
     required: true
   },
   archived: {
@@ -41,35 +52,39 @@ const accommodationSchema = new Schema({
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
+    ref: 'users',
     required: true
   },
-  user: {
-    type: [mongoose.Schema.Types.ObjectId],
-    required: false
-  },
-  review: {
-      type: [{
-          rating: {
-              type: Number,
-              enum: [1, 2, 3, 4, 5],
-              required: true
-          },
-          user: {
-              type: mongoose.Schema.Types.ObjectId,
-              required: true
-          },
-          detail: {
-              type: String,
-              required: true
-          },
-          liked: {
-              type: Boolean
-          }
-      }],
-      // required: true
-  },
+  review: [{
+    rating: {
+      type: Number,
+      enum: [1, 2, 3, 4, 5],
+      required: true
+    },
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'users',
+      required: true
+    },
+    fname: { 
+      type: String,
+      required: true
+    },
+    lname: {
+      type: String,
+      required: true
+    }, 
+    detail: {
+      type: String,
+      required: true
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now
+    }
+  }],
 }, {timestamps: true});
 
-module.exports = mongoose.model('dummy_accomodation', accommodationSchema);
+const Accommodation = mongoose.model('Accommodation', accommodationSchema, 'accommodations');
 
-// module.exports = Accomodation;
+module.exports = Accommodation

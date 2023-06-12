@@ -1,18 +1,25 @@
-import React from 'react'
-import { Container, Row, Col, Button, Image } from 'react-bootstrap'
+import { React, useState } from 'react'
+import { Container, Row, Col, Button, Image, Spinner } from 'react-bootstrap'
 import { useNavigate } from 'react-router-dom'
 
+
 const FaveTileItem = ({ data }) => {
-    const navigate = useNavigate()
+    const [isLoading, setIsLoading] = useState(false);
+    const navigate = useNavigate();
 
     const bId = data._id;
 
+    function ReloadComponent() {
+        window.location.reload();
+    }
+ 
     function DeleteBookmark() {
-            const type = localStorage.getItem('userType');
-            const id = localStorage.getItem('_id');
+        setIsLoading(true);
+        const type = localStorage.getItem('userType');
+        const id = localStorage.getItem('_id');
             const jwt = localStorage.getItem('token');
         
-            fetch(`api/v1/auth-required-func/${type}/bookmark/${bId}/${id}`, { // api endpoint to be modified
+            fetch(`api/v1/auth-required-func/${type}/bookmark/${bId}/${id}`, {
               method: 'DELETE',
               headers: {
                 'Content-Type': 'application/json',
@@ -20,9 +27,14 @@ const FaveTileItem = ({ data }) => {
               },
             })
             .then(res =>res.json())
-            console.log('successful deletion');
+            .then((body) => {
+                console.log(body);
 
-            window.location.reload();
+                if(!body.error) {
+                    ReloadComponent();
+                    setIsLoading(false);
+                }
+            })
     }
 
     const navigateToLodge = (data) => {
@@ -53,9 +65,20 @@ const FaveTileItem = ({ data }) => {
                             </div>
                         </Col>
                         <Col>
-                            <div className="justify-content-end ms-auto">
-                                <Button variant="light" onClick={DeleteBookmark} className='mb-5'>Remove</Button>
-                            </div>
+                            {
+                                isLoading ? (
+                                    <div className="d-flex justify-content-center align-items-center">
+                                        <Spinner animation="border" variant="primary" role="status" size="lg">
+                                            <span className="visually-hidden">Loading...</span>
+                                        </Spinner>
+                                    </div>
+                                ) : (
+                                    <div className="justify-content-end ms-auto">
+                                        <Button variant="light" onClick={DeleteBookmark} className='mb-5'>Remove</Button>
+                                    </div>
+                                )
+                            }
+                            
                         </Col>
                     </Row>
                     
