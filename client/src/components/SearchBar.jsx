@@ -51,7 +51,7 @@ const SearchBar = ({ data }) => {
     const handleSearch = () => {
         
         const newFilter = data.filter((value) => {
-                return value.name.toLowerCase().includes(wordEntered.toLowerCase())
+                return value.name.toLowerCase().startsWith(wordEntered.toLowerCase())
         })
         if (wordEntered == "") {
             setFilteredData([])
@@ -61,6 +61,17 @@ const SearchBar = ({ data }) => {
         
         setCurrentPage(1)
 
+    }
+
+    const handleSuggestion = () => {
+        const newFilter = data.filter((value) => {
+                return value.name.toLowerCase().startsWith(wordEntered.toLowerCase())
+        })
+        if (wordEntered == "") {
+            setShowSuggestions([])
+        } else {
+            setShowSuggestions(newFilter)
+        }
     }
     
         if (show) {
@@ -77,13 +88,29 @@ const SearchBar = ({ data }) => {
             <Container className='mt-4'>
                 <Row>
                     <Col className='px-5'>
-                        <Form onSubmit={(e) => { e.preventDefault(); handleSearch(e)}}>
+                        <Form onSubmit={(e) => { e.preventDefault(); handleSearch(e);}}>
                             <Form.Group controlId="filterAccomms" className='d-flex align-items-center mx-2'>
-                                <Form.Control type="search" placeholder="Search for an accommodation..." className='m-4' onChange={(e) => { setWordEntered(e.target.value); if (e.target.value == "") setFilteredData([]);}} />
-                                <Button className="rounded-1 mx-2" variant="secondary" onClick={handleSearch}>Search</Button>
-                                <Button className="rounded-1 mx-2 text-nowrap" variant="secondary" onClick={handleViewAll}>View All</Button>
+                                <Col className='mx-4'>
+                                    <Form.Control type="search" placeholder="Search for an accommodation..." onChange={(e) => { setWordEntered(e.target.value); if (e.target.value == "") setFilteredData([]); }} onKeyUp={handleSuggestion} />
+                                    <Container style={{ background: "red", marginTop: "-1.3rem", marginLeft: "2rem", maxWidth: "60.5rem"}}>
+                                        {showSuggestions.length != 0 && filteredData.length == 0 && (
+                                            <Row>
+                                                {showSuggestions.slice(0, 10).map((value) => {
+                                                    console.log(value)
+                                                    return (
+                                                        <p>{ value.name }</p>
+                                                    )
+                                                })}
+                                            </Row>
+                                        )}
+                                    </Container>
+                                </Col>
+                                <Col md="auto"><Button className="rounded-1 mx-2" variant="secondary" onClick={handleSearch}>Search</Button></Col>
+                                <Col xs lg={2}><Button className="rounded-1 mx-2 text-nowrap" variant="secondary" onClick={handleViewAll}>View All</Button></Col>
                             </Form.Group>
+                            
                         </Form>
+                       
                     </Col>
         
                 </Row>
