@@ -456,7 +456,6 @@ const UserPage = () => {
     };
     fetchData();
   }, []);
-
   return (
     <>
       <Container className="mt-5 mb-3 pb-4 d-flex flex-column align-items-left border-bottom">
@@ -513,7 +512,7 @@ const UserPage = () => {
       </Container>
       <Container>
         {
-          userData.user.userType === "Owner" ? (
+          userData.user && userData.user.userType === "Owner" ? (
             // console.log("Owner"),
             <CheckIfOwner />
           ) : (
