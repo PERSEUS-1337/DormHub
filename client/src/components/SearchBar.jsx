@@ -61,7 +61,7 @@ const SearchBar = ({ data }) => {
     const handleSearch = () => {
         
         const newFilter = data.filter((value) => {
-                return value.name.toLowerCase().startsWith(wordEntered.toLowerCase())
+                return value.name.toLowerCase().includes(wordEntered.toLowerCase())
         })
         if (wordEntered == "") {
             setFilteredData([])
