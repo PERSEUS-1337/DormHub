@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Container, Col, Row, Form, Button, Alert, Spinner, Pagination} from 'react-bootstrap';
 import LodgingTileItem from './LodgingTileItem';
 
@@ -8,7 +8,18 @@ const SearchBar = ({ data }) => {
     const [wordEntered, setWordEntered] = useState("")
     const [show, setShow] = useState(false)
     const [currentPage, setCurrentPage] = useState(1)
+    const [showNoresults, setShowNoresults] = useState(false)
     const itemsPerPage = 3
+
+    useEffect(() => {
+        let timeout
+
+        if (showNoresults) {
+            timeout = setTimeout(() => {
+                setShowNoresults(false)
+            }, 3000)
+        }
+    })
 
     const clearInput = () => {
         setFilteredData([])
@@ -59,6 +70,12 @@ const SearchBar = ({ data }) => {
         }
         
         setCurrentPage(1)
+        if (filteredData.length == 0) {
+            setShowNoresults(true)
+        } else {
+            setShowNoresults(false)
+        }
+        
 
     }
 
@@ -89,7 +106,7 @@ const SearchBar = ({ data }) => {
                     <Col className='px-5'>
                         <Form onSubmit={(e) => { e.preventDefault(); handleSearch(e);}}>
                             <Form.Group controlId="filterAccomms" className='d-flex align-items-center mx-2'>
-                                <Col className='mx-4'>
+                                <Col className='mx-4 mt-3'>
                                     <Form.Control type="search" placeholder="Search for an accommodation..." onChange={(e) => { setWordEntered(e.target.value); if (e.target.value == "") setFilteredData([]); }} onKeyUp={handleSuggestion} />
                                     {/* <Container style={{ background: "red", marginTop: "-1.3rem", marginLeft: "2rem", maxWidth: "60.5rem"}}>
                                         {showSuggestions.length != 0 && filteredData.length == 0 && (
@@ -113,8 +130,9 @@ const SearchBar = ({ data }) => {
                     </Col>
         
                 </Row>
+                { filteredData.length == 0 && showNoresults && <h3 className='d-flex justify-content-center mt-5'>No Results Found.</h3> }
                 {filteredData.length != 0 && (
-                    <Container className='rounded-3' style={{ background: "#ffffff", marginTop: "7rem"}}>
+                    <Container className='rounded-3' style={{ background: "#ffffff", marginTop: "5rem"}}>
                         <Row className='d-flex align-items-center ms-auto'>
                             <Col><h4>ACCOMMODATIONS: <span>{ filteredData.length }</span></h4></Col>
                             <Col className='d-flex justify-content-end'><Button variant='secondary'>Generate PDF</Button></Col>
