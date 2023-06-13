@@ -17,13 +17,22 @@ const Slideshow = (pics) => {
 
     return (
         <>
-            <Carousel>
-                {pics.pics.map((src, index) => (
-                    <Carousel.Item key={index} onClick={() => setupModal(src)}>
-                        <img src={src} alt={`Picture ${index + 1}`} className="d-block" />
+            {pics.pics.length === 0 ? (
+                <Carousel>
+                    <Carousel.Item>
+                        <img src="https://www.gpshealthonline.com/static/images/no-banner.jpg" alt="NO PIC" className="d-block"/>
                     </Carousel.Item>
-                ))}
-            </Carousel>
+                </Carousel>
+            ) : (
+                <Carousel>
+                    {pics.pics.map((src, index) => (
+                        <Carousel.Item key={index} onClick={() => setupModal(src)}>
+                            <img src={src} alt={`Picture ${index + 1}`} className="d-block" />
+                        </Carousel.Item>
+                    ))}
+                </Carousel>
+            )}
+            
 
             <ImageModal
                 show={modalShow}

@@ -27,7 +27,12 @@ const LodgingTileItem = ({ data }) => {
         <Container className={isArchived}>
             <Row>
                 <Col>
-                    <Image className='img-thumbnail border-0' src={data.pics[0]} alt='Lodge Photo' rounded />
+                    {data.pics.length === 0 ? (
+                        <Image className='img-thumbnail border-0' src="https://www.gpshealthonline.com/static/images/no-banner.jpg" alt='Lodge Photo' rounded />
+                    ) : (
+                        <Image className='img-thumbnail border-0' src={data.pics[0]} alt='Lodge Photo' rounded />
+                    )}
+                    
                 </Col>
                 <Col className='border'>
                     {
