@@ -115,9 +115,9 @@ const SearchBar = ({ data }) => {
         
                 </Row>
                 {filteredData.length != 0 && (
-                    <Container className='rounded-3 mt-5' style={{ background: "#ffffff" }}>
+                    <Container className='rounded-3' style={{ background: "#ffffff", marginTop: "7rem"}}>
                         <Row className='d-flex align-items-center ms-auto'>
-                            <Col><h4>ACCOMMODATIONS: </h4></Col>
+                            <Col><h4>ACCOMMODATIONS: <span>{ filteredData.length }</span></h4></Col>
                             <Col className='d-flex justify-content-end'><Button variant='secondary'>Generate PDF</Button></Col>
                         </Row>
                         
