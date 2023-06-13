@@ -3,7 +3,6 @@ import { Container, Col, Row, Form, Button, Alert, Spinner, Pagination} from 're
 import LodgingTileItem from './LodgingTileItem';
 
 const SearchBar = ({ data }) => {
-    const [isLoading, setIsLoading] = useState(data);
     const [filteredData, setFilteredData] = useState([])
     const [showSuggestions, setShowSuggestions] = useState([])
     const [wordEntered, setWordEntered] = useState("")
@@ -92,7 +91,7 @@ const SearchBar = ({ data }) => {
                             <Form.Group controlId="filterAccomms" className='d-flex align-items-center mx-2'>
                                 <Col className='mx-4'>
                                     <Form.Control type="search" placeholder="Search for an accommodation..." onChange={(e) => { setWordEntered(e.target.value); if (e.target.value == "") setFilteredData([]); }} onKeyUp={handleSuggestion} />
-                                    <Container style={{ background: "red", marginTop: "-1.3rem", marginLeft: "2rem", maxWidth: "60.5rem"}}>
+                                    {/* <Container style={{ background: "red", marginTop: "-1.3rem", marginLeft: "2rem", maxWidth: "60.5rem"}}>
                                         {showSuggestions.length != 0 && filteredData.length == 0 && (
                                             <Row>
                                                 {showSuggestions.slice(0, 10).map((value) => {
@@ -103,7 +102,7 @@ const SearchBar = ({ data }) => {
                                                 })}
                                             </Row>
                                         )}
-                                    </Container>
+                                    </Container> */}
                                 </Col>
                                 <Col md="auto"><Button className="rounded-1 mx-2" variant="secondary" onClick={handleSearch}>Search</Button></Col>
                                 <Col xs lg={2}><Button className="rounded-1 mx-2 text-nowrap" variant="secondary" onClick={handleViewAll}>View All</Button></Col>
