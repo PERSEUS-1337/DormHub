@@ -155,11 +155,10 @@ const FaveTileList = () => {
           },
         });
         const data = await res.json();
-
         if (data.error || data.length === 0) {
           setHasFav(false);
         } else {
-          setFavData(data);
+          setFavData(data.list);
         }
         setIsLoading(false);
       } catch (err) {
@@ -457,9 +456,6 @@ const UserPage = () => {
     };
     fetchData();
   }, []);
-
-  console.log(userData.phone);
-
   return (
     <>
       <Container className="mt-5 mb-3 pb-4 d-flex flex-column align-items-left border-bottom">
@@ -487,18 +483,21 @@ const UserPage = () => {
                     <Image
                       className="rounded-circle w-100 h-100"
                       src={pfp}
+                      roundedCircle
+                      fluid
+                      style={{objectFit:'contain', maxWidth:"auto", height:"aut0"}}
                     />
                   )}
                 </>
               )}
               </Col>
               <Col xs={7}>
-                <h2>{`${userData.fname} ${userData.lname}`}</h2>
+                <h2>{`${userData.user.fname} ${userData.user.lname}`}</h2>
                 {/* TO ADD: USER TYPE */}
-                <h5 className="lead">{`${userData.userType}`}</h5>
-                <h5 className="lead">Email: {`${userData.email}`}</h5>
+                <h5 className="lead">{`${userData.user.userType}`}</h5>
+                <h5 className="lead">Email: {`${userData.user.email}`}</h5>
                 <h5 className="lead">Contact Number: {
-                  userData.phone.length === 0 || userData.phone[0] === "" ? (
+                  userData.user.phone.length === 0 || userData.user.phone[0] === "" ? (
                     <span className="text-muted">Edit Profile to Add</span>
                   ) : (
                     `${userData.phone}`
@@ -506,7 +505,7 @@ const UserPage = () => {
                 } </h5>
               </Col>
               <Col xs={3} className="d-flex justify-content-end align-items-start">
-                <EditUserProfile key={userData.id} data={userData} />
+                <EditUserProfile key={userData.user.id} data={userData} />
               </Col>
             </Row>
           )
@@ -516,7 +515,7 @@ const UserPage = () => {
       </Container>
       <Container>
         {
-          userData.userType === "Owner" ? (
+          userData.user && userData.user.userType === "Owner" ? (
             // console.log("Owner"),
             <CheckIfOwner />
           ) : (
