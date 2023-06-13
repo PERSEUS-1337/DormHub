@@ -5,7 +5,8 @@ import { ReadStarRating, StarRating, AccomStarRating } from '../components/StarR
 import { useLocation } from 'react-router-dom';
 import ReviewList from '../components/ReviewTile';
 
-const Slideshow = () => {
+const Slideshow = (pics) => {
+    console.log("PICS", typeof(pics), pics.pics)
     const [modalShow, setModalShow] = React.useState(false);
     const [imgSrc, setImgSrc] = React.useState();
 
@@ -17,23 +18,13 @@ const Slideshow = () => {
     return (
         <>
             <Carousel>
-                <Carousel.Item onClick={() => setupModal("https://uplbperspective.files.wordpress.com/2020/03/img_0070.jpg?w=950")}>
-                    <img src="https://uplbperspective.files.wordpress.com/2020/03/img_0070.jpg?w=950"
-                        alt="Picture 1" className="d-block" />
-                </Carousel.Item>
-                <Carousel.Item onClick={() => setupModal("https://collegelifemadeeasy.com/wp-content/uploads/2022/06/cool-dorm-room-stuff-decorating-ideas-Facebook.jpg")}>
-                    <img src="https://collegelifemadeeasy.com/wp-content/uploads/2022/06/cool-dorm-room-stuff-decorating-ideas-Facebook.jpg"
-                        alt="Picture 2" className="d-block" />
-                </Carousel.Item>
-                <Carousel.Item onClick={() => setupModal("https://www.suidersee.co.za/media/cache/67/e6/67e6f48c4a41d0c53fedffc1190f5ea0.jpg")}>
-                    <img src="https://www.suidersee.co.za/media/cache/67/e6/67e6f48c4a41d0c53fedffc1190f5ea0.jpg" alt="Picture 3"
-                        className="d-block" />
-                </Carousel.Item>
-                <Carousel.Item onClick={() => setupModal("https://www.une.edu/sites/default/files/styles/block_image_large/public/2020-12/Avila-6259.jpg?itok=5HTs3fnj")}>
-                    <img src="https://www.une.edu/sites/default/files/styles/block_image_large/public/2020-12/Avila-6259.jpg?itok=5HTs3fnj" alt="Picture 4"
-                        className="d-block" />
-                </Carousel.Item>
+                {pics.pics.map((src, index) => (
+                    <Carousel.Item key={index} onClick={() => setupModal(src)}>
+                        <img src={src} alt={`Picture ${index + 1}`} className="d-block" />
+                    </Carousel.Item>
+                ))}
             </Carousel>
+
             <ImageModal
                 show={modalShow}
                 onHide={() => setModalShow(false)}
@@ -287,7 +278,7 @@ function Accommodation(props) {
     const location = useLocation();
     const isLoggedIn = localStorage.getItem("_id") && localStorage.getItem("token");
     return (<>
-        <Slideshow />
+        <Slideshow pics={location.state.data.pics}/>
         {/* <ReadStarRating rate={location.state.data} /> */}
         <Details accomData={location.state.data} />
         {isLoggedIn ? (
