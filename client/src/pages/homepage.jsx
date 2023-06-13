@@ -28,7 +28,6 @@ const AccomCards = () => {
             // console.log(data["accommodations"][2]);
         })
     }, []);
-    
     return (
         <>
         {isLoading ? (
@@ -45,7 +44,12 @@ const AccomCards = () => {
                 <Col key={data._id} className="col mx-auto" style={{cursor: "pointer"}}>
                 <Card className="bg-info" onClick={() => toAccomm(data)}>
                     {/* Added static src to test UI */}
-                    <Card.Img variant="top" src={data.pics[0]} alt="NO AVAILABLE PICTURE"/>
+                    {data.pics.length === 0 ? (
+                        <Card.Img variant="top" src="https://www.gpshealthonline.com/static/images/no-banner.jpg" alt="NO AVAILABLE PICTURE"/>
+                    ) : (
+                        <Card.Img variant="top" src={data.pics[0]} alt="NO AVAILABLE PICTURE"/>
+                    )}
+                    
                 <Card.Body>
                         <Card.Title>{data.name}</Card.Title>
                         {
