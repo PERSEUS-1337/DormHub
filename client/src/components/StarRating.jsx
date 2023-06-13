@@ -76,7 +76,9 @@ const AccomStarRating = (data) => {
     console.log("Rating, " ,rating)
 
     return (
-        <div className='d-flex align-items-center'>
+        <>
+        {!isNaN(rating) ? (
+            <div className='d-flex align-items-center'>
             {[...Array(5)].map((star, index) => {
                 const ratingValue = index + 1
                 
@@ -96,10 +98,12 @@ const AccomStarRating = (data) => {
                     
                 )
             })}
-            {/* will remove this line later. this is just for testing */}
-            <p className='ms-2 fs-4'>{rating}/5</p> 
-            
+            <p className='ms-2 fs-4'>{rating}/5</p>    
         </div>
+        ) : (
+        <p className='ms-2 fs-4'>No Ratings Yet</p>
+        )}
+        </>
     )
 }
 
