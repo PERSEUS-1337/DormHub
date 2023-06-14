@@ -62,7 +62,8 @@ const ReviewTileItem = ({ data }) => {
 
             {/* </Col> */}
             {/* </Row> */}
-        </div>
+        {/* </div> */}
+        </Container>
     )
 }
 
