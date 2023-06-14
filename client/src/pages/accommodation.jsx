@@ -204,14 +204,14 @@ const Details = (data) => {
                     }
                 </Col>
             </Row>
-            <Row id="calendar" className="detail">
+            {/* <Row id="calendar" className="detail">
                 <Col sm={1}>
                     <img src="../../assets/icons/calendar.jpg" alt="test3" />
                 </Col>
                 <Col sm={11}>
                     <p>Application Starts on July 2023</p>
                 </Col>
-            </Row>
+            </Row> */}
         </Container>
     );
 }
