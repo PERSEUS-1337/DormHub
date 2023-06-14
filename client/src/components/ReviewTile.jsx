@@ -36,34 +36,35 @@ const ReviewTileItem = ({ data }) => {
     const date = dateTime.toLocaleDateString(); // Get the date portion
     const time = dateTime.toLocaleTimeString(); // Get the time portion
 
-    console.log("data rating" + data.rating)
-    return(
-        <Container className='d-flex justify-content-center'>
-            <Row key={data._id}>
-                <Col style={{background: "white"  }} className='border rounded border-1 border-primary d-flex flex-column justify-content-start'>
+    // console.log("data rating" + data.rating)
+    return (
+        // <Container className='d-flex justify-content-center'>
+        <div className='border rounded border-1 border-primary reviewTile'>
+            {/* <Row key={data._id}> */}
+            {/* <Col style={{ background: "white" }} className='border rounded border-1 border-primary d-flex flex-column justify-content-start'> */}
+
+            <Row>
+                <Col lg={4}>
+                    <p className='text-center fw-bold mt-4'>{data.fname}</p>
+                </Col>
+                <Col lg={8}>
                     <ReadStarRating rate={data} />
-                    {/* 
-                    //Incoming
-                    <p className='my-4'>{data.detail}</p>
-                    <h6><b>{data.fname} {data.lname}</b></h6>
-                    <p>{date}, {time}</p> */}
-                    
+
+
                 </Col>
             </Row>
-
             <div className='reviewDetail overflow-auto mb-3'>
                 <p className=''>{data.detail}</p>
             </div>
             <div className='text-center'>
-                <h6 className='fw-bold'>{user}</h6>
+                <h6 className='fw-bold'>{data.fname} {data.lname}</h6>
+                {/* <h6><b>{data.fname} {data.lname}</b></h6> */}
                 <p>{date}, {time}</p>
             </div>
 
-
             {/* </Col> */}
             {/* </Row> */}
-        {/* </div> */}
-        </Container>
+        </div>
     )
 }
 
@@ -99,7 +100,7 @@ const ReviewList = ({ data }) => {
 
             {/* <Container className='d-flex flex-column align-items-center m-auto mt-4 pb-2'> */}
 
-                        {/* </Container> */}
+            {/* </Container> */}
 
             {/* <Container className='d-flex flex-column align-items-center m-auto mt-4 pb-2'>
                 <Row>{ReviewList}</Row>

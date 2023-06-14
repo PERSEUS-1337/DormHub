@@ -6,7 +6,7 @@ import { useLocation } from 'react-router-dom';
 import ReviewList from '../components/ReviewTile';
 
 const Slideshow = (pics) => {
-    console.log("PICS", typeof(pics), pics.pics)
+    // console.log("PICS", typeof(pics), pics.pics)
     const [modalShow, setModalShow] = React.useState(false);
     const [imgSrc, setImgSrc] = React.useState();
 

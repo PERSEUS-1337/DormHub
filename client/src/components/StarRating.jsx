@@ -73,7 +73,7 @@ const ReadStarRating = (data) => {
 const AccomStarRating = (data) => {
     // console.log("RATING READ STAR RATING", data.rate.rating)
     const rating = data.rate
-    console.log("Rating, " ,rating)
+    // console.log("Rating, " ,rating)
 
     return (
         <>
