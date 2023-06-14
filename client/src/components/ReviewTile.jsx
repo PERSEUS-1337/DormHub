@@ -36,30 +36,18 @@ const ReviewTileItem = ({ data }) => {
     const date = dateTime.toLocaleDateString(); // Get the date portion
     const time = dateTime.toLocaleTimeString(); // Get the time portion
 
-    // console.log("data rating" + data.rating)
-    return (
-        // <Container className='d-flex justify-content-center'>
-        //     <Row key={data._id}>
-        //         <Col style={{background: "white"  }} className='border rounded border-1 border-primary d-flex flex-column justify-content-start'>
-        //             <ReadStarRating rate={data} />
-        //             <p className='my-4'>{data.detail}</p>
-        //             <h6><b>{user}</b></h6>
-        //             <p>{date}, {time}</p>
-
-        //         </Col>
-        //     </Row>
-        // </Container>
-
-        <div className='border rounded border-1 border-primary reviewTile'>
-            {/* <Row key={data._id}> */}
-            {/* <Col style={{ background: "white" }} className='border rounded border-1 border-primary d-flex flex-column justify-content-start'> */}
-           
-            <Row>
-                <Col lg={4}>
-                    <p className='text-center fw-bold mt-4'>{user.split(" ")[0]}</p>
-                </Col>
-                <Col  lg={8}>
+    console.log("data rating" + data.rating)
+    return(
+        <Container className='d-flex justify-content-center'>
+            <Row key={data._id}>
+                <Col style={{background: "white"  }} className='border rounded border-1 border-primary d-flex flex-column justify-content-start'>
                     <ReadStarRating rate={data} />
+                    {/* 
+                    //Incoming
+                    <p className='my-4'>{data.detail}</p>
+                    <h6><b>{data.fname} {data.lname}</b></h6>
+                    <p>{date}, {time}</p> */}
+                    
                 </Col>
             </Row>
 

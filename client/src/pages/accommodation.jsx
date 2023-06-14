@@ -1,11 +1,12 @@
 import './accom-style.css';
 import { Button, Row, Col, Carousel, Container, Spinner, Modal, Form } from 'react-bootstrap';
 import React, { useState, useEffect } from "react";
-import { ReadStarRating, StarRating } from '../components/StarRating';
+import { ReadStarRating, StarRating, AccomStarRating } from '../components/StarRating';
 import { useLocation } from 'react-router-dom';
 import ReviewList from '../components/ReviewTile';
 
-const Slideshow = () => {
+const Slideshow = (pics) => {
+    console.log("PICS", typeof(pics), pics.pics)
     const [modalShow, setModalShow] = React.useState(false);
     const [imgSrc, setImgSrc] = React.useState();
 
@@ -16,24 +17,23 @@ const Slideshow = () => {
 
     return (
         <>
-            <Carousel>
-                <Carousel.Item onClick={() => setupModal("https://uplbperspective.files.wordpress.com/2020/03/img_0070.jpg?w=950")}>
-                    <img src="https://uplbperspective.files.wordpress.com/2020/03/img_0070.jpg?w=950"
-                        alt="Picture 1" className="d-block" />
-                </Carousel.Item>
-                <Carousel.Item onClick={() => setupModal("https://collegelifemadeeasy.com/wp-content/uploads/2022/06/cool-dorm-room-stuff-decorating-ideas-Facebook.jpg")}>
-                    <img src="https://collegelifemadeeasy.com/wp-content/uploads/2022/06/cool-dorm-room-stuff-decorating-ideas-Facebook.jpg"
-                        alt="Picture 2" className="d-block" />
-                </Carousel.Item>
-                <Carousel.Item onClick={() => setupModal("https://www.suidersee.co.za/media/cache/67/e6/67e6f48c4a41d0c53fedffc1190f5ea0.jpg")}>
-                    <img src="https://www.suidersee.co.za/media/cache/67/e6/67e6f48c4a41d0c53fedffc1190f5ea0.jpg" alt="Picture 3"
-                        className="d-block" />
-                </Carousel.Item>
-                <Carousel.Item onClick={() => setupModal("https://www.une.edu/sites/default/files/styles/block_image_large/public/2020-12/Avila-6259.jpg?itok=5HTs3fnj")}>
-                    <img src="https://www.une.edu/sites/default/files/styles/block_image_large/public/2020-12/Avila-6259.jpg?itok=5HTs3fnj" alt="Picture 4"
-                        className="d-block" />
-                </Carousel.Item>
-            </Carousel>
+            {pics.pics.length === 0 ? (
+                <Carousel>
+                    <Carousel.Item>
+                        <img src="https://www.gpshealthonline.com/static/images/no-banner.jpg" alt="NO PIC" className="d-block"/>
+                    </Carousel.Item>
+                </Carousel>
+            ) : (
+                <Carousel>
+                    {pics.pics.map((src, index) => (
+                        <Carousel.Item key={index} onClick={() => setupModal(src)}>
+                            <img src={src} alt={`Picture ${index + 1}`} className="d-block" />
+                        </Carousel.Item>
+                    ))}
+                </Carousel>
+            )}
+            
+
             <ImageModal
                 show={modalShow}
                 onHide={() => setModalShow(false)}
@@ -149,7 +149,10 @@ const AddToBookmarks = ({ bId }) => {
 }
 
 const Details = (data) => {
-
+    // console.log("Details", data.accomData.review[0])
+    const reviewValues = data.accomData.review.map(review => review.rating);
+    const total = reviewValues.reduce((accumulator, value) => accumulator + value, 0);
+    const count = data.accomData.review.length
     return (
         <Container className="desc_accom border-bottom pb-4">
             <h3 className='accomTitle'>{data.accomData.name}</h3>
@@ -158,7 +161,7 @@ const Details = (data) => {
                     <h5 className='ratingTitle'>Rating: </h5>
                 </Col>
                 <Col>
-                    <ReadStarRating rate={data.accomData} />
+                    <AccomStarRating rate={Math.floor(total/count)} />
                 </Col>
             </Row>
 
@@ -252,7 +255,7 @@ const CheckIfLoggedIn = ({ accommodationId }) => {
         } catch (err) {
             console.error("Review POST error.", err);
         }
-        //window.location.reload();
+        window.location.reload();
     };
     return (
         <>
@@ -316,7 +319,7 @@ const Review = (data) => {
 function Accommodation(props) {
     const location = useLocation();
     return (<>
-        <Slideshow />
+        <Slideshow pics={location.state.data.pics}/>
         {/* <ReadStarRating rate={location.state.data} /> */}
         <Details accomData={location.state.data} />
         <Review reviewData={location.state.data} />
