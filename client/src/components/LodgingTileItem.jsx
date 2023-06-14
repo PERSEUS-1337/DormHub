@@ -25,12 +25,12 @@ const LodgingTileItem = ({ data }) => {
 
     return (
         <Container className={isArchived}>
-            <Row>
-                <Col>
+            <Row >
+                <Col className='d-flex justify-content-center'>
                     {data.pics.length === 0 ? (
-                        <Image className='img-thumbnail border-0' src="https://www.gpshealthonline.com/static/images/no-banner.jpg" alt='Lodge Photo' rounded />
+                        <Image style={{ objectFit: "cover", height: "200px", width: "400px", overflow: "hidden"}} className='img-fluid border-0' src="https://www.gpshealthonline.com/static/images/no-banner.jpg" alt='Lodge Photo' rounded />
                     ) : (
-                        <Image className='img-thumbnail border-0' src={data.pics[0]} alt='Lodge Photo' rounded />
+                        <Image style={{ objectFit: "cover", height: "200px", width: "400px", overflow: "hidden"}} className='img-fluid border-0' src={data.pics[0]} alt='Lodge Photo' rounded />
                     )}
                     
                 </Col>
@@ -43,12 +43,12 @@ const LodgingTileItem = ({ data }) => {
                         )
                     }
                     
-                    {
+                    {/* {
                         data.rating > 1 ?
                             <p><b><span className='h4'>{data.rating}</span></b> STARS</p>
                             :
                             <p><b><span className='h4'>{data.rating}</span></b> STAR</p>
-                    }
+                    } */}
                     
                 </Col>
                 <Col>
@@ -60,12 +60,6 @@ const LodgingTileItem = ({ data }) => {
                                 :
                                 <h3 className='my-4'>PHP {data.price[0]} - {data.price[1]}</h3>
                             }
-                            {/* <FaHeart
-                                size={35}
-                                onClick={() => setIsBookmarked(!isBookmarked)}
-                                color={isBookmarked ? "#8b0000" : "#b8bac2"}
-                                style={{ cursor: 'pointer' }}
-                            /> */}
                         </Col>
 
                         <div className="d-flex justify-content-center">
