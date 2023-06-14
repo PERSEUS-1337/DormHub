@@ -104,71 +104,68 @@ const getAccommodationById = async (req, res) => {
 // POST ACCOMMODATION
 const createAccommodation = async (req, res) => {
     const { uId, name, desc, price, location, type, amenity } = req.body;
-
+  
     try {
-
-        if (!validator.default.isMongoId(uId)) {
-            throw {code: 400, msg: api.OWNER_ID_INVALID };
-        }
-
-        // Check if the owner exists
-        const owner = await User.findById(uId);
-        if (!owner)
-            throw { code: 404, msg: api.OWNER_NOT_FOUND };
-
-        if (owner.userType != "Owner") 
-            throw {code: 400, msg: api.NOT_AN_OWNER}
-        
-        const accommodationExist = await Accommodation.findOne({name});
-        if (accommodationExist)
-            throw { code: 400, msg: api.ACCOMMODATION_ALREADY_EXISTS };
-        
-
-        if (!name || !desc ||  !price || !location || !type || !amenity)
-            throw {code: 400, msg: api.FIELDS_MISSING };
-        
-        // Create the accommodation with default or empty values
-        const accommodation = new Accommodation({
-            name: name,
-            desc: desc,
-            pics: [],
-            price: price,
-            location: location,
-            type: type,
-            archived: false,
-            amenity: amenity,
-            owner: uId,
-            review: []
-        });
-
-        // Save the accommodation
-        const savedAccommodation = await accommodation.save();
-
-        // Update the owner's accommodations
-        // owner.accommodations.push(savedAccommodation._id);
-
-        const accommodationData = {
-            id: savedAccommodation._id,
-            name: savedAccommodation.name,
-            pics: savedAccommodation.pics,
-            price: savedAccommodation.price
-        }
-
-        await User.findByIdAndUpdate(
-                    uId,
-                    {$push:{accommodations: accommodationData}},
-                    {new: true})
-
-        // await owner.save();
-
-        console.info(api.CREATE_ACCOMMODATION_SUCCESS);
-        return res.status(201).json({msg: api.ACCOMMODATION_CREATED});
+      if (!validator.default.isMongoId(uId)) {
+        throw { code: 400, error: api.OWNER_ID_INVALID };
+      }
+  
+      // Check if the owner exists
+      const owner = await User.findById(uId);
+      if (!owner) {
+        throw { code: 404, error: api.OWNER_NOT_FOUND };
+      }
+  
+      if (owner.userType !== "Owner") {
+        throw { code: 400, error: api.NOT_AN_OWNER };
+      }
+  
+      const accommodationExist = await Accommodation.findOne({ name });
+      if (accommodationExist) {
+        throw { code: 400, error: api.ACCOMMODATION_ALREADY_EXISTS };
+      }
+  
+      if (!name || !desc || !price || !location || !type || !amenity) {
+        throw { code: 400, error: api.FIELDS_MISSING };
+      }
+  
+      // Create the accommodation with default or empty values
+      const accommodation = new Accommodation({
+        name: name,
+        desc: desc,
+        pics: [],
+        price: price,
+        location: location,
+        type: type,
+        archived: false,
+        amenity: amenity,
+        owner: uId,
+        review: [],
+      });
+  
+      // Save the accommodation
+      const savedAccommodation = await accommodation.save();
+  
+      const accommodationData = {
+        id: savedAccommodation._id,
+        name: savedAccommodation.name,
+        pics: savedAccommodation.pics,
+        price: savedAccommodation.price,
+      };
+  
+      await User.findByIdAndUpdate(uId, {
+        $push: { accommodations: accommodationData },
+      });
+  
+      console.info(api.CREATE_ACCOMMODATION_SUCCESS);
+      return res.status(201).json({ msg: api.ACCOMMODATION_CREATED });
     } catch (err) {
-        console.error(api.CREATE_ACCOMMODATION_ERROR, err.msg || err);
-        return res.status(err.code || 500).json({ err: err.msg || api.INTERNAL_ERROR })
+      console.error(api.CREATE_ACCOMMODATION_ERROR, err.error || err);
+      return res
+        .status(err.code || 500)
+        .json({ error: err.error || api.INTERNAL_ERROR });
     }
-
-};
+  };
 
 // UPDATE ACCOMMODATION
 const updateAccommodation = async (req, res) => {
