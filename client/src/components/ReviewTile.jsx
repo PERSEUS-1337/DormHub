@@ -45,7 +45,7 @@ const ReviewTileItem = ({ data }) => {
 
             <Row>
                 <Col lg={4}>
-                    <p className='text-center fw-bold mt-4'>{data.fname}</p>
+                    <p className='text-center fw-bold mt-4 reviewTopName'>{data.fname}</p>
                 </Col>
                 <Col lg={8}>
                     <ReadStarRating rate={data} />

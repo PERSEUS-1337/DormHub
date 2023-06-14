@@ -6,7 +6,7 @@ import { useLocation } from 'react-router-dom';
 import ReviewList from '../components/ReviewTile';
 
 const Slideshow = (pics) => {
-    // console.log("PICS", typeof(pics), pics.pics)
+    // console.log(pics.pics.pics);
     const [modalShow, setModalShow] = React.useState(false);
     const [imgSrc, setImgSrc] = React.useState();
 
@@ -20,7 +20,7 @@ const Slideshow = (pics) => {
             {pics.pics.length === 0 ? (
                 <Carousel>
                     <Carousel.Item>
-                        <img src="https://www.gpshealthonline.com/static/images/no-banner.jpg" alt="NO PIC" className="d-block"/>
+                        <img src="https://www.gpshealthonline.com/static/images/no-banner.jpg" alt="NO PIC" className="d-block" />
                     </Carousel.Item>
                 </Carousel>
             ) : (
@@ -32,7 +32,7 @@ const Slideshow = (pics) => {
                     ))}
                 </Carousel>
             )}
-            
+
 
             <ImageModal
                 show={modalShow}
@@ -125,7 +125,7 @@ const AddToBookmarks = ({ bId }) => {
     if (!isLoading && id && containsValue === false) {
         return (
             <div className="map" style={{ margin: '0px', padding: '0px' }}>
-                <Button type="button" onClick={addBookmark} variant="light">Bookmark</Button>
+                <Button type="button" onClick={addBookmark}>Bookmark</Button>
             </div>
         );
     } else if (!isLoading && id && containsValue === true) {
@@ -148,11 +148,162 @@ const AddToBookmarks = ({ bId }) => {
 
 }
 
+const EditDetails = (data) => {
+    const [isUserAccom, setIsUserAccom] = useState(false);
+
+    const id = localStorage.getItem("_id");
+    const jwt = localStorage.getItem("token");
+
+    const [modalShow, setModalShow] = useState(false);
+
+
+    try {
+        fetch(`/api/v1/auth-required-func/accommodations/${id}`, {
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${jwt}`
+            },
+        })
+            .then(res => res.json())
+            .then(body => {
+                for (var accom in body.accommodations) {
+                    if (body.accommodations[accom]._id == data.data.accomData._id) {
+                        setIsUserAccom(true);
+                    }
+                }
+            })
+    } catch (err) {
+        // console.log(err);
+        setIsUserAccom(false);
+    }
+
+    return (
+        <>
+            {
+                isUserAccom ?
+                    <>
+                        <div className='editAccomButton'>
+                            <Button type="button" className='btn editAccomButton' onClick={() => setModalShow(true)}>Edit Accommodation Description</Button>
+                        </div>
+                    </>
+
+                    : <></>
+            }
+            <ModalEditDescription show={modalShow} onHide={() => setModalShow(false)} data={data} />
+        </>
+    );
+}
+
+function ModalEditDescription(props) {
+    // console.log(props.data.data.accomData);
+
+    // const [desc, setDesc] = useState(props.data.data.accomData.desc);
+    var desc = props.data.data.accomData.desc;
+
+    const handleSubmit = () => {
+
+        const uId = localStorage.getItem("_id");
+        const jwt = localStorage.getItem("token");
+
+        desc = document.getElementById("comment").value;
+        var update = { desc };
+
+        console.log(desc);
+        console.log(JSON.stringify(update));
+
+
+        try {
+            const res = fetch(`/api/v1/auth-required-func/accommodation/${props.data.data.accomData._id}/${uId}`, {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${jwt}`
+                },
+                body: JSON.stringify(update),
+            });
+            const data = res.json();
+            console.log(data);
+            // if (res.status === 200) {
+            //     // console.log(data.msg);
+                window.location.reload();
+                
+            // }
+        } catch (err) {
+            console.error("Review POST error.", err);
+        }
+    };
+
+function update(){
+    // console.log(document.getElementById("comment").value);
+    // setDesc(document.getElementById("comment").value);
+    handleSubmit();
+    props.onHide();
+}
+
+
+    return (
+        <Modal
+            {...props}
+            size="lg"
+            aria-labelledby="contained-modal-title-vcenter"
+            centered
+        >
+            <Modal.Header closeButton>
+                <Modal.Title id="contained-modal-title-vcenter">
+                    <h4 className='modalDescTitle'>Edit Accommodation Description</h4>
+                </Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <form>
+                    <div class="form-group">
+                        {/* <label for="comment">Edit Description:</label> */}
+                        <textarea class="form-control" rows="5" id="comment">
+                            {desc}
+                        </textarea>
+                    </div>
+                </form>
+            </Modal.Body>
+            <Modal.Footer>
+                <Button onClick={props.onHide} className='btn btn-danger'>Close</Button>
+                <Button onClick={() => update()} className='btn btn-success text-white'>Save</Button>
+            </Modal.Footer>
+        </Modal>
+    );
+}
+
+
 const Details = (data) => {
-    // console.log("Details", data.accomData.review[0])
+    // console.log(data.accomData)
     const reviewValues = data.accomData.review.map(review => review.rating);
     const total = reviewValues.reduce((accumulator, value) => accumulator + value, 0);
+
     const count = data.accomData.review.length
+    const isLoggedIn = localStorage.getItem("_id") && localStorage.getItem("token");
+
+    const id = localStorage.getItem("_id");
+    const jwt = localStorage.getItem("token");
+
+    const [isUser, setIsUser] = useState(true);
+
+    try {
+        fetch(`/api/v1/auth-required-func/${id}`, {
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${jwt}`
+            },
+        })
+            .then(res => res.json())
+            .then(body => {
+                // console.log(body.user.userType);
+                if (body.user.userType != 'User') {
+                    setIsUser(false);
+                    // console.log("Check");
+                }
+            })
+    } catch (err) {
+        console.log(err);
+    }
+
     return (
         <Container className="desc_accom border-bottom pb-4">
             <h3 className='accomTitle'>{data.accomData.name}</h3>
@@ -161,11 +312,17 @@ const Details = (data) => {
                     <h5 className='ratingTitle'>Rating: </h5>
                 </Col>
                 <Col>
-                    <AccomStarRating rate={Math.floor(total/count)} />
+                    <AccomStarRating rate={Math.floor(total / count)} />
                 </Col>
             </Row>
 
             <p id="accommDetail">{data.accomData.desc}</p>
+
+            {
+                isLoggedIn && !isUser ? <EditDetails data={data} /> : <></>
+            }
+
+            {/* <Button onClick={checkAccomIfMatched}>Test accom</Button> */}
 
             <Row id="amenity" className="detail">
                 <Col sm={1}>
@@ -294,15 +451,15 @@ const Review = (data) => {
             <Container className='desc_accom reviewContainer'>
                 <h4 className='reviewTitle'>Accommodation Reviews:</h4>
                 {
-                
-                    data.reviewData.review.length > 0 ?    
-                    <ReviewList data={data.reviewData} />
-                    :
-                    <Container className='text-center mt-5'>
-                        <h6>No Reviews Yet =(</h6>
-                    </Container>
-                
-                
+
+                    data.reviewData.review.length > 0 ?
+                        <ReviewList data={data.reviewData} />
+                        :
+                        <Container className='text-center mt-5'>
+                            <h6>No Reviews Yet =(</h6>
+                        </Container>
+
+
                 },
 
                 {isLoggedIn ? (
@@ -318,9 +475,22 @@ const Review = (data) => {
 
 function Accommodation(props) {
     const location = useLocation();
+
+    const id = location.state.data._id
+
+    const [accomData, setAccomData] = useState();
+
+    useEffect(() => {
+        fetch(`/api/v1/accommodation/${id}`)
+        .then(res =>res.json())
+        .then(data => {
+            setAccomData(data.accommodation);
+            console.log(data.accommodation);
+        })
+    }, []);
+
     return (<>
         <Slideshow pics={location.state.data.pics}/>
-        {/* <ReadStarRating rate={location.state.data} /> */}
         <Details accomData={location.state.data} />
         <Review reviewData={location.state.data} />
     </>
