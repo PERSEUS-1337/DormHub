@@ -21,25 +21,31 @@ const AccomCards = () => {
 
     useEffect(() => {
         fetch("/api/v1/accommodation/all?limit=100")
-        .then(res =>res.json())
-        .then(data => {
+          .then((res) => res.json())
+          .then((data) => {
             setAccommData(data);
             setIsLoading(false);
-            // console.log(data["accommodations"][2]);
-        })
-    }, []);
-    // console.log(accommData.accommodations)
-    // accommData.accommodations && accommData.accommodations.map(accommodation => {
-    //     // console.log(accommodation._id)
-    //     console.log(accommodation.review)
-    //     const reviewValues = accommodation.review.map((data) => data.rating);
-    //     console.log(reviewValues)
-    //     const total = reviewValues.reduce((accumulator, value) => accumulator + value, 0);
-    //     console.log(total/reviewValues.length)
-    //     // console.log("Accommodation ID:", accommodation._id);
-    //     // console.log("Accommodation Name:", accommodation.name);
-    //     // Log other desired properties
-    //   });
+          });
+      }, []);
+    
+      useEffect(() => {
+        if (accommData.accommodations) {
+          const topThreeAccommodations = accommData.accommodations
+            .map((accommodation) => {
+              const reviewValues = accommodation.review.map((data) => data.rating);
+              const total = reviewValues.reduce((accumulator, value) => accumulator + value, 0);
+              const averageRating = total / reviewValues.length;
+    
+              return { accommodation, averageRating };
+            })
+            .sort((a, b) => b.averageRating - a.averageRating)
+            .slice(0, 3)
+            .map((item) => item.accommodation);
+    
+          console.log(topThreeAccommodations);
+        }
+      }, [accommData]);
+
     const topThreeAccommodations = accommData.accommodations && accommData.accommodations
         .map(accommodation => {
             const reviewValues = accommodation.review.map(data => data.rating);
@@ -197,5 +203,4 @@ const HomePage = () => {
 
     );
 }
-
 export default HomePage;
