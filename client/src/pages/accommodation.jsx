@@ -286,24 +286,27 @@ const Details = (data) => {
 
     const [isUser, setIsUser] = useState(true);
 
-    try {
-        fetch(`/api/v1/auth-required-func/${id}`, {
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${jwt}`
-            },
-        })
-            .then(res => res.json())
-            .then(body => {
-                // console.log(body.user.userType);
-                if (body.user.userType != 'User') {
-                    setIsUser(false);
-                    // console.log("Check");
-                }
+    if(isLoggedIn){
+        try {
+            fetch(`/api/v1/auth-required-func/${id}`, {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${jwt}`
+                },
             })
-    } catch (err) {
-        console.log(err);
+                .then(res => res.json())
+                .then(body => {
+                    // console.log(body.user.userType);
+                    if (body.user.userType != 'User') {
+                        setIsUser(false);
+                        // console.log("Check");
+                    }
+                })
+        } catch (err) {
+            console.log(err);
+        }
     }
+
 
     return (
         <Container className="desc_accom border-bottom pb-4">
