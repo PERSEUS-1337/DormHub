@@ -20,7 +20,7 @@ const FaveTileItem = ({ data }) => {
         const id = localStorage.getItem('_id');
             const jwt = localStorage.getItem('token');
         
-            fetch(`api/v1/auth-required-func/${type}/bookmark/${bId}/${id}`, {
+            fetch(`api/v1/auth-required-func/bookmark/${bId}/${id}`, {
               method: 'DELETE',
               headers: {
                 'Content-Type': 'application/json',
