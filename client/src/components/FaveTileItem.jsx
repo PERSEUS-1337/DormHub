@@ -45,13 +45,13 @@ const FaveTileItem = ({ data }) => {
     const reviewValues = data.review.map(review => review.rating);
     const total = reviewValues.reduce((accumulator, value) => accumulator + value, 0);
     // console.log(total, reviewValues.length)
-
+    const no_image = process.env.PUBLIC_URL + '/no_image.png'
     return (
         <Container className='border rounded mb-3'>
             <Row>
                 <Col>
                     {data.pics.length === 0 ? (
-                            <Image style={{ objectFit: "cover", height: "200px", width: "400px", overflow: "hidden"}} className='img-fluid border-0' src="https://www.gpshealthonline.com/static/images/no-banner.jpg" alt='Lodge Photo' rounded />
+                            <Image style={{ objectFit: "cover", height: "200px", width: "400px", overflow: "hidden"}} className='img-fluid border-0' src={no_image} alt='Lodge Photo' rounded />
                         ) : (
                             <Image style={{ objectFit: "cover", height: "200px", width: "400px", overflow: "hidden"}} className='img-fluid border-0' src={data.pics[0]} alt='Lodge Photo' rounded />
                     )}

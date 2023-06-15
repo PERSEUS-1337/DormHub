@@ -20,14 +20,46 @@ const AccomCards = () => {
 
 
     useEffect(() => {
-        fetch("/api/v1/accommodation/all")
-        .then(res =>res.json())
-        .then(data => {
+        fetch("/api/v1/accommodation/all?limit=100")
+          .then((res) => res.json())
+          .then((data) => {
             setAccommData(data);
             setIsLoading(false);
-            // console.log(data["accommodations"][2]);
+          });
+      }, []);
+    
+      useEffect(() => {
+        if (accommData.accommodations) {
+          const topThreeAccommodations = accommData.accommodations
+            .map((accommodation) => {
+              const reviewValues = accommodation.review.map((data) => data.rating);
+              const total = reviewValues.reduce((accumulator, value) => accumulator + value, 0);
+              const averageRating = total / reviewValues.length;
+    
+              return { accommodation, averageRating };
+            })
+            .sort((a, b) => b.averageRating - a.averageRating)
+            .slice(0, 3)
+            .map((item) => item.accommodation);
+    
+          console.log(topThreeAccommodations);
+        }
+      }, [accommData]);
+
+    const topThreeAccommodations = accommData.accommodations && accommData.accommodations
+        .map(accommodation => {
+            const reviewValues = accommodation.review.map(data => data.rating);
+            const total = reviewValues.reduce((accumulator, value) => accumulator + value, 0);
+            const averageRating = total / reviewValues.length;
+
+            return { accommodation, averageRating };
         })
-    }, []);
+        .sort((a, b) => b.averageRating - a.averageRating)
+        .slice(0, 3)
+        .map(item => item.accommodation);
+
+        console.log(topThreeAccommodations);
+    const no_image = process.env.PUBLIC_URL + '/no_image.png'
     return (
         <>
         {isLoading ? (
@@ -39,13 +71,13 @@ const AccomCards = () => {
         ) : (
             <Row md={4} className="g-3 row mx-auto">
             {/* BACKLOG: Retrieve highest rating top 3 accommodations */}
-            {accommData.accommodations && accommData.accommodations.slice(0,3).map( data => (
+            {topThreeAccommodations.map( data => (
                 // console.log(data._id),
                 <Col key={data._id} className="col mx-auto" style={{cursor: "pointer"}}>
                 <Card className="bg-info" onClick={() => toAccomm(data)}>
                     {/* Added static src to test UI */}
                     {data.pics.length === 0 ? (
-                        <Card.Img variant="top" src="https://www.gpshealthonline.com/static/images/no-banner.jpg" alt="NO AVAILABLE PICTURE" style={{ objectFit: "cover", height: "150px", width: "auto", overflow: "hidden"}}/>
+                        <Card.Img variant="top" src={no_image} alt="NO AVAILABLE PICTURE" style={{ objectFit: "cover", height: "150px", width: "auto", overflow: "hidden"}}/>
                     ) : (
                         <Card.Img variant="top" src={data.pics[0]} alt="NO AVAILABLE PICTURE" style={{ objectFit: "cover", height: "150px", width: "auto", overflow: "hidden"}}/>
                     )}
@@ -171,5 +203,4 @@ const HomePage = () => {
 
     );
 }
-
 export default HomePage;
