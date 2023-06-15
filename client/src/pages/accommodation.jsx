@@ -15,13 +15,13 @@ const Slideshow = (pics) => {
         setModalShow(true);
         setImgSrc(src);
     }
-
+    const no_image = process.env.PUBLIC_URL + '/no_image.png'
     return (
         <>
             {pics.pics.length === 0 ? (
                 <Carousel>
                     <Carousel.Item>
-                        <img src="https://www.gpshealthonline.com/static/images/no-banner.jpg" alt="NO PIC" className="d-block" />
+                        <img src={no_image} alt="NO PIC" className="d-block" />
                     </Carousel.Item>
                 </Carousel>
             ) : (
