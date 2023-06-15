@@ -24,7 +24,8 @@ const {
     deleteBookmark,
     getAccommodationOwner,
     uploadPfp,
-    getPfp
+    getPfp,
+    resetPassword
 } = require('../controllers/userController');
 
 const {
@@ -57,6 +58,8 @@ router.get('/accommodation', getAccommodation);
 router.get('/:uId', getUserData);
 // UPDATE user data
 router.patch('/:uId', editUserData); 
+// RESET user password
+router.patch('/password/:uId', resetPassword);
 // GET bookmarks
 router.get('/bookmark/:uId', getBookmark);
 // ADD a bookmark
