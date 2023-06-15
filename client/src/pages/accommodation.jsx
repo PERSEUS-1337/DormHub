@@ -238,6 +238,7 @@ function update(){
     // setDesc(document.getElementById("comment").value);
     handleSubmit();
     props.onHide();
+    window.location.reload();
 }
 
 
@@ -478,20 +479,22 @@ function Accommodation(props) {
 
     const id = location.state.data._id
 
-    const [accomData, setAccomData] = useState();
+    const [accomData, setAccomData] = useState(location.state.data);
 
     useEffect(() => {
         fetch(`/api/v1/accommodation/${id}`)
         .then(res =>res.json())
         .then(data => {
             setAccomData(data.accommodation);
-            console.log(data.accommodation);
         })
     }, []);
 
+    // console.log(accomData);
+    // console.log(location.state.data.pics);
+
     return (<>
         <Slideshow pics={location.state.data.pics}/>
-        <Details accomData={location.state.data} />
+        <Details accomData={accomData} />
         <Review reviewData={location.state.data} />
     </>
     );
