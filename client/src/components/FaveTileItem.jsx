@@ -66,6 +66,9 @@ const FaveTileItem = ({ data }) => {
                             data.price.length === 1? 
                             <h3 className='my-4'>PHP {data.price[0]}</h3>
                             :
+                            data.price[0] > data.price[1] ?
+                            <h3 className='my-4'>PHP {data.price[1]} - {data.price[0]}</h3>
+                            :
                             <h3 className='my-4'>PHP {data.price[0]} - {data.price[1]}</h3>
                         }
                         <Col>
