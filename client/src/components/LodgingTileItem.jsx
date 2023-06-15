@@ -9,6 +9,7 @@ const LodgingTileItem = ({ data }) => {
     const navigate = useNavigate();
 
     const navigateToLodge = (data) => {
+        console.log("STATE",{state: {data}})
         navigate('/accommodation', {state: {data}})
     }
     
