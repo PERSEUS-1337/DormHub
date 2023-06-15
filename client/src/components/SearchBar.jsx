@@ -1,40 +1,26 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Container, Col, Row, Form, Button, Alert, Spinner, Pagination} from 'react-bootstrap';
 import LodgingTileItem from './LodgingTileItem';
 
 const SearchBar = ({ data }) => {
-    const [viewAll, setViewAll] = useState(false)
-    const [isLoading, setIsLoading] = useState(data);
     const [filteredData, setFilteredData] = useState([])
+    const [showSuggestions, setShowSuggestions] = useState([])
     const [wordEntered, setWordEntered] = useState("")
     const [show, setShow] = useState(false)
     const [currentPage, setCurrentPage] = useState(1)
+    const [showNoresults, setShowNoresults] = useState(false)
     const itemsPerPage = 3
 
-    const handleFilter = (e) => {
-        try {
+    useEffect(() => {
+        let timeout
 
-            const searchedWord = e.target.value
-            setWordEntered(searchedWord)
-
-            const newFilter = data.filter((value) => {
-                return value.name.toLowerCase().includes(searchedWord.toLowerCase())
-            })
-
-            if (searchedWord === "") {
-                setFilteredData([])
-            } else {
-                setFilteredData(newFilter)
-            }
-            setCurrentPage(1)
-
-
-        } catch (error) {
-            console.log(error)
-            setShow(true)
-
+        if (showNoresults) {
+            timeout = setTimeout(() => {
+                setShowNoresults(false)
+            }, 3000)
         }
-    }
+    })
+
     const clearInput = () => {
         setFilteredData([])
         setWordEntered("")
@@ -84,27 +70,26 @@ const SearchBar = ({ data }) => {
         }
         
         setCurrentPage(1)
+        if (filteredData.length == 0) {
+            setShowNoresults(true)
+        } else {
+            setShowNoresults(false)
+        }
+        
 
     }
-    // const returnResults = () => {
-    //     return (<>
-    //         {
-    //             filteredData.length != 0 && (
-    //                 <Container className='rounded-3 mt-4' style={{ background: "#ffffff" }}>
-    //                     {filteredData.slice(0, 10).map((value, key) => {
-    //                         return (
-    //                             <LodgingTileItem key={value.id} data={value} />
-    //                             // <p key={key._id}>{value.name}</p>
-                        
-    //                         )
-    //                     })
-    //                     }
-    //                 </Container>
-    //             )
-    //         }
-    //     </>)
-    // }
 
+    const handleSuggestion = () => {
+        const newFilter = data.filter((value) => {
+                return value.name.toLowerCase().startsWith(wordEntered.toLowerCase())
+        })
+        if (wordEntered == "") {
+            setShowSuggestions([])
+        } else {
+            setShowSuggestions(newFilter)
+        }
+    }
+    
         if (show) {
             return (
                 <Alert variant="danger" onClose={() => dismissAlert()} dismissible className='mt-3 mx-3' style={{ caretColor: "transparent" }}>
@@ -119,20 +104,37 @@ const SearchBar = ({ data }) => {
             <Container className='mt-4'>
                 <Row>
                     <Col className='px-5'>
-                        <Form>
+                        <Form onSubmit={(e) => { e.preventDefault(); handleSearch(e);}}>
                             <Form.Group controlId="filterAccomms" className='d-flex align-items-center mx-2'>
-                                <Form.Control type="search" placeholder="Search for an accommodation..." className='m-4' onChange={(e) => { setWordEntered(e.target.value); if (e.target.value == "") setFilteredData([])}} />
-                                <Button className="rounded-1 mx-2" variant="secondary" onClick={handleSearch}>Search</Button>
-                                <Button className="rounded-1 mx-2 text-nowrap" variant="secondary" onClick={handleViewAll}>View All</Button>
+                                <Col className='mx-4 mt-3'>
+                                    <Form.Control type="search" placeholder="Search for an accommodation..." onChange={(e) => { setWordEntered(e.target.value); if (e.target.value == "") setFilteredData([]); }} onKeyUp={handleSuggestion} />
+                                    {/* <Container style={{ background: "red", marginTop: "-1.3rem", marginLeft: "2rem", maxWidth: "60.5rem"}}>
+                                        {showSuggestions.length != 0 && filteredData.length == 0 && (
+                                            <Row>
+                                                {showSuggestions.slice(0, 10).map((value) => {
+                                                    console.log(value)
+                                                    return (
+                                                        <p>{ value.name }</p>
+                                                    )
+                                                })}
+                                            </Row>
+                                        )}
+                                    </Container> */}
+                                </Col>
+                                <Col md="auto"><Button className="rounded-1 mx-2" variant="secondary" onClick={handleSearch}>Search</Button></Col>
+                                <Col xs lg={2}><Button className="rounded-1 mx-2 text-nowrap" variant="secondary" onClick={handleViewAll}>View All</Button></Col>
                             </Form.Group>
+                            
                         </Form>
+                       
                     </Col>
         
                 </Row>
+                { filteredData.length == 0 && showNoresults && <h3 className='d-flex justify-content-center mt-5'>No Results Found.</h3> }
                 {filteredData.length != 0 && (
-                    <Container className='rounded-3 mt-5' style={{ background: "#ffffff" }}>
+                    <Container className='rounded-3' style={{ background: "#ffffff", marginTop: "5rem"}}>
                         <Row className='d-flex align-items-center ms-auto'>
-                            <Col><h4>ACCOMMODATIONS: </h4></Col>
+                            <Col><h4>ACCOMMODATIONS: <span>{ filteredData.length }</span></h4></Col>
                             <Col className='d-flex justify-content-end'><Button variant='secondary'>Generate PDF</Button></Col>
                         </Row>
                         
