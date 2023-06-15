@@ -129,26 +129,26 @@ const editUserData = async (req, res) => {
     const { fname, lname, phone, email} = req.body;
   
     try {
-        if (!validator.default.isMongoId(uId))
-            throw { code: 400, msg: api.USER_ID_INVALID };
+        // if (!validator.default.isMongoId(uId))
+        //     throw { code: 400, msg: api.USER_ID_INVALID };
 
-        if (!uId || !fname || !lname || !phone || !email ) throw { code: 400, msg: api.FIELDS_MISSING };
+        // // if (!uId || !fname || !lname || !phone || !email ) throw { code: 400, msg: api.FIELDS_MISSING };
 
-        if (fname.trim() == "" || lname.trim() == "") throw { code: 400, msg: api.EMPTY_FIELD};
+        // if (fname.trim() == "" || lname.trim() == "") throw { code: 400, msg: api.EMPTY_FIELD};
 
-        phone.forEach((element) => {
-            if (!validator.default.isMobilePhone(element, 'en-PH')) {
-                throw { code: 400, msg: api.INVALID_PHONE};
-            }
+        // phone.forEach((element) => {
+        //     if (!validator.default.isMobilePhone(element, 'en-PH')) {
+        //         throw { code: 400, msg: api.INVALID_PHONE};
+        //     }
             
-        });
+        // });
 
-        if (!validator.default.isEmail(email)) throw {code: 400, msg: api.INVALID_EMAIL};
+        // if (!validator.default.isEmail(email)) throw {code: 400, msg: api.INVALID_EMAIL};
 
-        const emailExist = await User.findOne({email});
+        // const emailExist = await User.findOne({email});
 
-        // ensures that email is not owned && if it does it should match the orig 
-        if (emailExist && emailExist._id != uId) throw {code: 400, msg: api.USER_ALREADY_EXISTS};
+        // // ensures that email is not owned && if it does it should match the orig 
+        // if (emailExist && emailExist._id != uId) throw {code: 400, msg: api.USER_ALREADY_EXISTS};
         
         const user = await User.findByIdAndUpdate(uId, {
             ...req.body

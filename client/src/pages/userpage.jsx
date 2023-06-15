@@ -520,7 +520,7 @@ const UserPage = () => {
                     userData.user.phone.length === 0 || userData.user.phone[0] === "" ? (
                       <span className="text-muted">Edit Profile to Add</span>
                     ) : (
-                      `${userData.phone}`
+                      `${userData.user.phone}`
                     )
                   } </h5>
                 </Col>

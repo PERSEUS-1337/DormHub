@@ -20,9 +20,6 @@ const LodgingTileItem = ({ data }) => {
         }
     }, [data]);
 
-    console.log("LODGING TILE ITEM", data.pics[0])
-    
-
     return (
         <Container className={isArchived}>
             <Row >
