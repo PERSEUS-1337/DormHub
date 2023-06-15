@@ -168,9 +168,6 @@ const FaveTileList = () => {
 
     fetchBookmarks();
   }, []);
-
-  console.log(favData);
-
   if (isLoading === true) {
     return (
       <Spinner animation="border" variant="secondary" role="status" size="lg">
