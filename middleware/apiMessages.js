@@ -48,6 +48,7 @@ module.exports = {
     BAD_REQUEST: "The request is invalid or improperly formed. Consequently, the server could not understand the request.",
     UNAUTHORIZED_REQUEST: "Unauthorized request!",
     ROUTE_NOT_FOUND: "Route does not exist.",
+    REQ_BODY_EMPTY: "The req.body is empty!",
 
     //accommodation controller
     GET_ACCOMMODATION_ERROR: "getAccommodation error",

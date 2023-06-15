@@ -17,7 +17,7 @@ const requireAuth = async (req, res, next) => {
     const {authorization} = req.headers;
  
     if (!authorization) {
-        return res.status(401).json({error: apiMessages.unauthorizedRequest});
+        return res.status(401).json({error: apiMessages.UNAUTHORIZED_REQUEST});
     }
 
     const token = authorization.split(' ')[1];

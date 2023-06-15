@@ -125,36 +125,52 @@ const getAllOwners = async (req, res) => {
 // UPDATE USER
 const editUserData = async (req, res) => {
     const { uId } = req.params
-    // NOTE: phone is an ARRAY!
-    const { fname, lname, phone, email} = req.body;
-  
+    
+    const allowedFields = ['fname', 'lname', 'phone', 'email'];
+    const fieldsToUpdate = {};
+    
     try {
-        // if (!validator.default.isMongoId(uId))
-        //     throw { code: 400, msg: api.USER_ID_INVALID };
-
-        // // if (!uId || !fname || !lname || !phone || !email ) throw { code: 400, msg: api.FIELDS_MISSING };
-
-        // if (fname.trim() == "" || lname.trim() == "") throw { code: 400, msg: api.EMPTY_FIELD};
-
-        // phone.forEach((element) => {
-        //     if (!validator.default.isMobilePhone(element, 'en-PH')) {
-        //         throw { code: 400, msg: api.INVALID_PHONE};
-        //     }
-            
-        // });
-
-        // if (!validator.default.isEmail(email)) throw {code: 400, msg: api.INVALID_EMAIL};
-
-        // const emailExist = await User.findOne({email});
-
-        // // ensures that email is not owned && if it does it should match the orig 
-        // if (emailExist && emailExist._id != uId) throw {code: 400, msg: api.USER_ALREADY_EXISTS};
+        if (!validator.default.isMongoId(uId))
+            throw { code: 400, msg: api.USER_ID_INVALID };
         
+        if (Object.keys(req.body).length === 0)
+            throw { code: 404, msg: api.REQ_BODY_EMPTY };
+        
+        // Iterate over the allowed fields and check if they exist in req.body
+        allowedFields.forEach((field) => {
+            if (req.body.hasOwnProperty(field)) {
+                fieldsToUpdate[field] = req.body[field];
+            }
+        });
+        
+        // NOTE: phone is an ARRAY!
+        if (fieldsToUpdate['phone']) {
+            const phoneArray = fieldsToUpdate['phone'].split(',')
+            phoneArray.forEach((element) => {
+                console.log(element)
+                if (!validator.default.isMobilePhone(element, 'en-PH'))
+                    throw { code: 400, msg: api.INVALID_PHONE};
+            });
+        }
+
+        if (fieldsToUpdate['email']){
+            if (!validator.default.isEmail(email))
+                throw {code: 400, msg: api.INVALID_EMAIL};
+
+            const emailExist = await User.findOne({email});
+
+            // ensures that email is not owned && if it does it should match the orig 
+            if (emailExist && emailExist._id != uId)
+                throw {code: 400, msg: api.USER_ALREADY_EXISTS};
+        }
+
+
         const user = await User.findByIdAndUpdate(uId, {
-            ...req.body
+            ...fieldsToUpdate
         });
     
-        if (!user) throw { code: 404, msg: api.USER_NOT_FOUND };
+        if (!user)
+            throw { code: 404, msg: api.USER_NOT_FOUND };
         
         console.info(api.EDIT_USER_DATA_SUCCESSFUL);
         return res.status(201).json({ msg: api.EDIT_USER_DATA_SUCCESSFUL})
