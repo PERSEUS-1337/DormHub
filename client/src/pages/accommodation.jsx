@@ -4,9 +4,10 @@ import React, { useState, useEffect } from "react";
 import { ReadStarRating, StarRating, AccomStarRating } from '../components/StarRating';
 import { useLocation } from 'react-router-dom';
 import ReviewList from '../components/ReviewTile';
+import { useNavigate } from 'react-router-dom';
 
 const Slideshow = (pics) => {
-    // console.log(pics.pics.pics);
+
     const [modalShow, setModalShow] = React.useState(false);
     const [imgSrc, setImgSrc] = React.useState();
 
@@ -78,12 +79,14 @@ const AddToBookmarks = ({ bId }) => {
                     Authorization: `Bearer ${jwt}`
                 },
             })
+
                 .then(res => res.json())
                 .then(data => {
                     // console.log(data);
                     setFetchedData(data);
                     setIsLoading(false);
                 })
+
         } catch (err) {
             console.log(err);
         }
@@ -104,8 +107,10 @@ const AddToBookmarks = ({ bId }) => {
     }, [fetchedData, bId, containsValue]);
 
 
+
     function addBookmark() {
         console.log(`Trying to add bookmark with id ${bId}`);
+
         setIsLoading(true);
         fetch(`/api/v1/auth-required-func/bookmark/${bId}/${id}`, {
             method: "PATCH",
@@ -116,7 +121,7 @@ const AddToBookmarks = ({ bId }) => {
         })
             .then((response) => response.json())
             .then((body) => {
-                console.log(body);
+                // console.log(body);
                 window.location.reload();
             });
     };
@@ -377,14 +382,22 @@ const Details = (data) => {
     );
 }
 
-
 const CheckIfLoggedIn = ({ accommodationId }) => {
+    const navigate = useNavigate();
     const [rating, setRating] = useState("");
     const [detail, setDetail] = useState("");
-
+    const [accomm, setAccomm] = useState("");
     const handleRatingChange = (newRating) => {
         setRating(newRating)
     }
+
+    useEffect(() => {
+        if (accomm !== "") {
+            // console.log("NAVIGATED")
+            navigate('/accommodation', { state: { data: accomm.accommodation } });
+            window.location.reload();
+        }
+      }, [accomm]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -406,18 +419,21 @@ const CheckIfLoggedIn = ({ accommodationId }) => {
                 body: JSON.stringify(formData),
             });
             const data = await res.json();
-            console.log(data);
-            if (res.status === 200) {
-                console.log(data.msg);
+            // console.log(data);
+            // console.log(data.msg);
+
+            fetch(`/api/v1/accommodation/${accommodationId}`)
+                .then((res) => res.json())
+                .then((data) => {
+                    setAccomm(data);
+                });
                 // closeModal();
-            } else {
-                console.log("error")
-            }
-        } catch (err) {
+        } catch (err){
             console.error("Review POST error.", err);
         }
-        window.location.reload();
+        // navigate('/accommodation', {state: {accomm}});
     };
+
     return (
         <>
             <Container className='desc_accom reviewContainer mb-5'>
@@ -498,6 +514,7 @@ function Accommodation(props) {
     return (<>
         <Slideshow pics={location.state.data.pics}/>
         <Details accomData={accomData} />
+
         <Review reviewData={location.state.data} />
     </>
     );

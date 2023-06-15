@@ -45,9 +45,9 @@ const AccomCards = () => {
                 <Card className="bg-info" onClick={() => toAccomm(data)}>
                     {/* Added static src to test UI */}
                     {data.pics.length === 0 ? (
-                        <Card.Img variant="top" src="https://www.gpshealthonline.com/static/images/no-banner.jpg" alt="NO AVAILABLE PICTURE"/>
+                        <Card.Img variant="top" src="https://www.gpshealthonline.com/static/images/no-banner.jpg" alt="NO AVAILABLE PICTURE" style={{ objectFit: "cover", height: "150px", width: "auto", overflow: "hidden"}}/>
                     ) : (
-                        <Card.Img variant="top" src={data.pics[0]} alt="NO AVAILABLE PICTURE"/>
+                        <Card.Img variant="top" src={data.pics[0]} alt="NO AVAILABLE PICTURE" style={{ objectFit: "cover", height: "150px", width: "auto", overflow: "hidden"}}/>
                     )}
                     
                 <Card.Body>
