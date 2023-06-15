@@ -120,12 +120,10 @@ const createAccommodation = async (req, res) => {
             throw {code: 400, msg: api.NOT_AN_OWNER}
         
         const accommodationExist = await Accommodation.findOne({name});
-        if (accommodationExist)
-            throw { code: 400, msg: api.ACCOMMODATION_ALREADY_EXISTS };
+        if (accommodationExist) throw { code: 400, msg: api.ACCOMMODATION_ALREADY_EXISTS };
         
 
-        if (!name || !desc ||  !price || !location || !type || !amenity)
-            throw {code: 400, msg: api.FIELDS_MISSING };
+        if (!name || !desc ||  !price || !location || !type || !amenity) throw {code: 400, msg: api.FIELDS_MISSING };
         
         // Create the accommodation with default or empty values
         const accommodation = new Accommodation({
@@ -192,6 +190,10 @@ const updateAccommodation = async (req, res) => {
         if(!name || !price || !desc || !location || !type || !amenity) throw {code: 400, msg: api.FIELDS_MISSING};
 
         if (name.trim() == "" || desc.trim() =="") throw {code: 400, msg: api.EMPTY_FIELD};
+
+        const nameExist = await Accommodation.findOne({name: name});
+        
+        if (nameExist) throw {code: 400, msg: api.ACCOMMODATION_ALREADY_EXISTS};
 
         if (amenity.length==0 || type.length==0 || price.length==0) throw {code:400, msg: api.EMPTY_ARRAY};
 
