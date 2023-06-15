@@ -13,6 +13,7 @@ const AccommTileList = () => {
   const [deleting, setDeleting] = useState(false);
   const [archiving, setArchiving] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
+  const [index, setIndex] = useState('');
   const handleClose = () => setShowDelete(false);
 
   useEffect(() => {
@@ -93,11 +94,11 @@ const AccommTileList = () => {
       <p>No Accommodations Uploaded Yet.</p>
     )
   } else {
-    const LodgingList = accommData && accommData.map(data =>
+    const LodgingList = accommData && accommData.map((data, index) =>
       <>
         {/* onClick={() => handleDeleteAccommodation(data._id)} */}
         <LodgingTileItem key={data._id} data={data} />
-        <Button variant="danger" onClick={() => setShowDelete(true)}>
+        <Button variant="danger" onClick={() => {setShowDelete(true); setIndex(index)}}>
           Delete
         </Button>
         <Button className="m-1" variant="primary" onClick={() => handleArchiveAccommodation(data._id)} disabled={archiving}>
@@ -119,10 +120,10 @@ const AccommTileList = () => {
         <>
           <Modal show={showDelete} backdrop="static" centered>
             <Modal.Body>
-              <p>Do you really want to delete {accommData[0].name}?</p>
+              <p>Do you really want to delete {accommData[index]?.name}?</p>
             </Modal.Body>
             <Modal.Footer>
-              <Button variant="danger" onClick={() => handleDeleteAccommodation(accommData[0]._id)} disabled={deleting}>
+              <Button variant="danger" onClick={() => handleDeleteAccommodation(accommData[index]?._id)} disabled={deleting}>
                 Confirm
               </Button>
               <Button type="submit" variant="light" onClick={handleClose} disabled={deleting}>
