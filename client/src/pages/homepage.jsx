@@ -28,18 +28,31 @@ const AccomCards = () => {
             // console.log(data["accommodations"][2]);
         })
     }, []);
-    console.log(accommData.accommodations)
-    accommData.accommodations && accommData.accommodations.map(accommodation => {
-        console.log(accommodation._id)
-        // console.log("Accommodation ID:", accommodation._id);
-        // console.log("Accommodation Name:", accommodation.name);
-        // Log other desired properties
-      });
-    // const reviewValues = accommData.accommodations.map((accommodation) => accommodation.review);
-    // console.log("Accommodation Names:", reviewValues);
-    // const reviewValues = accommData.accommodations.review.map(review => review.rating);
-    // const total = reviewValues.reduce((accumulator, value) => accumulator + value, 0);
-    // console.log(total)
+    // console.log(accommData.accommodations)
+    // accommData.accommodations && accommData.accommodations.map(accommodation => {
+    //     // console.log(accommodation._id)
+    //     console.log(accommodation.review)
+    //     const reviewValues = accommodation.review.map((data) => data.rating);
+    //     console.log(reviewValues)
+    //     const total = reviewValues.reduce((accumulator, value) => accumulator + value, 0);
+    //     console.log(total/reviewValues.length)
+    //     // console.log("Accommodation ID:", accommodation._id);
+    //     // console.log("Accommodation Name:", accommodation.name);
+    //     // Log other desired properties
+    //   });
+    const topThreeAccommodations = accommData.accommodations && accommData.accommodations
+        .map(accommodation => {
+            const reviewValues = accommodation.review.map(data => data.rating);
+            const total = reviewValues.reduce((accumulator, value) => accumulator + value, 0);
+            const averageRating = total / reviewValues.length;
+
+            return { accommodation, averageRating };
+        })
+        .sort((a, b) => b.averageRating - a.averageRating)
+        .slice(0, 3)
+        .map(item => item.accommodation);
+
+        console.log(topThreeAccommodations);
     const no_image = process.env.PUBLIC_URL + '/no_image.png'
     return (
         <>
@@ -52,7 +65,7 @@ const AccomCards = () => {
         ) : (
             <Row md={4} className="g-3 row mx-auto">
             {/* BACKLOG: Retrieve highest rating top 3 accommodations */}
-            {accommData.accommodations && accommData.accommodations.slice(0,3).map( data => (
+            {topThreeAccommodations.map( data => (
                 // console.log(data._id),
                 <Col key={data._id} className="col mx-auto" style={{cursor: "pointer"}}>
                 <Card className="bg-info" onClick={() => toAccomm(data)}>
