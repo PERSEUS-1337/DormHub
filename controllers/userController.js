@@ -333,6 +333,24 @@ const addToBookmark = async (req, res) => {
     }
 }
 
+// HELPER FUNCTION for BOOKMARK
+const checkBookmarkExists = async (id, uId) => {
+    const user = await User.findOne({
+        _id: uId,
+        bookmarks: { $elemMatch: { $eq: id } }
+    });
+
+    if (user) {
+        // The bookmark already exists in the bookmark array
+        console.log('Bookmark already exists');
+        return true
+    } else {
+        // The bookmark does not exist in the bookmark array
+        console.log('Bookmark does not exist');
+        return false;
+    }
+}
+
 // DELETE ACCOMMODATION FROM BOOKMARK
 const deleteBookmark = async (req, res) => {
     const { id,uId } = req.params;
@@ -353,11 +371,11 @@ const deleteBookmark = async (req, res) => {
         throw { code: 404, msg: api.ACCOMMODATION_NOT_FOUND };
         }
 
-        const status = await checkBookmarkExists(id, uId);
+        // const status = await checkBookmarkExists(id, uId);
+        const status = await User.findByIdAndUpdate(uId, {"$pull": {bookmarks: {id: id}}});
 
         if (status) {
             try {
-                await User.findByIdAndUpdate(uId, {$pull:{bookmarks: id}})
                 console.info(api.BOOKMARK_REMOVE_SUCCESSFUL);
                 res.status(200).json({ msg: api.BOOKMARK_REMOVE_SUCCESSFUL });
             } catch (error) {
@@ -373,23 +391,7 @@ const deleteBookmark = async (req, res) => {
     }
 }
 
-// HELPER FUNCTION for BOOKMARK
-const checkBookmarkExists = async (id, uId) => {
-    const user = await User.findOne({
-        _id: uId,
-        bookmarks: { $elemMatch: { $eq: id } }
-    });
 
-    if (user) {
-        // The bookmark already exists in the bookmark array
-        console.log('Bookmark already exists');
-        return true
-    } else {
-        // The bookmark does not exist in the bookmark array
-        console.log('Bookmark does not exist');
-        return false;
-    }
-}
 
 // UPLOAD USER PFP
 const uploadPfp = async(req, res) => {
