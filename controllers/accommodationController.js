@@ -106,59 +106,63 @@ const createAccommodation = async (req, res) => {
     const { uId, name, desc, price, location, type, amenity } = req.body;
   
     try {
-      if (!validator.default.isMongoId(uId)) {
-        throw { code: 400, error: api.OWNER_ID_INVALID };
-      }
-  
-      // Check if the owner exists
-      const owner = await User.findById(uId);
-      if (!owner) {
-        throw { code: 404, error: api.OWNER_NOT_FOUND };
-      }
-  
-      if (owner.userType !== "Owner") {
-        throw { code: 400, error: api.NOT_AN_OWNER };
-      }
-  
-      const accommodationExist = await Accommodation.findOne({ name });
-      if (accommodationExist) {
-        throw { code: 400, error: api.ACCOMMODATION_ALREADY_EXISTS };
-      }
-  
-      if (!name || !desc || !price || !location || !type || !amenity) {
-        throw { code: 400, error: api.FIELDS_MISSING };
-      }
-  
-      // Create the accommodation with default or empty values
-      const accommodation = new Accommodation({
-        name: name,
-        desc: desc,
-        pics: [],
-        price: price,
-        location: location,
-        type: type,
-        archived: false,
-        amenity: amenity,
-        owner: uId,
-        review: [],
-      });
-  
-      // Save the accommodation
-      const savedAccommodation = await accommodation.save();
-  
-      const accommodationData = {
-        id: savedAccommodation._id,
-        name: savedAccommodation.name,
-        pics: savedAccommodation.pics,
-        price: savedAccommodation.price,
-      };
-  
-      await User.findByIdAndUpdate(uId, {
-        $push: { accommodations: accommodationData },
-      });
-  
-      console.info(api.CREATE_ACCOMMODATION_SUCCESS);
-      return res.status(201).json({ msg: api.ACCOMMODATION_CREATED });
+
+        if (!validator.default.isMongoId(uId)) {
+            throw {code: 400, msg: api.OWNER_ID_INVALID };
+        }
+
+        // Check if the owner exists
+        const owner = await User.findById(uId);
+        if (!owner)
+            throw { code: 404, msg: api.OWNER_NOT_FOUND };
+
+        if (owner.userType != "Owner") 
+            throw {code: 400, msg: api.NOT_AN_OWNER}
+        
+        const accommodationExist = await Accommodation.findOne({name});
+        if (accommodationExist)
+            throw { code: 400, msg: api.ACCOMMODATION_ALREADY_EXISTS };
+        
+
+        if (!name || !desc ||  !price || !location || !type || !amenity)
+            throw {code: 400, msg: api.FIELDS_MISSING };
+        
+        // Create the accommodation with default or empty values
+        const accommodation = new Accommodation({
+            name: name,
+            desc: desc,
+            pics: [],
+            price: price,
+            location: location,
+            type: type,
+            archived: false,
+            amenity: amenity,
+            owner: uId,
+            review: []
+        });
+
+        // Save the accommodation
+        const savedAccommodation = await accommodation.save();
+
+        // Update the owner's accommodations
+        // owner.accommodations.push(savedAccommodation._id);
+
+        const accommodationData = {
+            id: savedAccommodation._id,
+            name: savedAccommodation.name,
+            pics: savedAccommodation.pics,
+            price: savedAccommodation.price
+        }
+
+        await User.findByIdAndUpdate(
+                    uId,
+                    {$push:{accommodations: accommodationData}},
+                    {new: true})
+
+        // await owner.save();
+
+        console.info(api.CREATE_ACCOMMODATION_SUCCESS);
+        return res.status(201).json({msg: api.ACCOMMODATION_CREATED});
     } catch (err) {
       console.error(api.CREATE_ACCOMMODATION_ERROR, err.error || err);
       return res
@@ -172,6 +176,7 @@ const updateAccommodation = async (req, res) => {
 
     const { id,uId } = req.params;
     const update = req.body; 
+    const {name, price, desc, location, type, amenity} = req.body;
     
     try {
         if (!validator.default.isMongoId(id) || !validator.default.isMongoId(uId)) {
@@ -179,11 +184,34 @@ const updateAccommodation = async (req, res) => {
         }
 
         const accommodation = await Accommodation.findById(id);
-        
-        if (accommodation.owner != uId || !accommodation) {
-            throw { code: 400, msg: api.INVALID_ACCOMMODATION_OWNER };
-        }
 
+        if (!accommodation) throw { code: 400, msg: api.ACCOMMODATION_NOT_FOUND};
+        
+        if (accommodation.owner != uId) throw { code: 400, msg: api.INVALID_ACCOMMODATION_OWNER };
+    
+        if(!name || !price || !desc || !location || !type || !amenity) throw {code: 400, msg: api.FIELDS_MISSING};
+
+        if (name.trim() == "" || desc.trim() =="") throw {code: 400, msg: api.EMPTY_FIELD};
+
+        if (amenity.length==0 || type.length==0 || price.length==0) throw {code:400, msg: api.EMPTY_ARRAY};
+
+        amenity.forEach((element) => {
+            if (element.trim() == "") throw {code: 400, msg: api.EMPTY_FIELD};
+        });
+
+        type.forEach((element) => {
+            if (element.trim() == "") throw {code: 400, msg: api.EMPTY_FIELD};
+        });
+
+        price.forEach((element) => {
+            if (typeof(element) != "number") throw {code: 400, msg: api.INVALID_PRICE};
+            if (element < 0) throw {code: 400, msg: api.INVALID_PRICE};
+        });
+
+        if (location.vicinity.trim() == "" || location.street.trim() == "" || location.barangay.trim() == "" || location.town.trim() == "") {
+            throw {code: 400, msg: api.EMPTY_FIELD};
+        }
+        
         const updatedAccommodation = await Accommodation.findByIdAndUpdate(id, update, { new: true });
 
         if (!updatedAccommodation) {

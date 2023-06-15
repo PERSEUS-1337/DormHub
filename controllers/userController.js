@@ -17,6 +17,7 @@ const bucketName = 'dormhub-128-e8l';
 
 const multer = require('multer');
 const { use } = require('passport');
+const { locales } = require('validator/lib/isIBAN');
 
 const storageBucket = storage.bucket(bucketName);
 
@@ -46,6 +47,8 @@ const register = async (req, res) => {
         if (userExist) throw { code: 400, msg: api.USER_ALREADY_EXISTS };
 
         if (!validator.default.isEmail(email)) throw { code: 400, msg: api.INVALID_EMAIL };
+
+        if (fname.trim() == "" || lname.trim() == "") throw { code: 400, msg: api.EMPTY_FIELD}
 
         if (!validator.default.isStrongPassword(password)) {
             throw { code: 400, msg: api.WEAK_PASSWORD };
@@ -84,9 +87,7 @@ const login = async (req, res) => {
         // checks password match
         const matchPass = await bcrypt.compare(password, user.password);
 
-        if (!matchPass) {
-            throw Error(api.INCORRECT_PASSWORD);
-        }
+        if (!matchPass) throw {code: 400, msg: api.INCORRECT_PASSWORD};
 
         const token = createToken(user._id);
         console.info(api.LOGIN_SUCCESSFUL);
@@ -124,30 +125,84 @@ const getAllOwners = async (req, res) => {
 // UPDATE USER
 const editUserData = async (req, res) => {
     const { uId } = req.params
+    // NOTE: phone is an ARRAY!
+    const { fname, lname, phone, email} = req.body;
   
     try {
         if (!validator.default.isMongoId(uId))
             throw { code: 400, msg: api.USER_ID_INVALID };
+
+        if (!uId || !fname || !lname || !phone || !email ) throw { code: 400, msg: api.FIELDS_MISSING };
+
+        if (fname.trim() == "" || lname.trim() == "") throw { code: 400, msg: api.EMPTY_FIELD};
+
+        phone.forEach((element) => {
+            if (!validator.default.isMobilePhone(element, 'en-PH')) {
+                throw { code: 400, msg: api.INVALID_PHONE};
+            }
+            
+        });
+
+        if (!validator.default.isEmail(email)) throw {code: 400, msg: api.INVALID_EMAIL};
+
+        const emailExist = await User.findOne({email});
+
+        // ensures that email is not owned && if it does it should match the orig 
+        if (emailExist && emailExist._id != uId) throw {code: 400, msg: api.USER_ALREADY_EXISTS};
         
         const user = await User.findByIdAndUpdate(uId, {
             ...req.body
         });
     
-        if (!user)
-          throw { code: 404, msg: api.USER_NOT_FOUND };
+        if (!user) throw { code: 404, msg: api.USER_NOT_FOUND };
         
         console.info(api.EDIT_USER_DATA_SUCCESSFUL);
         return res.status(201).json({ msg: api.EDIT_USER_DATA_SUCCESSFUL})
     } catch (err) {
         console.error(api.EDIT_USER_DATA_ERROR, err.msg || err);
-        return res.status(err.code || 500).json({ err: err.msg || api.INTERNAL_ERROR });
+        return res.status(err.code || 500).json({ err: err.msg || api.INTERNAL_ERROR});
+    }
+}
+
+const resetPassword = async (req, res) => {
+    const { uId } = req.params;
+    const { oldPassword, newPass, newPass2  } = req.body;
+
+    try {
+        if (!validator.default.isMongoId(uId)) throw { code: 400, msg: api.USER_ID_INVALID };      
+
+        if (!oldPassword || !newPass || !newPass2 ) throw {code: 400, msg: api.FIELDS_MISSING};
+        
+        const user = await User.findById(uId);
+    
+        if (!user) throw { code: 404, msg: api.USER_NOT_FOUND };
+
+        // checks password match
+        const matchPass = await bcrypt.compare(oldPassword, user.password);
+
+        if (!matchPass) throw {code: 400, msg: api.INCORRECT_PASSWORD};
+
+        if (!validator.default.isStrongPassword(newPass)) throw { code: 400, msg: api.WEAK_PASSWORD };
+        if (newPass != newPass2) throw {code: 400, msg: api.MISMATCHED_PASS};
+
+        // Password encryption before storing in DB
+        const salt = await bcrypt.genSalt(10);
+        const hash = await bcrypt.hash(newPass, salt);
+        
+        const resetPass = await User.findByIdAndUpdate(uId, {"$set": {password: hash}});
+        if (!resetPass) throw { code: 404, msg: api.USER_NOT_FOUND };
+      
+        console.info(api.RESET_PASSWORD_SUCCESSFUL);
+        return res.status(201).json({ msg: api.RESET_PASSWORD_SUCCESSFUL})
+    } catch (err) {
+        console.error(api.RESET_PASSWORD_ERROR, err.msg || err);
+        return res.status(err.code || 500).json({ err: err.msg || api.INTERNAL_ERROR});
     }
 }
 
 // GET USER
 const getUserData = async (req, res) => {
     const { uId } = req.params;
-    console.log(uId)
     try {
 
         if (!validator.default.isMongoId(uId)) {
@@ -193,11 +248,17 @@ const getBookmark = async (req, res)  => {
         }
 
         const bookmarks = user.bookmarks;
+        // below makes an array of id (Accom) from bookmarks
+        let bId = [];
+        bookmarks.forEach((element) => {
+            bId.push(element.id);
+        });
+
 
         if (bookmarks.length===0) {
             throw { code: 404, msg: api.BOOKMARKS_NOT_FOUND};
         } else {
-            const list = await Accommodation.find({ _id: { $in: bookmarks } })
+            const list = await Accommodation.find({ _id: { $in: bId } })
             console.info(api.GET_BOOKMARK_SUCCESSFUL);
             return res.status(200).json({msg:api.GET_BOOKMARK_SUCCESSFUL, list: list})
         }
@@ -448,5 +509,6 @@ module.exports = {
     deleteBookmark,
     uploadPfp,
     getPfp,
-    getAccommodationOwner
+    getAccommodationOwner,
+    resetPassword
 };
