@@ -188,7 +188,7 @@ const EditDetails = (data) => {
                 isUserAccom ?
                     <>
                         <div className='editAccomButton'>
-                            <Button type="button" className='btn editAccomButton' onClick={() => setModalShow(true)}>Edit Accommodation Description</Button>
+                            <Button type="button" className='btn editAccomButton' onClick={() => setModalShow(true)}>Edit Accomodation Details</Button>
                         </div>
                     </>
 
@@ -268,6 +268,118 @@ function update(){
                         </textarea>
                     </div>
                 </form>
+                {/* <Form onSubmit={handleSubmit}>
+            <Form.Group controlId="accommodationName">
+              <Form.Label>Accommodation Name</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter accommodation name"
+                value={name}
+                onChange={(e) => setAccommodationName(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group controlId="accommodationDesc">
+              <Form.Label>Accommodation Description</Form.Label>
+              <Form.Control
+                as="textarea"
+                type="text"
+                placeholder="Enter accommodation description"
+                value={desc}
+                onChange={(e) => setAccommodationDesc(e.target.value)}
+              />
+            </Form.Group>
+
+            <Form.Group controlId="accommodationPrice">
+              <Form.Label>Price <span className="text-muted">/month</span></Form.Label>
+              <Form.Control
+                type="number"
+                placeholder="Enter price"
+                value={price}
+                onChange={(e) => {
+                  const inputPrice = e.target.value;
+                  if (inputPrice >= 0) {
+                    setPrice(inputPrice);
+                  }
+                }}
+              />
+            </Form.Group>
+
+            <Form.Group controlId="locationVicinity">
+              <Form.Label>Location</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter Vicinity"
+                value={vicinity}
+                onChange={(e) => setVicinity(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group controlId="locationStreet">
+              <Form.Control
+                type="text"
+                placeholder="Enter Street"
+                value={street}
+                onChange={(e) => setStreet(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group controlId="locationBarangay">
+              <Form.Control
+                type="text"
+                placeholder="Enter Barangay"
+                value={barangay}
+                onChange={(e) => setBarangay(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group controlId="locationTown">
+              <Form.Control
+                type="text"
+                placeholder="Enter Town"
+                value={town}
+                onChange={(e) => setTown(e.target.value)}
+              />
+            </Form.Group>
+
+            <Form.Group controlId="accommodationType">
+              <Form.Label>Type</Form.Label>
+              <Form.Control
+                as="select"
+                value={type}
+                onChange={(e) => setAccommodationType(e.target.value)}
+              >
+                <option value="" ></option>
+                <option value="apartment">Apartment</option>
+                <option value="condominium">Condominium</option>
+                <option value="dormitory">Dormitory</option>
+                <option value="transient">Transient</option>
+                <option value="hotel">Hotel</option>
+                <option value="hostel">Hostel</option>
+                <option value="bedspace">Bedspace</option>
+              </Form.Control>
+            </Form.Group>
+
+
+            <Form.Group controlId="accommodationAmenity">
+              <Form.Label>Amenity</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter amenity"
+                value={amenity}
+                onChange={(e) => setAccommodationAmenity(e.target.value)}
+              />
+            </Form.Group>
+            <Button className="" variant="secondary" type="submit" disabled={loadingPostResult}>
+              {
+                loadingPostResult ? (
+                  <Spinner animation="border" variant="primary" role="status" size="sm" disabled>
+                    <span className="visually-hidden">Loading...</span>
+                  </Spinner>
+
+                ) : (
+                  "Save"
+                )
+              }
+            </Button>
+
+          </Form> */}
             </Modal.Body>
             <Modal.Footer>
                 <Button onClick={props.onHide} className='btn btn-danger'>Close</Button>
@@ -326,13 +438,6 @@ const Details = (data) => {
             </Row>
 
             <p id="accommDetail">{data.accomData.desc}</p>
-
-            {
-                isLoggedIn && !isUser ? <EditDetails data={data} /> : <></>
-            }
-
-            {/* <Button onClick={checkAccomIfMatched}>Test accom</Button> */}
-
             <Row id="amenity" className="detail">
                 <Col sm={1}>
                     <img src="../../assets/icons/amenities.jpg" alt="test4" />
@@ -370,6 +475,9 @@ const Details = (data) => {
                     }
                 </Col>
             </Row>
+            {
+                isLoggedIn && !isUser ? <EditDetails data={data} /> : <></>
+            }
             {/* <Row id="calendar" className="detail">
                 <Col sm={1}>
                     <img src="../../assets/icons/calendar.jpg" alt="test3" />
@@ -479,7 +587,7 @@ const Review = (data) => {
                         <ReviewList data={data.reviewData} />
                         :
                         <Container className='text-center mt-5'>
-                            <h6>No Reviews Yet </h6>
+                            <p className='font-italic'>No Reviews Yet</p>
                         </Container>
 
 
