@@ -3,6 +3,9 @@ import { Container, Col, Row, Image, Button, Modal, Form, Spinner } from "react-
 import FaveTileItem from "../components/FaveTileItem";
 import LodgingTileItem from "../components/LodgingTileItem";
 import EditUserProfile from "../components/EditUser";
+import AddAccommodationPicButton from "../components/addAccomodationPicButton";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const AccommTileList = () => {
   const [accommData, setAccommData] = useState(null);
@@ -92,7 +95,7 @@ const AccommTileList = () => {
   } else {
     const LodgingList = accommData && accommData.map(data =>
       <>
-      {/* onClick={() => handleDeleteAccommodation(data._id)} */}
+        {/* onClick={() => handleDeleteAccommodation(data._id)} */}
         <LodgingTileItem key={data._id} data={data} />
         <Button variant="danger" onClick={() => setShowDelete(true)}>
           Delete
@@ -106,6 +109,7 @@ const AccommTileList = () => {
             )
           }
         </Button>
+        <AddAccommodationPicButton accommodationId={data._id}/>
       </>
     )
 
@@ -113,26 +117,26 @@ const AccommTileList = () => {
     try {
       return (
         <>
-        <Modal show={showDelete} backdrop="static" centered>
-          <Modal.Body>
-            <p>Do you really want to delete {accommData[0].name}?</p>
-          </Modal.Body>
+          <Modal show={showDelete} backdrop="static" centered>
+            <Modal.Body>
+              <p>Do you really want to delete {accommData[0].name}?</p>
+            </Modal.Body>
             <Modal.Footer>
-                <Button variant="danger" onClick={() => handleDeleteAccommodation(accommData[0]._id)} disabled={deleting}>
+              <Button variant="danger" onClick={() => handleDeleteAccommodation(accommData[0]._id)} disabled={deleting}>
                 Confirm
-                </Button>
-                <Button type="submit" variant="light" onClick={handleClose} disabled={deleting}>
+              </Button>
+              <Button type="submit" variant="light" onClick={handleClose} disabled={deleting}>
                 Cancel
-                </Button>
+              </Button>
             </Modal.Footer>
-        </Modal>
+          </Modal>
           {LodgingList}
         </>
       )
     } catch (error) {
       console.error(error);
     }
-    
+
   }
 }
 
@@ -197,14 +201,15 @@ const CheckIfOwner = () => {
   const [showModal, setShowModal] = useState(false);
   const [name, setAccommodationName] = useState("");
   const [desc, setAccommodationDesc] = useState("");
-  const [price, setAccommodationPrice] = useState([]);
   const [vicinity, setVicinity] = useState([]);
   const [street, setStreet] = useState([]);
   const [barangay, setBarangay] = useState([]);
+  const [price, setPrice] = useState('');
   const [town, setTown] = useState([]);
   const [type, setAccommodationType] = useState([]);
   const [amenity, setAccommodationAmenity] = useState([]);
   const [accommData, setAccommData] = useState([]);
+
   const [loadingPostResult, setLoadingPostResult] = useState(false);
   useEffect(() => {
     const fetchAccommodations = async () => {
@@ -237,48 +242,62 @@ const CheckIfOwner = () => {
   const closeModal = () => {
     setShowModal(false);
   };
-
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const uId = localStorage.getItem("_id");
-    const jwt = localStorage.getItem("token");
     setLoadingPostResult(true);
-
-    const location = { 
-      vicinity, street, barangay, town 
-    };
-
+  
+    const uId = localStorage.getItem('_id');
+    const jwt = localStorage.getItem('token');
+    const location = { vicinity, street, barangay, town };
     const formData = {
-      uId, name, desc, price, location, type, amenity
+      uId,
+      name,
+      desc,
+      price,
+      location,
+      type,
+      amenity
     };
+  
     try {
-      const res = await fetch("/api/v1/auth-required-func/accommodation", {
-        method: "POST",
+      const res = await fetch('/api/v1/auth-required-func/accommodation', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
           Authorization: `Bearer ${jwt}`,
         },
         body: JSON.stringify(formData),
       });
+    
       const data = await res.json();
-      console.log(formData);
-      if (res.status === 201) {
-        console.log(data.msg);
+    
+     
+      if (res.status === 201) { 
         closeModal();
         window.location.reload();
       } else {
-        console.error(data.error);
-        alert("Creation failed.", data.error);
+        let errorMessage = 'Creation failed.';
+        if (data && data.error) {
+          errorMessage += ' ' + data.error;
+        }
+        console.error(data);
+        toast.error(errorMessage);
       }
+    
       setLoadingPostResult(false);
     } catch (err) {
-      console.error("Accommodation creation error.", err);
+      console.error('Accommodation creation error.', err);
+      toast.error('An error occurred while creating the accommodation.');
     }
+    
   };
-
+ 
+  
   return (
     <>
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
       <h3>Accommodations:</h3>
       <div key={accommData._id} className="mb-3">
         <AccommTileList data={accommData} />
@@ -318,7 +337,12 @@ const CheckIfOwner = () => {
                 type="number"
                 placeholder="Enter price"
                 value={price}
-                onChange={(e) => setAccommodationPrice(e.target.value)}
+                onChange={(e) => {
+                  const inputPrice = e.target.value;
+                  if (inputPrice >= 0) {
+                    setPrice(inputPrice);
+                  }
+                }}
               />
             </Form.Group>
 
@@ -384,7 +408,6 @@ const CheckIfOwner = () => {
                 onChange={(e) => setAccommodationAmenity(e.target.value)}
               />
             </Form.Group>
-
             <Button className="" variant="secondary" type="submit" disabled={loadingPostResult}>
               {
                 loadingPostResult ? (
@@ -449,10 +472,10 @@ const UserPage = () => {
 
         if (data.error) {
           setHasPfp(false);
-        } 
+        }
       } catch (err) {
         console.error('PFP fetching error.', err);
-      }      
+      }
     };
     fetchData();
   }, []);
@@ -460,57 +483,57 @@ const UserPage = () => {
     <>
       <Container className="mt-5 mb-3 pb-4 d-flex flex-column align-items-left border-bottom">
         <>
-        {
-          isLoading ? (
-            <div className="d-flex justify-content-center align-items-center">
-              <Spinner animation="border" variant="primary" role="status" size="lg">
-                <span className="visually-hidden">Loading...</span>
-              </Spinner>
-            </div>
-          ) : (
-            <Row>
-              <Col xs={2}>
-                {hasPfp === false ? (
-                <p>No PFP.</p>
-              ) : (
-                <>
-                  {pfp === "null" ? (
-                    <Image
-                      className="rounded-circle w-100 h-100"
-                      src="https://i.pinimg.com/222x/57/70/f0/5770f01a32c3c53e90ecda61483ccb08.jpg"
-                    />
+          {
+            isLoading ? (
+              <div className="d-flex justify-content-center align-items-center">
+                <Spinner animation="border" variant="primary" role="status" size="lg">
+                  <span className="visually-hidden">Loading...</span>
+                </Spinner>
+              </div>
+            ) : (
+              <Row>
+                <Col xs={2}>
+                  {hasPfp === false ? (
+                    <p>No PFP.</p>
                   ) : (
-                    <Image
-                      className="rounded-circle w-100 h-100"
-                      src={pfp}
-                      roundedCircle
-                      fluid
-                      style={{objectFit:'contain', maxWidth:"auto", height:"aut0"}}
-                    />
+                    <>
+                      {pfp === "null" ? (
+                        <Image
+                          className="rounded-circle w-100 h-100"
+                          src="https://i.pinimg.com/222x/57/70/f0/5770f01a32c3c53e90ecda61483ccb08.jpg"
+                        />
+                      ) : (
+                        <Image
+                          className="rounded-circle w-100 h-100"
+                          src={pfp}
+                          roundedCircle
+                          fluid
+                          style={{ objectFit: 'contain', maxWidth: "auto", height: "aut0" }}
+                        />
+                      )}
+                    </>
                   )}
-                </>
-              )}
-              </Col>
-              <Col xs={7}>
-                <h2>{`${userData.user.fname} ${userData.user.lname}`}</h2>
-                {/* TO ADD: USER TYPE */}
-                <h5 className="lead">{`${userData.user.userType}`}</h5>
-                <h5 className="lead">Email: {`${userData.user.email}`}</h5>
-                <h5 className="lead">Contact Number: {
-                  userData.user.phone.length === 0 || userData.user.phone[0] === "" ? (
-                    <span className="text-muted">Edit Profile to Add</span>
-                  ) : (
-                    `${userData.phone}`
-                  )
-                } </h5>
-              </Col>
-              <Col xs={3} className="d-flex justify-content-end align-items-start">
-                <EditUserProfile key={userData.user.id} data={userData} />
-              </Col>
-            </Row>
-          )
-        }
-        
+                </Col>
+                <Col xs={7}>
+                  <h2>{`${userData.user.fname} ${userData.user.lname}`}</h2>
+                  {/* TO ADD: USER TYPE */}
+                  <h5 className="lead">{`${userData.user.userType}`}</h5>
+                  <h5 className="lead">Email: {`${userData.user.email}`}</h5>
+                  <h5 className="lead">Contact Number: {
+                    userData.user.phone.length === 0 || userData.user.phone[0] === "" ? (
+                      <span className="text-muted">Edit Profile to Add</span>
+                    ) : (
+                      `${userData.phone}`
+                    )
+                  } </h5>
+                </Col>
+                <Col xs={3} className="d-flex justify-content-end align-items-start">
+                  <EditUserProfile key={userData.user.id} data={userData} />
+                </Col>
+              </Row>
+            )
+          }
+
         </>
       </Container>
       <Container>
@@ -522,7 +545,7 @@ const UserPage = () => {
             <></>
           )
         }
-        
+
         <h3>Favorites:</h3>
         <FaveTileList />
       </Container>
