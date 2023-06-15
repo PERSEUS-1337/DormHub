@@ -45,7 +45,11 @@ const FaveTileItem = ({ data }) => {
         <Container className='border rounded mb-3'>
             <Row>
                 <Col>
-                    <Image className='img-thumbnail border-0' src={data.img_src} alt='Lodge Photo' rounded />
+                    {data.pics.length === 0 ? (
+                            <Image style={{ objectFit: "cover", height: "200px", width: "400px", overflow: "hidden"}} className='img-fluid border-0' src="https://www.gpshealthonline.com/static/images/no-banner.jpg" alt='Lodge Photo' rounded />
+                        ) : (
+                            <Image style={{ objectFit: "cover", height: "200px", width: "400px", overflow: "hidden"}} className='img-fluid border-0' src={data.pics[0]} alt='Lodge Photo' rounded />
+                    )}
                 </Col>
                 <Col className='border'>
                     <h2 className='my-4'>{data.name}</h2>
