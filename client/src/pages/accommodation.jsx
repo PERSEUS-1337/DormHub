@@ -387,17 +387,20 @@ const CheckIfLoggedIn = ({ accommodationId }) => {
     const [rating, setRating] = useState("");
     const [detail, setDetail] = useState("");
     const [accomm, setAccomm] = useState("");
+
     const handleRatingChange = (newRating) => {
         setRating(newRating)
     }
 
     useEffect(() => {
+        // console.log(accomm)
         if (accomm !== "") {
             // console.log("NAVIGATED")
+            // console.log({ state: { data: accomm.accommodation } })
             navigate('/accommodation', { state: { data: accomm.accommodation } });
             window.location.reload();
         }
-      }, [accomm]);
+    }, [accomm]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -419,13 +422,14 @@ const CheckIfLoggedIn = ({ accommodationId }) => {
                 body: JSON.stringify(formData),
             });
             const data = await res.json();
-            // console.log(data);
+            console.log(data);
             // console.log(data.msg);
 
             fetch(`/api/v1/accommodation/${accommodationId}`)
                 .then((res) => res.json())
                 .then((data) => {
                     setAccomm(data);
+                    console.log("DATA", data)
                 });
                 // closeModal();
         } catch (err){
@@ -464,8 +468,7 @@ const CheckIfLoggedIn = ({ accommodationId }) => {
 
 
 const Review = (data) => {
-    const isLoggedIn = localStorage.getItem("_id") && localStorage.getItem("token");
-
+    const isLoggedIn = localStorage.getItem("_id") && localStorage.getItem("token")
     return (
         <>
             <Container className='desc_accom reviewContainer'>
@@ -476,7 +479,7 @@ const Review = (data) => {
                         <ReviewList data={data.reviewData} />
                         :
                         <Container className='text-center mt-5'>
-                            <h6>No Reviews Yet =(</h6>
+                            <h6>No Reviews Yet </h6>
                         </Container>
 
 
@@ -484,7 +487,7 @@ const Review = (data) => {
 
                 {isLoggedIn ? (
                     // console.log("id" + location.state.data._id),
-                    <CheckIfLoggedIn accommodationId={data._id} />
+                    <CheckIfLoggedIn accommodationId={data.reviewData._id} />
                 ) : (
                     <></>
                 )}
@@ -495,7 +498,6 @@ const Review = (data) => {
 
 function Accommodation(props) {
     const location = useLocation();
-
     const id = location.state.data._id
 
     const [accomData, setAccomData] = useState(location.state.data);
