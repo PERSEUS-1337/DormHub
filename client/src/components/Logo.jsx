@@ -2,8 +2,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 const DormHubLogo = () => {
+    const logo = process.env.PUBLIC_URL + '/dormhub_logo.png'
     return(
-        <img src={require('./dormhub_logo.png')} alt="" srcset="" width={110} height={46}/>
+        <img src={logo} alt="" srcSet="" width={110} height={46}/>
     );
 };
 

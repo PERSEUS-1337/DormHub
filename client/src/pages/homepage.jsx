@@ -20,7 +20,7 @@ const AccomCards = () => {
 
 
     useEffect(() => {
-        fetch("/api/v1/accommodation/all")
+        fetch("/api/v1/accommodation/all?limit=100")
         .then(res =>res.json())
         .then(data => {
             setAccommData(data);
@@ -28,6 +28,19 @@ const AccomCards = () => {
             // console.log(data["accommodations"][2]);
         })
     }, []);
+    console.log(accommData.accommodations)
+    accommData.accommodations && accommData.accommodations.map(accommodation => {
+        console.log(accommodation._id)
+        // console.log("Accommodation ID:", accommodation._id);
+        // console.log("Accommodation Name:", accommodation.name);
+        // Log other desired properties
+      });
+    // const reviewValues = accommData.accommodations.map((accommodation) => accommodation.review);
+    // console.log("Accommodation Names:", reviewValues);
+    // const reviewValues = accommData.accommodations.review.map(review => review.rating);
+    // const total = reviewValues.reduce((accumulator, value) => accumulator + value, 0);
+    // console.log(total)
+    const no_image = process.env.PUBLIC_URL + '/no_image.png'
     return (
         <>
         {isLoading ? (
@@ -45,7 +58,7 @@ const AccomCards = () => {
                 <Card className="bg-info" onClick={() => toAccomm(data)}>
                     {/* Added static src to test UI */}
                     {data.pics.length === 0 ? (
-                        <Card.Img variant="top" src="https://www.gpshealthonline.com/static/images/no-banner.jpg" alt="NO AVAILABLE PICTURE" style={{ objectFit: "cover", height: "150px", width: "auto", overflow: "hidden"}}/>
+                        <Card.Img variant="top" src={no_image} alt="NO AVAILABLE PICTURE" style={{ objectFit: "cover", height: "150px", width: "auto", overflow: "hidden"}}/>
                     ) : (
                         <Card.Img variant="top" src={data.pics[0]} alt="NO AVAILABLE PICTURE" style={{ objectFit: "cover", height: "150px", width: "auto", overflow: "hidden"}}/>
                     )}
