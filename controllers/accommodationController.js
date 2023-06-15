@@ -248,6 +248,8 @@ const deleteAccommodation = async (req, res) => {
             throw { code: 404, msg: api.ACCOMMODATION_NOT_FOUND };
         }
 
+        await User.findByIdAndUpdate(uId, {"$pull": {accommodations: {id: id}}});
+
         console.info(api.DELETE_ACCOMMODATION_SUCCESS);
         return res.status(200).json({ msg: api.ACCOMMODATION_DELETED });
     } catch (err) {
