@@ -37,6 +37,7 @@ const EditUserProfile = ({data}) => {
             fname: form.fname,
             lname: form.lname,
             phone: form.phone,
+            email: form.email
         };
 
         const formData = new FormData();
@@ -90,7 +91,7 @@ const EditUserProfile = ({data}) => {
         }
       window.location.reload();
     };
-  
+
     return (
       <>
         <Button variant="light" onClick={handleShow}>
@@ -106,8 +107,8 @@ const EditUserProfile = ({data}) => {
               <Form.Group className="mb-3" controlId="fname">
                 <Form.Label>First Name</Form.Label>
                 <Form.Control
-                  placeholder={data.fname}
-                  defaultValue={form.fname || data.fname}
+                  placeholder={data.user.fname}
+                  defaultValue={form.fname || data.user.fname}
                   onChange={(e) => {
                     if(e.target.value == "" || e.target.value == null){
                       setField("fname", "");
@@ -122,8 +123,8 @@ const EditUserProfile = ({data}) => {
               <Form.Group className="mb-3" controlId="lname">
                 <Form.Label>Last Name</Form.Label>
                 <Form.Control
-                  placeholder={data.lname}
-                  defaultValue={form.lname || data.lname}
+                  placeholder={data.user.lname}
+                  defaultValue={form.lname || data.user.lname}
                   onChange={(e) => {
                     if(e.target.value == "" || e.target.value == null){
                       setField("lname", "");
@@ -138,8 +139,8 @@ const EditUserProfile = ({data}) => {
               <Form.Group className="mb-3" controlId="phone">
                 <Form.Label>Contact Number</Form.Label>
                 <Form.Control
-                  placeholder={data.phone}
-                  defaultValue={form.phone || data.phone}
+                  placeholder={data.user.phone}
+                  defaultValue={form.phone || data.user.phone}
                   onChange={(e) => {
                     if(e.target.value == "" || e.target.value == null){
                       setField("phone", "");
@@ -150,7 +151,22 @@ const EditUserProfile = ({data}) => {
                   }
                 />
               </Form.Group>
-                  
+              <Form.Group className="mb-3" controlId="email">
+                <Form.Label>Email</Form.Label>
+                <Form.Control
+                  placeholder={data.user.email}
+                  defaultValue={form.email || data.user.email}
+                  onChange={(e) => {
+                    if(e.target.value == "" || e.target.value == null){
+                      setField("email", "");
+                    }else{
+                      setField("email", e.target.value);
+                    }
+                  }
+                  }
+                  isInvalid={!!errors.email}
+                />
+              </Form.Group>
               <Form.Group className="mb-3" controlId="pfp" encType="multipart/form-data">
                 <Form.Label>Profile Picture</Form.Label>
                 <Form.Control type="file" name="pfp" accept="image/*" onChange={(e) => setFile(e.target.files[0])} />

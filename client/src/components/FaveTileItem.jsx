@@ -44,7 +44,7 @@ const FaveTileItem = ({ data }) => {
 
     const reviewValues = data.review.map(review => review.rating);
     const total = reviewValues.reduce((accumulator, value) => accumulator + value, 0);
-    console.log(total, reviewValues.length)
+    // console.log(total, reviewValues.length)
 
     return (
         <Container className='border rounded mb-3'>
