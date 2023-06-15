@@ -1,6 +1,7 @@
 import { React, useState } from 'react'
 import { Container, Row, Col, Button, Image, Spinner } from 'react-bootstrap'
 import { useNavigate } from 'react-router-dom'
+import { ReadStarRating, StarRating, AccomStarRating } from '../components/StarRating';
 
 
 const FaveTileItem = ({ data }) => {
@@ -41,6 +42,10 @@ const FaveTileItem = ({ data }) => {
         navigate('/accommodation', {state: {data}})
     }
 
+    const reviewValues = data.review.map(review => review.rating);
+    const total = reviewValues.reduce((accumulator, value) => accumulator + value, 0);
+    console.log(total, reviewValues.length)
+
     return (
         <Container className='border rounded mb-3'>
             <Row>
@@ -53,7 +58,7 @@ const FaveTileItem = ({ data }) => {
                 </Col>
                 <Col className='border'>
                     <h2 className='my-4'>{data.name}</h2>
-                    <p>{data.rating} STARS</p>
+                    <AccomStarRating rate={Math.floor(total / reviewValues.length)} />
                 </Col>
                 <Col>
                     <Row className="bg-info">
