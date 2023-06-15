@@ -9,8 +9,14 @@ const SearchBar = ({ data }) => {
     const [show, setShow] = useState(false)
     const [currentPage, setCurrentPage] = useState(1)
     const [showNoresults, setShowNoresults] = useState(false)
+    const [alphaIndex, setAlphaIndex] = useState(0)
+    const [alphaBtnText, setAlphaBtnIndex] = useState("A-Z")
+    const [queryAlpha, setQueryAlpha] = useState('a-z')
+    const [priceIndex, setPriceIndex] = useState(0)
+    const [priceBtnText, setPriceBtnIndex] = useState("HIGHEST PRICE")
+    const [queryPrice, setQueryPrice] = useState('price-high')
     const itemsPerPage = 3
-
+    
     useEffect(() => {
         let timeout
 
@@ -79,6 +85,50 @@ const SearchBar = ({ data }) => {
 
     }
 
+    const handleSortAlpha = () => {
+        if (alphaIndex === 1) {
+            setQueryAlpha('a-z')
+            setAlphaIndex(0)
+            setAlphaBtnIndex('A-Z')
+        } else {
+            setQueryAlpha('z-a')
+            setAlphaIndex(1)
+            setAlphaBtnIndex('Z-A')
+        }
+        fetch(`/api/v1/accommodation/all?limit=100&sort=${queryAlpha}`)
+      .then((res) => res.json())
+      .then((data) => {
+        console.log('SORT', data);
+        setFilteredData(data.accommodations)
+        setCurrentPage(1);
+      })
+      .catch((error) => {
+        console.error('Error sorting accommodations:', error);
+      });
+    }
+
+    const handleSortPrice = () => {
+        if (priceIndex === 1) {
+            setQueryPrice('price-low')
+            setPriceIndex(0)
+            setPriceBtnIndex('HIGHEST PRICE')
+        } else {
+            setQueryPrice('price-high')
+            setPriceIndex(1)
+            setPriceBtnIndex('LOWEST PRICE')
+        }
+        fetch(`/api/v1/accommodation/all?limit=100&sort=${queryPrice}`)
+      .then((res) => res.json())
+      .then((data) => {
+        console.log('SORT', data);
+        setFilteredData(data.accommodations)
+        setCurrentPage(1);
+      })
+      .catch((error) => {
+        console.error('Error sorting accommodations:', error);
+      });
+    }
+
     const handleSuggestion = () => {
         const newFilter = data.filter((value) => {
                 return value.name.toLowerCase().startsWith(wordEntered.toLowerCase())
@@ -135,6 +185,8 @@ const SearchBar = ({ data }) => {
                     <Container className='rounded-3' style={{ background: "#ffffff", marginTop: "5rem"}}>
                         <Row className='d-flex align-items-center ms-auto'>
                             <Col><h4>ACCOMMODATIONS: <span>{ filteredData.length }</span></h4></Col>
+                            <Col className='d-flex justify-content-end'><Button variant='secondary' onClick={handleSortAlpha}>{alphaBtnText}</Button></Col>
+                            <Col className='d-flex justify-content-end'><Button variant='secondary' onClick={handleSortPrice}>{priceBtnText}</Button></Col>
                             <Col className='d-flex justify-content-end'><Button variant='secondary'>Generate PDF</Button></Col>
                         </Row>
                         
