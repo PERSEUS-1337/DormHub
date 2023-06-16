@@ -38,9 +38,6 @@ const ReviewTileItem = ({ data }) => {
     return (
         // <Container className='d-flex justify-content-center'>
         <div className='border rounded border-1 border-primary reviewTile'>
-            {/* <Row key={data._id}> */}
-            {/* <Col style={{ background: "white" }} className='border rounded border-1 border-primary d-flex flex-column justify-content-start'> */}
-
             <Row>
                 <Col lg={4}>
                     <p className='text-center fw-bold mt-4 reviewTopName'>{data.fname}</p>
