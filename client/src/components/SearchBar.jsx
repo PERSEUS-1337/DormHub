@@ -51,14 +51,14 @@ const SearchBar = ({ data }) => {
         }
       };
 
-    useEffect(() => {
-        let timeout
-        if (showNoresults) {
-            timeout = setTimeout(() => {
-                setShowNoresults(false)
-            }, 5000)
-        }
-    })
+    // useEffect(() => {
+    //     let timeout
+    //     if (showNoresults) {
+    //         timeout = setTimeout(() => {
+    //             setShowNoresults(false)
+    //         }, 5000)
+    //     }
+    // })
 
     useEffect(()=>{
         if (queryType) {
@@ -209,7 +209,7 @@ const SearchBar = ({ data }) => {
                 })
                 .catch((error) => {
                     console.error('Error sorting accommodations:', error);
-                    alert("Error sorting accommodations")
+                    // alert("Error sorting accommodations")
                     return;
                 });
         }
@@ -257,8 +257,8 @@ const SearchBar = ({ data }) => {
                     </Col>
         
                 </Row>
-                { filteredData.length == 0 && showNoresults && <h3 className='d-flex justify-content-center mt-5'>No Results Found.</h3> }
-                {filteredData.length != 0 && (
+                {/* { filteredData.length == 0 && showNoresults && <h3 className='d-flex justify-content-center mt-5'>No Results Found.</h3> } */}
+                
                     <Container className='rounded-3' style={{ background: "#ffffff", marginTop: "5rem"}}>
                         <Row className='d-flex align-items-center ms-auto'>
                             <Col><h4>ACCOMMODATIONS: <span>{ filteredData.length }</span></h4></Col>
@@ -284,13 +284,22 @@ const SearchBar = ({ data }) => {
                         </Row>
                         
                         <br />
-                        {currentItems.map((value, key) => {
-                            return (
-                                <LodgingTileItem key={key} data={value} />
-                           
+                        {
+                            filteredData.length == 0 && showNoresults ? 
+                            
+                           (<h3 className='d-flex justify-content-center pb-5'>No Results Found.</h3>)
+                            : 
+                                
+                            ( currentItems.map((value, key) => {
+                                return (
+                                    <LodgingTileItem key={key} data={value} />
+                                
+                                )
+                                })
                             )
-                        })
+                            
                         }
+                        
                         <Pagination className='d-flex justify-content-center'>
                             <Pagination.First onClick={() => setCurrentPage(1)} disabled={currentPage === 1} />
                             <Pagination.Prev onClick={handlePreviousPage} disabled={currentPage === 1} />
@@ -299,7 +308,7 @@ const SearchBar = ({ data }) => {
                             <Pagination.Last onClick={() => setCurrentPage(totalPages)} disabled={currentPage === totalPages} />
                         </Pagination>
                     </Container>
-                )}
+                
                 
             </Container>
         )
