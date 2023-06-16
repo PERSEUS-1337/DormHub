@@ -18,6 +18,7 @@ const SearchBar = ({ data }) => {
     const [selectedType, setSelectedType] = useState('Type');
     const [queryType, setQueryType] = useState(null);
     const itemsPerPage = 3    
+    const maxVisiblePages = 5
     const handleTypeSelection = (type) => {
         setSelectedType(type);
         switch (type) {
@@ -100,6 +101,30 @@ const SearchBar = ({ data }) => {
         if (currentPage < totalPages) {
             setCurrentPage(currentPage + 1)
         }
+    }
+
+    const renderPageNumbers = () => {
+        const pageNumbers = []
+        let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2))
+        let endPage = Math.min(totalPages, startPage + maxVisiblePages -1)
+
+        if (endPage - startPage < maxVisiblePages -1){
+            startPage = Math.max(1, endPage - maxVisiblePages + 1)
+        }
+
+        for (let i = startPage; i <= endPage; i++){
+            pageNumbers.push(
+                <Pagination.Item
+                    key={i}
+                    active={i === currentPage}
+                    onClick={() => handlePageChange(i)}
+                >
+                    {i}
+                </Pagination.Item>
+            )
+        }
+
+        return pageNumbers;
     }
 
     const handleSearch = () => {
@@ -261,23 +286,7 @@ const SearchBar = ({ data }) => {
                         <Pagination className='d-flex justify-content-center'>
                             <Pagination.First onClick={() => setCurrentPage(1)} disabled={currentPage === 1} />
                             <Pagination.Prev onClick={handlePreviousPage} disabled={currentPage === 1} />
-
-
-                           
-
-                            {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNumber) => (
-                                <Pagination.Item
-                                    key={pageNumber}
-                                    active={pageNumber === currentPage}
-                                    onClick={() => handlePageChange(pageNumber)}
-                                >
-                                    {pageNumber}
-                                </Pagination.Item>
-                            ))}
-
-                                
-                            
-                            
+                            {renderPageNumbers()}             
                             <Pagination.Next onClick={handleNextPage} disabled={currentPage === totalPages} />
                             <Pagination.Last onClick={() => setCurrentPage(totalPages)} disabled={currentPage === totalPages} />
                         </Pagination>
