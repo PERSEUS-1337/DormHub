@@ -30,6 +30,7 @@ const AddAccommodationPicButton = ({ accommodationId }) => {
         const data = await res.json();
         console.log(data);
         closeModal();
+        window.location.reload(); // Reload the page
       } else {
         const error = await res.json();
         console.error(error);
