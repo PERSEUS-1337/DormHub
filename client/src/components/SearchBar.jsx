@@ -16,7 +16,7 @@ const SearchBar = ({ data }) => {
     const [priceBtnText, setPriceBtnIndex] = useState("HIGHEST PRICE")
     const [queryPrice, setQueryPrice] = useState('price-high')
     const itemsPerPage = 3
-    
+
     useEffect(() => {
         let timeout
 
@@ -129,6 +129,10 @@ const SearchBar = ({ data }) => {
       });
     }
 
+    useEffect(() => {
+        handleViewAll();
+    },[])
+
     const handleSuggestion = () => {
         const newFilter = data.filter((value) => {
                 return value.name.toLowerCase().startsWith(wordEntered.toLowerCase())
@@ -150,6 +154,8 @@ const SearchBar = ({ data }) => {
                 </Alert>
             )
         }
+
+
         return (
             <Container className='mt-4'>
                 <Row>
