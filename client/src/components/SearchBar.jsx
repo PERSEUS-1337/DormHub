@@ -56,7 +56,7 @@ const SearchBar = ({ data }) => {
         if (showNoresults) {
             timeout = setTimeout(() => {
                 setShowNoresults(false)
-            }, 3000)
+            }, 5000)
         }
     })
 
@@ -194,7 +194,13 @@ const SearchBar = ({ data }) => {
     const handleSortType = () => {
         if (queryType) {
             fetch(`/api/v1/accommodation/all?limit=100&type=${queryType}`)
-                .then((res) => res.json())
+                .then((res) => {
+                    if(!res.ok){
+                        setFilteredData([]);
+                        setShowNoresults(true);
+                        throw new Error("Network response failed");
+                    }
+                    return res.json()})
                 .then((data) => {
                     console.log(queryType, data);
                     setFilteredData(data.accommodations)
