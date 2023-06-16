@@ -7,6 +7,7 @@ import { useReactToPrint } from 'react-to-print';
 const SearchBar = ({ data }) => {
     const [filteredData, setFilteredData] = useState([])
     const [showSuggestions, setShowSuggestions] = useState([])
+    const [showResults, setShowResults] = useState(false)
     const [wordEntered, setWordEntered] = useState("")
     const [show, setShow] = useState(false)
     const [currentPage, setCurrentPage] = useState(1)
@@ -81,15 +82,6 @@ const SearchBar = ({ data }) => {
             )
         })
 
-    useEffect(() => {
-        let timeout
-        if (showNoresults) {
-            timeout = setTimeout(() => {
-                setShowNoresults(false)
-            }, 3000)
-        }
-    })
-
     useEffect(()=>{
         if (queryType) {
           handleSortType();
@@ -107,8 +99,13 @@ const SearchBar = ({ data }) => {
     }
     
     const handleViewAll = () => {
+        setShowResults(true)
         setFilteredData(data)
         setCurrentPage(1)
+    }
+
+    const handleCloseResults = () => {
+        setShowResults(false)
     }
 
     const indexLastItem = currentPage * itemsPerPage
@@ -163,8 +160,10 @@ const SearchBar = ({ data }) => {
                 return value.name.toLowerCase().includes(wordEntered.toLowerCase())
         })
         if (wordEntered == "") {
+            setShowResults(true)
             setFilteredData([])
         } else {
+            setShowResults(true)
             setFilteredData(newFilter)
         }
         
@@ -225,7 +224,13 @@ const SearchBar = ({ data }) => {
         if (queryType) {
             
             fetch(`/api/v1/accommodation/all?limit=100&type=${queryType}`)
-                .then((res) => res.json())
+                .then((res) => {
+                    if(!res.ok){
+                        setFilteredData([]);
+                        setShowNoresults(true);
+                        throw new Error("Network response failed");
+                    }
+                    return res.json()})
                 .then((data) => {
                     console.log(queryType, data);
                     setFilteredData(data.accommodations)
@@ -233,7 +238,7 @@ const SearchBar = ({ data }) => {
                 })
                 .catch((error) => {
                     console.error('Error sorting accommodations:', error);
-                    alert("Error sorting accommodations")
+                    // alert("Error sorting accommodations")
                     return;
                 });
         }
@@ -273,7 +278,12 @@ const SearchBar = ({ data }) => {
                                     <Form.Control type="search" placeholder="Search for an accommodation..." onChange={(e) => { setWordEntered(e.target.value); if (e.target.value == "") setFilteredData([]); }} onKeyUp={handleSuggestion} />
                                 </Col>
                                 <Col md="auto"><Button className="rounded-1 mx-2" variant="secondary" onClick={handleSearch}>Search</Button></Col>
-                                <Col xs lg={2}><Button className="rounded-1 mx-2 text-nowrap" variant="secondary" onClick={handleViewAll}>View All</Button></Col>
+                                <Col xs lg={2}>
+                                    {showResults ? 
+                                    <Button className="rounded-1 mx-2 text-nowrap" variant="secondary" onClick={handleCloseResults}>Close</Button>
+                                    :
+                                    <Button className="rounded-1 mx-2 text-nowrap" variant="secondary" onClick={handleViewAll}>View All</Button>}
+                                </Col>
                             </Form.Group>
                             
                         </Form>
@@ -281,9 +291,10 @@ const SearchBar = ({ data }) => {
                     </Col>
         
                 </Row>
-                { filteredData.length == 0 && showNoresults && <h3 className='d-flex justify-content-center mt-5'>No Results Found.</h3> }
-                {filteredData.length != 0 && (
-                    <Container className='rounded-3' style={{ background: "#ffffff", marginTop: "5rem"}}>
+                {/* { filteredData.length == 0 && showNoresults && <h3 className='d-flex justify-content-center mt-5'>No Results Found.</h3> } */}
+                {
+                    showResults && (
+                        <Container className='rounded-3' style={{ background: "#ffffff", marginTop: "5rem"}}>
                         <Row className='d-flex align-items-center ms-auto'>
                             <Col><h4>ACCOMMODATIONS: <span>{ filteredData.length }</span></h4></Col>
                             <Col className='d-flex justify-content-end'><Button variant='secondary' onClick={handleSortAlpha}>{alphaBtnText}</Button></Col>
@@ -308,6 +319,22 @@ const SearchBar = ({ data }) => {
                         </Row>
                         
                         <br />
+                        {
+                            filteredData.length == 0 && showNoresults ? 
+                            
+                           (<h3 className='d-flex justify-content-center pb-5'>No Results Found.</h3>)
+                            : 
+                                
+                            ( currentItems.map((value, key) => {
+                                return (
+                                    <LodgingTileItem key={key} data={value} />
+                                
+                                )
+                                })
+                            )
+                            
+                        }
+                        
                         <GeneratePDF/>
                         <Pagination className='d-flex justify-content-center'>
                             <Pagination.First onClick={() => setCurrentPage(1)} disabled={currentPage === 1} />
@@ -317,7 +344,10 @@ const SearchBar = ({ data }) => {
                             <Pagination.Last onClick={() => setCurrentPage(totalPages)} disabled={currentPage === totalPages} />
                         </Pagination>
                     </Container>
-                )}
+                    )
+                }
+                    
+                
                 
             </Container>
         )

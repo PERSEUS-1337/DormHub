@@ -656,9 +656,6 @@ function Accommodation(props) {
             })
     }, []);
 
-    // console.log(accomData);
-    // console.log(location.state.data.pics);
-
     return (<>
         <Slideshow pics={location.state.data.pics} />
         <Details accomData={accomData} />

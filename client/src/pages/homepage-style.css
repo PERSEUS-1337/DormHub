@@ -3,9 +3,22 @@
     background-position: center top;
     background-size: cover;
     background-repeat: no-repeat;
-    height: 26vh;
+    height: 20vh;
     background-attachment: scroll;
     padding-top: 50px;
+}
+
+.art-container {
+    background-image: url("homepageart.png");
+    background-position: center center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: scroll;
+    padding-top: 900px;
+}
+
+.spacer{
+    padding-top: 100px;
 }
 
 #searchbtn {
@@ -33,6 +46,47 @@
     padding-left:0%;
 }
 
-.font-italic{
-    font-style: italic !important;
-}
+.card {
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+  
+  .card:hover {
+    transform: scale(1.05);
+  }
+  
+  .card-img-top {
+    height: 200px;
+    object-fit: cover;
+  }
+  
+  .card-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+  }
+  
+  .card-text {
+    font-size: 0.9rem;
+    color: #888;
+  }
+  
+  .card-body {
+    padding: 1.5rem;
+  }
+  
+  .bg-info {
+    background-color: #17a2b8;
+    color: #fff;
+  }
+  
+  .bg-info:hover {
+    background-color: #138496;
+  }
+  
+  @media (max-width: 576px) {
+    .card-img-top {
+      height: 150px;
+    }
+  }

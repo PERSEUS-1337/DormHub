@@ -84,11 +84,6 @@ const PopOver = ({ data }) => {
 
 
 const NavBar = () => {
-    // const [isVisible, setIsVisible] = useState(false)
-    // const toggleVisible = () => {
-    //     setIsVisible(!isVisible)
-    // }
-    // let url = "/login"
     const id = localStorage.getItem("_id");
     const [userData, setUserData] = useState({});
     const [isLoading, setIsLoading] = useState(true);
@@ -119,10 +114,6 @@ const NavBar = () => {
     }, []); 
     console.log("USERDATA", userData?.user?.fname)
 
-    // if (userData && userData) {
-    //     url = "/user"
-    // }
-    
     const nav_items = [
         {
             id: 2,
@@ -150,18 +141,6 @@ const NavBar = () => {
                 <Navbar.Collapse id="basic-navbar-nav">
                 <Nav className="ms-auto d-flex align-items-center">
 
-                        
-                    {/* <Nav.Link style={{color: "white"}} href={ userData && userData ? "/user" : "/login" }>
-                        <label className='d-flex align-items-center' style={{cursor: "pointer"}}>
-                            <FaHeart className='mx-2'
-                            color='#ffffff'
-                            size={20}
-                            />
-                            <p className='mx-2'>Favorites</p>   
-                        </label>
-                     </Nav.Link> */}
-                    
-                    {/* {navList} */}
                     <PopOver data={ userData?.user?.fname } />   
                 </Nav>
                 </Navbar.Collapse>
