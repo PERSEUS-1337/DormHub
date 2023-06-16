@@ -3,6 +3,7 @@ import { Container, Col, Row, Image, Button, Modal, Form, Spinner } from "react-
 import FaveTileItem from "../components/FaveTileItem";
 import LodgingTileItem from "../components/LodgingTileItem";
 import EditUserProfile from "../components/EditUser";
+import { useNavigate } from "react-router-dom";
 import AddAccommodationPicButton from "../components/addAccomodationPicButton";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -429,16 +430,25 @@ const CheckIfOwner = () => {
 };
 
 const UserPage = () => {
+  const navigate = useNavigate();
   const [userData, setUserData] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [hasPfp, setHasPfp] = useState(true);
   const [pfp, setPfp] = useState(null);
+  const [authorizationError, setAuthorizationError] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
-      // const type = localStorage.getItem("userType");
       const uid = localStorage.getItem("_id");
       const jwt = localStorage.getItem("token");
+
+      if (!jwt) {
+        setAuthorizationError(true); 
+        setTimeout(() => {
+          navigate("/login"); 
+        }, 3000);
+        return;
+      }
 
       try {
         const res = await fetch(`/api/v1/auth-required-func/${uid}`, {
@@ -449,9 +459,6 @@ const UserPage = () => {
         });
         const data = await res.json();
         setUserData(data);
-        // console.log(data);
-        // const userType = localStorage.getItem("userType");
-        // console.log(userType)
         setIsLoading(false);
       } catch (err) {
         console.error('User fetching error.', err);
@@ -465,7 +472,6 @@ const UserPage = () => {
           },
         });
         const data = await res.json();
-        // console.log(data.pfp);
         setPfp(data.pfp);
 
         if (data.error) {
@@ -475,8 +481,19 @@ const UserPage = () => {
         console.error('PFP fetching error.', err);
       }
     };
+
     fetchData();
   }, []);
+
+ 
+  if (authorizationError) {
+    return (
+      <Container className="d-flex flex-column align-items-center justify-content-center mt-5">
+        <h4 className="text-danger">Authorization Error</h4>
+        <h5>Redirecting to Login</h5>
+      </Container>
+    );
+  }
   return (
     <>
       <Container className="mt-5 mb-3 pb-4 d-flex flex-column align-items-left border-bottom">
