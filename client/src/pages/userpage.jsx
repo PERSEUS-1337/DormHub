@@ -206,7 +206,7 @@ const CheckIfOwner = () => {
   const [price, setPrice] = useState('');
   const [town, setTown] = useState([]);
   const [type, setAccommodationType] = useState([]);
-  const [amenity, setAccommodationAmenity] = useState([]);
+  const [amenity, setAccommodationAmenity] = useState("");
   const [accommData, setAccommData] = useState([]);
 
   const [loadingPostResult, setLoadingPostResult] = useState(false);
@@ -242,57 +242,62 @@ const CheckIfOwner = () => {
     setShowModal(false);
   };
   
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    setLoadingPostResult(true);
-  
-    const uId = localStorage.getItem('_id');
-    const jwt = localStorage.getItem('token');
-    const location = { vicinity, street, barangay, town };
-    const formData = {
-      uId,
-      name,
-      desc,
-      price,
-      location,
-      type,
-      amenity
-    };
-  
-    try {
-      const res = await fetch('/api/v1/auth-required-func/accommodation', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${jwt}`,
-        },
-        body: JSON.stringify(formData),
-      });
-    
-      const data = await res.json();
-    
-     
-      if (res.status === 201) { 
-        closeModal();
-        window.location.reload();
-      } else {
-        let errorMessage = 'Creation failed.';
-        if (data && data.error) {
-          errorMessage += ' ' + data.error;
-        }
-        console.error(data);
-        toast.error(errorMessage);
-      }
-    
-      setLoadingPostResult(false);
-    } catch (err) {
-      console.error('Accommodation creation error.', err);
-      toast.error('An error occurred while creating the accommodation.');
-    }
-    
+  setLoadingPostResult(true);
+
+  const uId = localStorage.getItem('_id');
+  const jwt = localStorage.getItem('token');
+  const location = { vicinity, street, barangay, town };
+  const formData = {
+    uId,
+    name,
+    desc,
+    price,
+    location,
+    type,
+    amenity
   };
- 
+
+  try {
+    const res = await fetch('/api/v1/auth-required-func/accommodation', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${jwt}`,
+      },
+      body: JSON.stringify(formData),
+    });
+
+    const data = await res.json();
+
+    if (res.status === 201) {
+      closeModal();
+      window.location.reload();
+      toast.success(data.msg, {
+        autoClose: 3000,
+      });
+    } else {
+      let errorMessage = 'Creation failed.';
+      if (data && data.error) {
+        errorMessage += ' ' + data.error;
+      }
+      console.error(data);
+      toast.error(errorMessage, {
+        autoClose: 3000,
+      });
+    }
+
+    setLoadingPostResult(false);
+  } catch (err) {
+    console.error('Accommodation creation error.', err);
+    toast.error('An error occurred while creating the accommodation.', {
+      autoClose: 3000,
+    });
+  }
+};
+
   
   return (
     <>
