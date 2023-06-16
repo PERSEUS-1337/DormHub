@@ -82,15 +82,6 @@ const SearchBar = ({ data }) => {
             )
         })
 
-    useEffect(() => {
-        let timeout
-        if (showNoresults) {
-            timeout = setTimeout(() => {
-                setShowNoresults(false)
-            }, 3000)
-        }
-    })
-
     useEffect(()=>{
         if (queryType) {
           handleSortType();
