@@ -193,6 +193,7 @@ const SearchBar = ({ data }) => {
 
     const handleSortType = () => {
         if (queryType) {
+            
             fetch(`/api/v1/accommodation/all?limit=100&type=${queryType}`)
                 .then((res) => res.json())
                 .then((data) => {
@@ -202,6 +203,8 @@ const SearchBar = ({ data }) => {
                 })
                 .catch((error) => {
                     console.error('Error sorting accommodations:', error);
+                    alert("Error sorting accommodations")
+                    return;
                 });
         }
         
@@ -256,11 +259,10 @@ const SearchBar = ({ data }) => {
                             <Col className='d-flex justify-content-end'><Button variant='secondary' onClick={handleSortAlpha}>{alphaBtnText}</Button></Col>
                             <Col className='d-flex justify-content-end'><Button variant='secondary' onClick={handleSortPrice}>{priceBtnText}</Button></Col>
                             <Col className='d-flex justify-content-end'>
-                                <DropdownButton
-                                    title={selectedType}
-                                    variant="success"
-                                    id="dropdown-basic"
-                                >
+                                <Dropdown>
+                                <Dropdown.Toggle variant="secondary" id="dropdown-basic">
+                                    {selectedType}
+                                </Dropdown.Toggle>
                                     <Dropdown.Menu>
                                         <Dropdown.Item onClick={() => handleTypeSelection('Apartment')}>Apartment</Dropdown.Item>
                                         <Dropdown.Item onClick={() => handleTypeSelection('Condominium')}>Condominium</Dropdown.Item>
@@ -270,7 +272,7 @@ const SearchBar = ({ data }) => {
                                         <Dropdown.Item onClick={() => handleTypeSelection('Hostel')}>Hostel</Dropdown.Item>
                                         <Dropdown.Item onClick={() => handleTypeSelection('Bedspace')}>Bedspace</Dropdown.Item>
                                     </Dropdown.Menu>
-                                </DropdownButton>
+                                </Dropdown>
                             </Col>
                             <Col className='d-flex justify-content-end'><Button variant='secondary'>Generate PDF</Button></Col>
                         </Row>
