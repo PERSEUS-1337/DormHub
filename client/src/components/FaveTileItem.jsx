@@ -57,7 +57,7 @@ const FaveTileItem = ({ data }) => {
                     )}
                 </Col>
                 <Col className='border'>
-                    <h2 className='my-4'>{data.name}</h2>
+                    {data.archived ? (<h2 className='my-4'>{data.name} (archived by owner)</h2>) : (<h2 className='my-4'>{data.name}</h2>)}
                     <AccomStarRating rate={Math.floor(total / reviewValues.length)} />
                 </Col>
                 <Col>
@@ -73,7 +73,7 @@ const FaveTileItem = ({ data }) => {
                         }
                         <Col>
                             <div className="justify-content-end ms-auto">
-                                <Button variant="secondary" onClick={() => navigateToLodge(data)} className='mb-5'>Check</Button>
+                                {data.archived ? (<></>): (<Button variant="secondary" onClick={() => navigateToLodge(data)} className='mb-5'>Check</Button>)}
                             </div>
                         </Col>
                         <Col>

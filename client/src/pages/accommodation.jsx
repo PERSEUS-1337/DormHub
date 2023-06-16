@@ -545,7 +545,10 @@ const CheckIfLoggedIn = ({ accommodationId }) => {
 
         const uId = localStorage.getItem("_id");
         const jwt = localStorage.getItem("token");
-
+        if (rating === '' || detail === '') {
+            alert('Please complete the rating and details before submitting the form.');
+            return;
+        }
         const formData = { rating, detail };
 
         // const params = { id, uId };
@@ -559,9 +562,15 @@ const CheckIfLoggedIn = ({ accommodationId }) => {
                 },
                 body: JSON.stringify(formData),
             });
+            // console.log(data.msg);
+
+            if (!res.ok) {
+                throw new Error('Failed to submit the review.'); // Throw an error if the request was not successful
+              }
+          
             const data = await res.json();
             console.log(data);
-            // console.log(data.msg);
+          
 
             fetch(`/api/v1/accommodation/${accommodationId}`)
                 .then((res) => res.json())
@@ -592,7 +601,6 @@ const CheckIfLoggedIn = ({ accommodationId }) => {
                             </Col>
                             {/* <Col lg={4}></Col> */}
                         </Row>
-
                         <Form.Control as="textarea" className='reviewInput' rows={3} type="text" value={detail} onChange={(e) => setDetail(e.target.value)} />
                     </Form.Group>
                     <div className='text-center'>

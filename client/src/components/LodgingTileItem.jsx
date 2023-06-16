@@ -64,7 +64,8 @@ const LodgingTileItem = ({ data }) => {
                         </Col>
 
                         <div className="d-flex justify-content-center">
-                            <Button onClick={() => navigateToLodge(data)} className='mb-4'>View Details   <FaArrowRight /></Button>
+                            {data.archived ? (<></>) : (<Button onClick={() => navigateToLodge(data)} className='mb-4'>View Details   <FaArrowRight /></Button>)}
+                            
                         </div>
                     </Row>
                     
