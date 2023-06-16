@@ -4,6 +4,7 @@ import { Navbar, Nav, Container, OverlayTrigger, Popover, Row, Spinner, Modal } 
 import NavItem from './NavItem'
 import { FaHeart, FaSignInAlt, FaLaughWink, FaUser, FaSignOutAlt } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
+import DormHubLogo from './Logo';
 
 const handleLogout = () => {
     localStorage.clear();
@@ -108,7 +109,7 @@ const NavBar = () => {
             const data = await res.json();
             setUserData(data);
             setIsLoading(false);
-            console.log(data);
+            // console.log(data);
             } catch (err) {
             console.error('User fetching error.', err);
             }
@@ -141,7 +142,9 @@ const NavBar = () => {
     return (
         <Navbar bg="primary" expand="lg" className="fixed-navbar">
             <Container>
-                <Navbar.Brand style={{color:"white"}} href="/">DORMHUB</Navbar.Brand>
+                <Navbar.Brand href="/">
+                    <DormHubLogo />
+                </Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
                 <Nav className="ms-auto d-flex align-items-center">

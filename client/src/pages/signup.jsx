@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Form, Button, OverlayTrigger, Tooltip, Spinner } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import './style.css';
 
 const Signup = () => {
@@ -10,6 +12,7 @@ const Signup = () => {
   const [password, setPassword] = useState('');
   const [userType, setUserType] = useState('User');
   const [isVerifying, setIsVerifying] = useState(false);
+
   const navigateTo = useNavigate();
 
   const handleLoginClick = () => {
@@ -18,10 +21,11 @@ const Signup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+
     setIsVerifying(true);
 
     const formData = { fname, lname, email, password, userType };
-    console.log(formData);
 
     function login() {
   
@@ -50,7 +54,6 @@ const Signup = () => {
           }
         });
     }
-  
     try {
       const res = await fetch(`/api/v1/auth/register`, {
         method: 'POST',
@@ -62,25 +65,33 @@ const Signup = () => {
 
       if (res.ok) {
         console.log('Registration Successful');
-        console.log(fname, lname, email, password, userType);
         try {
           login();
         } catch (error) {
           console.error(error);
         }
+    
       } else {
-        console.error('Registration failed');
+        const errorData = await res.json();
+        let errorMessage = 'Creation failed.';
+        errorMessage += ' ' + errorData.err;
+        toast.error(errorMessage);
       }
+
       setIsVerifying(false);
     } catch (err) {
       console.error(err);
+      toast.error('An error occurred');
     }
   };
 
   return (
     <>
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
       <div className="signup-container">
-        <h2>Create an <span style={{ color: '#ffd041' }}>Account</span></h2>
+        <h2>
+          Create an <span style={{ color: '#ffd041' }}>Account</span>
+        </h2>
         <Form onSubmit={handleSubmit}>
           <Form.Group controlId="formFirstName">
             <Form.Label>First Name</Form.Label>
@@ -141,21 +152,25 @@ const Signup = () => {
           <br />
           <Button type="submit" variant="secondary" disabled={isVerifying}>
             CREATE ACCOUNT
-            </Button>
-            <div>
-              {
-                isVerifying ? (
-                  <Spinner animation="border" variant="secondary" role="status" size="sm">
-                    <span className="visually-hidden">Loading...</span>
-                  </Spinner>
-                ) : (
-                  <>
-                  </>
-                )
-              }
-            </div>
+          </Button>
+          <div>
+            {isVerifying ? (
+              <Spinner
+                animation="border"
+                variant="secondary"
+                role="status"
+                size="sm"
+              >
+                <span className="visually-hidden">Loading...</span>
+              </Spinner>
+            ) : (
+              <></>
+            )}
+          </div>
           <br />
-          <Button onClick={handleLoginClick} variant="light">GO TO LOGIN</Button>
+          <Button onClick={handleLoginClick} variant="light">
+            GO TO LOGIN
+          </Button>
         </Form>
       </div>
     </>

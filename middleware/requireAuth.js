@@ -10,12 +10,14 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
+const apiMessages = require('./apiMessages');
+
 const requireAuth = async (req, res, next) => {
 
     const {authorization} = req.headers;
  
     if (!authorization) {
-        return res.status(401).json({err: 'Unauthorized request! Log in first to continue'});
+        return res.status(401).json({error: apiMessages.UNAUTHORIZED_REQUEST});
     }
 
     const token = authorization.split(' ')[1];
@@ -28,7 +30,7 @@ const requireAuth = async (req, res, next) => {
         next();
     } catch (error) {
         
-        res.status(401).json({err: 'Authorization required!'});
+        res.status(401).json({error: apiMessages.UNAUTHORIZED_REQUEST});
     }
     
 }

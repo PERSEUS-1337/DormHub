@@ -24,7 +24,8 @@ const {
     deleteBookmark,
     getAccommodationOwner,
     uploadPfp,
-    getPfp
+    getPfp,
+    resetPassword
 } = require('../controllers/userController');
 
 const {
@@ -36,7 +37,7 @@ const {
     postAccommodationReview,
     uploadPics,
     getPics,
-    deleteAccommodationReviews
+    deleteAllReviews
 } = require('../controllers/accommodationController');
 
 router.use(requireAuth);
@@ -57,6 +58,8 @@ router.get('/accommodation', getAccommodation);
 router.get('/:uId', getUserData);
 // UPDATE user data
 router.patch('/:uId', editUserData); 
+// RESET user password
+router.patch('/password/:uId', resetPassword);
 // GET bookmarks
 router.get('/bookmark/:uId', getBookmark);
 // ADD a bookmark
@@ -74,6 +77,9 @@ router.get('/pfp/:uId', getPfp);
 // GET owner accommodation
 router.get('/accommodations/:uId', getAccommodationOwner);
 
+// ADMIN ONLY
+router.delete('/accommodation/review/:id', deleteAllReviews)
+
 // ACCOMMODATION ROUTES
 // POST a new ACCOMMODATION
 router.post('/accommodation', createAccommodation);
@@ -88,8 +94,6 @@ router.post('/accommodation/upload/:id', uploadPics)
 // GET pics
 router.get('/accommodation/pics/:id', getPics)
 
-// ADMIN ONLY
-router.delete('/accommodation/review/:id', deleteAccommodationReviews)
 
 
 module.exports = router;

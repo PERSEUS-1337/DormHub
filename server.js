@@ -9,6 +9,8 @@ You can check what values or JSON responses it returns so you know where to star
 */
 require('dotenv').config();
 
+const apiMessages = require('./middleware/apiMessages');
+
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
@@ -19,7 +21,6 @@ const multer = require('multer');
 // Import Routes
 const accommodationRouter = require('./routes/accommodationRouter');
 const authRouter = require('./routes/authRouter');
-
 const authRequiredFunc = require('./routes/authRequiredRoutes');
 
 // Express application
@@ -43,7 +44,7 @@ app.use((req, res, next) => {
   console.info(`[${new Date().toLocaleString()}] [${req.method}] [${req.originalUrl}] [${req.ip}]`);
   next();
 });
-
+//
 // Routes
 app.get('/api/v1', (req, res) => {
   res.json({ msg: 'This is the API route' });
@@ -57,7 +58,7 @@ app.get('*', (req, res) => {
 });
 
 app.use((req, res, next) => {
-  res.status(404).json({ error: 'Route not found' });
+  res.status(404).json({ error: apiMessages.ROUTE_NOT_FOUND });
 });
 
 // Connect to the database and listen for requests
