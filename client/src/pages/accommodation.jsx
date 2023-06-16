@@ -1,5 +1,5 @@
 import './accom-style.css';
-import { Button, Row, Col, Carousel, Container, Spinner, Modal, Form } from 'react-bootstrap';
+import { Button, Row, Col, Carousel, Container, Spinner, Modal, Form, InputGroup } from 'react-bootstrap';
 import React, { useState, useEffect } from "react";
 import { ReadStarRating, StarRating, AccomStarRating } from '../components/StarRating';
 import { useLocation } from 'react-router-dom';
@@ -208,8 +208,6 @@ function ModalEditDescription(props) {
     var type = props.data.data.accomData.type;
     var amenity = props.data.data.accomData.amenity;
 
-    // var isValidated = true;
-
     const handleSubmit = () => {
 
         const uId = localStorage.getItem("_id");
@@ -217,7 +215,8 @@ function ModalEditDescription(props) {
 
         name = document.getElementById("name").value;
         desc = document.getElementById("desc").value;
-        price = document.getElementById("price1").value;
+        price = [document.getElementById("lowest-price").value,
+        document.getElementById("highest-price").value]
         location = {
             "vicinity": `${document.getElementById("vicinity").value}`,
             "street": `${document.getElementById("street").value}`,
@@ -226,74 +225,33 @@ function ModalEditDescription(props) {
         }
         type = document.getElementById("type").value;
         amenity = document.getElementById("amenity1").value;
-
-        console.log(name);
-        console.log(desc);
-        console.log(price);
-        console.log(location);
-        console.log(type);
-        console.log(amenity);
+        amenity = amenity.split(",");
 
         var update = { name, price, desc, location, type, amenity };
 
-        // console.log(desc);
-        // console.log(JSON.stringify(update));
-
-
-        try {
-            const res = fetch(`/api/v1/auth-required-func/accommodation/${props.data.data.accomData._id}/${uId}`, {
-                method: "PATCH",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${jwt}`
-                },
-                body: JSON.stringify(update),
-            });
-            // const data = res.json();
-            // console.log(data);
-            // if (res.status === 200) {
-            // console.log(data.msg);
-            // window.location.reload();
-
-            // }
-        } catch (err) {
-            console.error("Review POST error.", err);
+        if (name != "" && price[0] != "" && price[1] != "" && desc != "" && location != "" && type != "" && amenity != ""
+        && name != undefined && price[0] != undefined && price[1] != undefined && desc != undefined && location != undefined && type != undefined 
+        && amenity != undefined && name != null && price[0] != null && price[1] != null && desc != null && location != null && type != null 
+        && amenity != null) {
+            try {
+                const res = fetch(`/api/v1/auth-required-func/accommodation/${props.data.data.accomData._id}/${uId}`, {
+                    method: "PATCH",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${jwt}`
+                    },
+                    body: JSON.stringify(update),
+                })
+                props.onHide();
+                window.location.reload();
+            } catch (err) {
+                alert("Update Accommodation Error: ", err);
+            }
+        }else{
+            alert("All fields must have values!");
         }
+
     };
-
-    // const validateForm = () => {
-    //     var isValidated = true;
-
-    //     name = document.getElementById("name").value;
-    //     desc = document.getElementById("desc").value;
-    //     price = document.getElementById("price1").value;
-    //     location = {
-    //         "vicinity": `${document.getElementById("vicinity").value}`,
-    //         "street": `${document.getElementById("street").value}`,
-    //         "barangay": `${document.getElementById("barangay").value}`,
-    //         "town": `${document.getElementById("town").value}`,
-    //     }
-    //     type = document.getElementById("type").value;
-    //     amenity = document.getElementById("amenity1").value;
-
-    //     var update = { name, desc, price, location, type, amenity };
-
-    //     for (var item in update) {
-    //         if (item = '') {
-    //             isValidated = false;
-    //             break;
-    //         }
-    //     }
-
-    //     return isValidated;
-    // }
-
-    function update() {
-        handleSubmit();
-        props.onHide();
-        window.location.reload();
-    }
-
 
     return (
         <Modal
@@ -304,7 +262,7 @@ function ModalEditDescription(props) {
         >
             <Modal.Header closeButton>
                 <Modal.Title id="contained-modal-title-vcenter">
-                    <h4 className='modalDescTitle'>Edit Accommodation Description</h4>
+                    <h4 className='modalDescTitle'>Update Accommodation Description</h4>
                 </Modal.Title>
             </Modal.Header>
             <Modal.Body>
@@ -332,15 +290,35 @@ function ModalEditDescription(props) {
                     </Form.Group>
 
                     <Form.Group>
-                        <Form.Label>Price <span className="text-muted">/ Month </span>
-                            (eg. 4500 or 3920 - 5450)</Form.Label>
-                        <Form.Control
-                            type="number"
-                            placeholder="Enter price"
-                            // value={price}
-                            defaultValue={price}
-                            id="price1"
-                        />
+                        <Form.Label>Price <span className="text-muted">/ Month </span></Form.Label>
+
+                        <Row>
+                            <Col>
+                                <InputGroup>
+                                    <InputGroup.Text id="price-low">Lowest Price</InputGroup.Text>
+                                    <Form.Control
+                                        type='number'
+                                        placeholder="Enter Lowest Price"
+                                        aria-describedby="price-low"
+                                        id="lowest-price"
+                                        defaultValue={price[0]}
+                                    />
+                                </InputGroup>
+                            </Col>
+                            <Col>
+                                <InputGroup>
+                                    <InputGroup.Text id="price-high">Highest Price</InputGroup.Text>
+                                    <Form.Control
+                                        type='number'
+                                        placeholder="Enter Highest Price"
+                                        aria-describedby="price-high"
+                                        id="highest-price"
+                                        defaultValue={price.length > 0 ? price[1] : null}
+                                    />
+                                </InputGroup>
+                            </Col>
+                        </Row>
+
                     </Form.Group>
 
                     <Form.Group>
@@ -403,11 +381,15 @@ function ModalEditDescription(props) {
 
 
                     <Form.Group>
-                        <Form.Label>Amenity (eg. "Kitchen, Parking Lot, Wifi")</Form.Label>
+                        <Form.Label>Amenity (Separated by Comma e.g. "Kitchen,Parking Lot,Wifi")</Form.Label>
                         <Form.Control
                             type="text"
                             placeholder="Enter amenity"
-                            defaultValue={amenity}
+                            defaultValue={
+                                amenity.map((item) => {
+                                    return item;
+                                })
+                            }
                             id='amenity1'
                         />
                     </Form.Group>
@@ -415,14 +397,7 @@ function ModalEditDescription(props) {
             </Modal.Body>
             <Modal.Footer>
                 <Button onClick={props.onHide} className='btn btn-danger'>Cancel</Button>
-                {/* {
-                    validateForm() ?
-                        <Button onClick={() => update()} className='btn btn-success text-white'>Update</Button>
-                        :
-                        <Button onClick={() => update()} className='btn btn-success text-white' disabled>Update</Button>
-
-                } */}
-                <Button onClick={() => update()} className='btn btn-success text-white'>Update</Button>
+                <Button onClick={() => handleSubmit()} className='btn btn-success text-white'>Update</Button>
 
 
             </Modal.Footer>
@@ -468,7 +443,7 @@ const Details = (data) => {
 
     return (
         <Container className="desc_accom border-bottom pb-4">
-            <h3 className='accomTitle'>{data.accomData.name}  <span className='badge bg-light'> {data.accomData.type}</span></h3>
+            <h3 className='accomTitle'>{data.accomData.name}  <span className='badge bg-light title-badge'> {data.accomData.type}</span></h3>
             <Row className="accomRating">
                 <Col className='' lg={1}>
                     <h5 className='ratingTitle'>Rating: </h5>
@@ -486,7 +461,13 @@ const Details = (data) => {
                 <Col sm={11}>
                     <p>
                         {data.accomData.amenity.map((amenity) => {
-                            return amenity + ", ";
+                            if (amenity == data.accomData.amenity[data.accomData.amenity.length - 1]
+                                && amenity.length > 1) {
+                                return "and " + amenity;
+                            }
+                            else {
+                                return amenity + ", ";
+                            }
                         })}
                     </p>
                 </Col>
@@ -511,11 +492,11 @@ const Details = (data) => {
                     {
                         data.accomData.price.length === 1 ?
                             <p >Php {data.accomData.price[0]} per month</p>
-                        :
-                        data.accomData.price[0] > data.accomData.price[1] ?
-                            <p >Php {data.accomData.price[1]} - Php {data.accomData.price[0]} per month</p>
-                        :
-                            <p >Php {data.accomData.price[0]} - Php {data.accomData.price[1]} per month</p>
+                            :
+                            data.accomData.price[0] > data.accomData.price[1] ?
+                                <p >Php {data.accomData.price[1]} - Php {data.accomData.price[0]} per month</p>
+                                :
+                                <p >Php {data.accomData.price[0]} - Php {data.accomData.price[1]} per month</p>
                     }
                 </Col>
             </Row>

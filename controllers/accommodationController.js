@@ -197,9 +197,9 @@ const updateAccommodation = async (req, res) => {
 
         if (amenity.length==0 || type.length==0 || price.length==0) throw {code:400, msg: api.EMPTY_ARRAY};
 
-        // amenity.forEach((element) => {
-        //     if (element.trim() == "") throw {code: 400, msg: api.EMPTY_FIELD};
-        // });
+        amenity.forEach((element) => {
+            if (element.trim() == "") throw {code: 400, msg: api.EMPTY_FIELD};
+        });
 
         // type.forEach((element) => {
         //     if (element.trim() == "") throw {code: 400, msg: api.EMPTY_FIELD};
