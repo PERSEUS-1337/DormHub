@@ -46,8 +46,9 @@ const getAccommodation = async(req, res) => {
         let accommodation = Accommodation.find(queryObject)
 
         // Sorting of accommodations
-        if (sort === 'a-z') accommodation = accommodation.sort('name');
-        if (sort === 'z-a') accommodation = accommodation.sort('-name');
+        console.log(typeof(accommodation));
+        if (sort === 'a-z') accommodation = accommodation.collation({locale: 'en'}).sort('name');
+        if (sort === 'z-a') accommodation = accommodation.collation({locale: 'en'}).sort('-name');
         if (sort === 'price-high') accommodation = accommodation.sort('price');
         if (sort === 'price-low') accommodation = accommodation.sort('-price');
 
@@ -185,7 +186,7 @@ const updateAccommodation = async (req, res) => {
 
         const nameExist = await Accommodation.findOne({name: name});
         
-        // if (nameExist) throw {code: 400, msg: api.ACCOMMODATION_ALREADY_EXISTS};
+        if (nameExist && nameExist._id != id) throw {code: 400, msg: api.ACCOMMODATION_ALREADY_EXISTS};
 
         if (amenity.length==0 || type.length==0 || price.length==0) throw {code:400, msg: api.EMPTY_ARRAY};
 
