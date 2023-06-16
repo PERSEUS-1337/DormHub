@@ -72,6 +72,7 @@ const ReviewList = ({ data }) => {
     const [reviewData, setreviewData] = useState(data.review);
     const [currentPage, setCurrentPage] = useState(1)
     const itemsPerPage = 6
+    const maxVisiblePages = 5
 
 
     const ReviewList = reviewData && reviewData.map(data => <ReviewTileItem key={data} data={data} />)
@@ -97,37 +98,32 @@ const ReviewList = ({ data }) => {
         }
     }
 
-    // TODO: Add function to pagination
-    // let active = 1;
-    // let max = 1;
-    // let items = [];
-    // for (let number = 1; number <= max; number++) {
-    //     items.push(
-    //         <Pagination.Item key={number} active={number === active}>
-    //             {number}
-    //         </Pagination.Item>,
-    //     );
-    // }
+    const renderPageNumbers = () => {
+        const pageNumbers = []
+        let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2))
+        let endPage = Math.min(totalPages, startPage + maxVisiblePages -1)
+
+        if (endPage - startPage < maxVisiblePages -1){
+            startPage = Math.max(1, endPage - maxVisiblePages + 1)
+        }
+
+        for (let i = startPage; i <= endPage; i++){
+            pageNumbers.push(
+                <Pagination.Item
+                    key={i}
+                    active={i === currentPage}
+                    onClick={() => handlePageChange(i)}
+                >
+                    {i}
+                </Pagination.Item>
+            )
+        }
+
+        return pageNumbers;
+    }
 
     return (
         <>
-            {/* <span className='ms-5'>Review</span> */}
-            {/* <Container className='d-flex flex-column align-items-center m-auto mt-4 pb-2'>
-                <Row>{ReviewList}</Row>
-                <Row className='mt-3'><Pagination>{items}</Pagination></Row>
-            </Container> */}
-
-
-            {/* <Container className='d-flex flex-column align-items-center m-auto mt-4 pb-2'> */}
-
-            {/* </Container> */}
-
-            {/* <Container className='d-flex flex-column align-items-center m-auto mt-4 pb-2'>
-                <Row>{ReviewList}</Row>
-            </Container> */}
-
-            {/* <Row className='mt-3'><Pagination>{items}</Pagination></Row> */}
-
 
             <Row>
                 {
@@ -150,15 +146,7 @@ const ReviewList = ({ data }) => {
                     <Pagination.First onClick={() => setCurrentPage(1)} disabled={currentPage === 1} />
                     <Pagination.Prev onClick={handlePreviousPage} disabled={currentPage === 1} />
 
-                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNumber) => (
-                        <Pagination.Item
-                            key={pageNumber}
-                            active={pageNumber === currentPage}
-                            onClick={() => handlePageChange(pageNumber)}
-                        >
-                            {pageNumber}
-                        </Pagination.Item>
-                    ))}
+                    {renderPageNumbers()}
 
                     <Pagination.Next onClick={handleNextPage} disabled={currentPage === totalPages} />
                     <Pagination.Last onClick={() => setCurrentPage(totalPages)} disabled={currentPage === totalPages} />
