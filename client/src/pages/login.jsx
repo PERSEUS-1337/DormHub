@@ -1,14 +1,15 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, Container, Form, InputGroup } from "react-bootstrap";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import "./style.css";
 
 const Login = () => {
-
   const [form, setForm] = useState({});
   const [errors, setErrors] = useState({});
   const [authentication, setAuthenticated] = useState(false);
-  // const [userType, setUserType] = useState("user");
+
   const setField = (field, value) => {
     setForm({
       ...form,
@@ -27,67 +28,15 @@ const Login = () => {
   const handleSignupClick = () => {
     navigateTo("/signup");
   };
+
   useEffect(() => {
     if (authentication) {
       window.location.href = "/";
     }
   }, [authentication]);
 
-  // function login(e) {
-  //   e.preventDefault();
-  
-  //   console.log("form submitted");
-  //   console.log(form);
-  
-  //   const credentials = {
-  //     email: form.email,
-  //     password: form.password,
-  //   };
-  
-  //   const ownerLoginPromise = fetch(`/api/v1/auth/login/owner`, {
-
-  //   fetch(`/api/v1/auth/login`, {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify(credentials),
-  //   });
-  
-  //   const userLoginPromise = fetch(`/api/v1/auth/login/user`, {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify(credentials),
-  //   });
-  
-  //   Promise.all([ownerLoginPromise, userLoginPromise])
-  //     .then((responses) => Promise.all(responses.map((response) => response.json())))
-  //     .then((bodies) => {
-  //       const ownerResponse = bodies[0];
-  //       const userResponse = bodies[1];
-  
-  //       if (ownerResponse.token) {
-  //         localStorage.setItem("token", ownerResponse.token);
-  //         localStorage.setItem("userType", "owner");
-  //         console.log("owner");
-  //         localStorage.setItem("_id", ownerResponse._id);
-  //         setAuthenticated(true);
-  //       } else if (userResponse.token) {
-  //         localStorage.setItem("token", userResponse.token);
-  //         localStorage.setItem("userType", "user");
-  //         console.log("user");
-  //         localStorage.setItem("_id", userResponse._id);
-  //         setAuthenticated(true);
-  //       } else {
-  //         alert("Failed to log in");
-  //       }
-  //     });
-  // }
-  function login(e) {
+  const login = async (e) => {
     e.preventDefault();
-
     console.log("form submitted");
     console.log(form);
 
@@ -96,27 +45,44 @@ const Login = () => {
       password: form.password,
     };
 
-    fetch(`/api/v1/auth/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(credentials),
-    })
-      .then((response) => response.json())
-      .then((body) => {
-        console.log(body);
+    try {
+      const response = await fetch(`/api/v1/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(credentials),
+      });
+
+      if (response.ok) {
+        const body = await response.json();
 
         if (body.token) {
           localStorage.setItem("token", body.token);
-
           localStorage.setItem("_id", body._id);
           setAuthenticated(true);
+          toast.success("Login successful", {
+            autoClose: 3000, 
+          });
+          window.location.href = "/";
         } else {
           alert("Failed to log in");
         }
+      } else {
+        const errorData = await response.json();
+        let errorMessage = "Login failed.";
+        errorMessage += " " + errorData.err;
+        toast.error(errorMessage, {
+          autoClose: 3000, 
+        });
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("An error occurred during login", {
+        autoClose: 3000, 
       });
-  }
+    }
+  };
 
   return (
     <>
@@ -141,7 +107,7 @@ const Login = () => {
               <Form.Label className="input-label">Password</Form.Label>
               <InputGroup>
                 <Form.Control
-                type="password"
+                  type="password"
                   title="Enter password"
                   placeholder="Enter password"
                   value={form.password || ""}
@@ -162,7 +128,9 @@ const Login = () => {
           </Form>
         </Container>
       </div>
+      <ToastContainer />
     </>
   );
 };
+
 export default Login;

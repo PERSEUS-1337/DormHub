@@ -6,8 +6,6 @@ import '../pages/accom-style.css';
 import { FaDraft2Digital } from 'react-icons/fa';
 import './review.css';
 
-// TODO: (Jemu) - fix style
-// TODO: Add scrollbar when review is too long for consistent review sizes
 const ReviewTileItem = ({ data }) => {
     const [user, setUser] = useState(""); // Define state variable
     const jwt = localStorage.getItem("token");
@@ -72,46 +70,64 @@ const ReviewTileItem = ({ data }) => {
 const ReviewList = ({ data }) => {
     // console.log(data.review)
     const [reviewData, setreviewData] = useState(data.review);
+    const [currentPage, setCurrentPage] = useState(1)
+    const itemsPerPage = 6
+    const maxVisiblePages = 5
 
 
     const ReviewList = reviewData && reviewData.map(data => <ReviewTileItem key={data} data={data} />)
+    const indexLastItem = currentPage * itemsPerPage
+    const indexFirstItem = indexLastItem - itemsPerPage
+    const currentItems = reviewData.slice(indexFirstItem, indexLastItem)
 
+    const totalPages = Math.ceil(reviewData.length / itemsPerPage)
 
-    // TODO: Add function to pagination
-    let active = 1;
-    let max = 1;
-    let items = [];
-    for (let number = 1; number <= max; number++) {
-        items.push(
-            <Pagination.Item key={number} active={number === active}>
-                {number}
-            </Pagination.Item>,
-        );
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber)
+    }
+
+    const handlePreviousPage = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1)
+        }
+    }
+
+    const handleNextPage = () => {
+        if (currentPage < totalPages) {
+            setCurrentPage(currentPage + 1)
+        }
+    }
+
+    const renderPageNumbers = () => {
+        const pageNumbers = []
+        let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2))
+        let endPage = Math.min(totalPages, startPage + maxVisiblePages -1)
+
+        if (endPage - startPage < maxVisiblePages -1){
+            startPage = Math.max(1, endPage - maxVisiblePages + 1)
+        }
+
+        for (let i = startPage; i <= endPage; i++){
+            pageNumbers.push(
+                <Pagination.Item
+                    key={i}
+                    active={i === currentPage}
+                    onClick={() => handlePageChange(i)}
+                >
+                    {i}
+                </Pagination.Item>
+            )
+        }
+
+        return pageNumbers;
     }
 
     return (
         <>
-            {/* <span className='ms-5'>Review</span> */}
-            {/* <Container className='d-flex flex-column align-items-center m-auto mt-4 pb-2'>
-                <Row>{ReviewList}</Row>
-                <Row className='mt-3'><Pagination>{items}</Pagination></Row>
-            </Container> */}
-
-
-            {/* <Container className='d-flex flex-column align-items-center m-auto mt-4 pb-2'> */}
-
-            {/* </Container> */}
-
-            {/* <Container className='d-flex flex-column align-items-center m-auto mt-4 pb-2'>
-                <Row>{ReviewList}</Row>
-            </Container> */}
-
-            {/* <Row className='mt-3'><Pagination>{items}</Pagination></Row> */}
-
 
             <Row>
                 {
-                    reviewData.map((data) => {
+                    currentItems.map((data) => {
                         return (
                             <>
                                 <Col lg={4}>
@@ -125,7 +141,16 @@ const ReviewList = ({ data }) => {
                 }
             </Row>
 
-            <Pagination className='mt-3 text-center flex-column align-items-center'>{items}</Pagination>
+            {/* <Pagination className='mt-3 text-center flex-column align-items-center'>{items}</Pagination> */}
+            <Pagination className='d-flex justify-content-center'>
+                    <Pagination.First onClick={() => setCurrentPage(1)} disabled={currentPage === 1} />
+                    <Pagination.Prev onClick={handlePreviousPage} disabled={currentPage === 1} />
+
+                    {renderPageNumbers()}
+
+                    <Pagination.Next onClick={handleNextPage} disabled={currentPage === totalPages} />
+                    <Pagination.Last onClick={() => setCurrentPage(totalPages)} disabled={currentPage === totalPages} />
+            </Pagination>
 
         </>
     )

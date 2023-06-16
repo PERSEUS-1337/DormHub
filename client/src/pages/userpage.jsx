@@ -3,6 +3,7 @@ import { Container, Col, Row, Image, Button, Modal, Form, Spinner } from "react-
 import FaveTileItem from "../components/FaveTileItem";
 import LodgingTileItem from "../components/LodgingTileItem";
 import EditUserProfile from "../components/EditUser";
+import { useNavigate } from "react-router-dom";
 import AddAccommodationPicButton from "../components/addAccomodationPicButton";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -205,7 +206,7 @@ const CheckIfOwner = () => {
   const [price, setPrice] = useState('');
   const [town, setTown] = useState([]);
   const [type, setAccommodationType] = useState([]);
-  const [amenity, setAccommodationAmenity] = useState([]);
+  const [amenity, setAccommodationAmenity] = useState("");
   const [accommData, setAccommData] = useState([]);
 
   const [loadingPostResult, setLoadingPostResult] = useState(false);
@@ -241,57 +242,62 @@ const CheckIfOwner = () => {
     setShowModal(false);
   };
   
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    setLoadingPostResult(true);
-  
-    const uId = localStorage.getItem('_id');
-    const jwt = localStorage.getItem('token');
-    const location = { vicinity, street, barangay, town };
-    const formData = {
-      uId,
-      name,
-      desc,
-      price,
-      location,
-      type,
-      amenity
-    };
-  
-    try {
-      const res = await fetch('/api/v1/auth-required-func/accommodation', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${jwt}`,
-        },
-        body: JSON.stringify(formData),
-      });
-    
-      const data = await res.json();
-    
-     
-      if (res.status === 201) { 
-        closeModal();
-        window.location.reload();
-      } else {
-        let errorMessage = 'Creation failed.';
-        if (data && data.error) {
-          errorMessage += ' ' + data.error;
-        }
-        console.error(data);
-        toast.error(errorMessage);
-      }
-    
-      setLoadingPostResult(false);
-    } catch (err) {
-      console.error('Accommodation creation error.', err);
-      toast.error('An error occurred while creating the accommodation.');
-    }
-    
+  setLoadingPostResult(true);
+
+  const uId = localStorage.getItem('_id');
+  const jwt = localStorage.getItem('token');
+  const location = { vicinity, street, barangay, town };
+  const formData = {
+    uId,
+    name,
+    desc,
+    price,
+    location,
+    type,
+    amenity
   };
- 
+
+  try {
+    const res = await fetch('/api/v1/auth-required-func/accommodation', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${jwt}`,
+      },
+      body: JSON.stringify(formData),
+    });
+
+    const data = await res.json();
+
+    if (res.status === 201) {
+      closeModal();
+      window.location.reload();
+      toast.success(data.msg, {
+        autoClose: 3000,
+      });
+    } else {
+      let errorMessage = 'Creation failed.';
+      if (data && data.error) {
+        errorMessage += ' ' + data.error;
+      }
+      console.error(data);
+      toast.error(errorMessage, {
+        autoClose: 3000,
+      });
+    }
+
+    setLoadingPostResult(false);
+  } catch (err) {
+    console.error('Accommodation creation error.', err);
+    toast.error('An error occurred while creating the accommodation.', {
+      autoClose: 3000,
+    });
+  }
+};
+
   
   return (
     <>
@@ -429,16 +435,25 @@ const CheckIfOwner = () => {
 };
 
 const UserPage = () => {
+  const navigate = useNavigate();
   const [userData, setUserData] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [hasPfp, setHasPfp] = useState(true);
   const [pfp, setPfp] = useState(null);
+  const [authorizationError, setAuthorizationError] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
-      // const type = localStorage.getItem("userType");
       const uid = localStorage.getItem("_id");
       const jwt = localStorage.getItem("token");
+
+      if (!jwt) {
+        setAuthorizationError(true); 
+        setTimeout(() => {
+          navigate("/login"); 
+        }, 3000);
+        return;
+      }
 
       try {
         const res = await fetch(`/api/v1/auth-required-func/${uid}`, {
@@ -449,9 +464,6 @@ const UserPage = () => {
         });
         const data = await res.json();
         setUserData(data);
-        // console.log(data);
-        // const userType = localStorage.getItem("userType");
-        // console.log(userType)
         setIsLoading(false);
       } catch (err) {
         console.error('User fetching error.', err);
@@ -465,7 +477,6 @@ const UserPage = () => {
           },
         });
         const data = await res.json();
-        // console.log(data.pfp);
         setPfp(data.pfp);
 
         if (data.error) {
@@ -475,8 +486,19 @@ const UserPage = () => {
         console.error('PFP fetching error.', err);
       }
     };
+
     fetchData();
   }, []);
+
+ 
+  if (authorizationError) {
+    return (
+      <Container className="d-flex flex-column align-items-center justify-content-center mt-5">
+        <h4 className="text-danger">Authorization Error</h4>
+        <h5>Redirecting to Login</h5>
+      </Container>
+    );
+  }
   return (
     <>
       <Container className="mt-5 mb-3 pb-4 d-flex flex-column align-items-left border-bottom">

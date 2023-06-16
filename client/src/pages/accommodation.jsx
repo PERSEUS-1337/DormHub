@@ -1,5 +1,5 @@
 import './accom-style.css';
-import { Button, Row, Col, Carousel, Container, Spinner, Modal, Form } from 'react-bootstrap';
+import { Button, Row, Col, Carousel, Container, Spinner, Modal, Form, InputGroup } from 'react-bootstrap';
 import React, { useState, useEffect } from "react";
 import { ReadStarRating, StarRating, AccomStarRating } from '../components/StarRating';
 import { useLocation } from 'react-router-dom';
@@ -188,7 +188,7 @@ const EditDetails = (data) => {
                 isUserAccom ?
                     <>
                         <div className='editAccomButton'>
-                            <Button type="button" className='btn editAccomButton' onClick={() => setModalShow(true)}>Edit Accommodation Description</Button>
+                            <Button type="button" className='btn editAccomButton' onClick={() => setModalShow(true)}>Edit Accomodation Details</Button>
                         </div>
                     </>
 
@@ -200,52 +200,63 @@ const EditDetails = (data) => {
 }
 
 function ModalEditDescription(props) {
-    // console.log(props.data.data.accomData);
 
-    // const [desc, setDesc] = useState(props.data.data.accomData.desc);
+    var name = props.data.data.accomData.name;
     var desc = props.data.data.accomData.desc;
+    var price = props.data.data.accomData.price;
+    var location = props.data.data.accomData.location;
+    var type = props.data.data.accomData.type;
+    var amenity = props.data.data.accomData.amenity;
 
     const handleSubmit = () => {
 
         const uId = localStorage.getItem("_id");
         const jwt = localStorage.getItem("token");
 
-        desc = document.getElementById("comment").value;
-        var update = { desc };
-
-        console.log(desc);
-        console.log(JSON.stringify(update));
-
-
-        try {
-            const res = fetch(`/api/v1/auth-required-func/accommodation/${props.data.data.accomData._id}/${uId}`, {
-                method: "PATCH",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${jwt}`
-                },
-                body: JSON.stringify(update),
-            });
-            const data = res.json();
-            console.log(data);
-            // if (res.status === 200) {
-            //     // console.log(data.msg);
-                window.location.reload();
-                
-            // }
-        } catch (err) {
-            console.error("Review POST error.", err);
+        name = document.getElementById("name").value;
+        desc = document.getElementById("desc").value;
+        price = [document.getElementById("lowest-price").value,
+        document.getElementById("highest-price").value]
+        location = {
+            "vicinity": `${document.getElementById("vicinity").value}`,
+            "street": `${document.getElementById("street").value}`,
+            "barangay": `${document.getElementById("barangay").value}`,
+            "town": `${document.getElementById("town").value}`,
         }
+        type = document.getElementById("type").value;
+        amenity = document.getElementById("amenity1").value;
+        amenity = amenity.split(",");
+
+        var update = { name, price, desc, location, type, amenity };
+
+        if (name != "" && price[0] != "" && price[1] != "" && desc != "" && location != "" && type != "" && amenity != ""
+        && name != undefined && price[0] != undefined && price[1] != undefined && desc != undefined && location != undefined && type != undefined 
+        && amenity != undefined && name != null && price[0] != null && price[1] != null && desc != null && location != null && type != null 
+        && amenity != null) {
+            try {
+                const res = fetch(`/api/v1/auth-required-func/accommodation/${props.data.data.accomData._id}/${uId}`, {
+                    method: "PATCH",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${jwt}`
+                    },
+                    body: JSON.stringify(update),
+                })
+                props.onHide();
+                // window.location.reload();
+            } catch (err) {
+                alert("Update Accommodation Error: ", err);
+            }
+        }else{
+            alert("All fields must have values!");
+        }
+
     };
 
-function update(){
-    // console.log(document.getElementById("comment").value);
-    // setDesc(document.getElementById("comment").value);
-    handleSubmit();
-    props.onHide();
-    window.location.reload();
-}
-
+    function updateAccom(){
+        handleSubmit();
+        window.location.reload();
+    }
 
     return (
         <Modal
@@ -256,22 +267,144 @@ function update(){
         >
             <Modal.Header closeButton>
                 <Modal.Title id="contained-modal-title-vcenter">
-                    <h4 className='modalDescTitle'>Edit Accommodation Description</h4>
+                    <h4 className='modalDescTitle'>Update Accommodation Description</h4>
                 </Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <form>
-                    <div class="form-group">
-                        {/* <label for="comment">Edit Description:</label> */}
-                        <textarea class="form-control" rows="5" id="comment">
-                            {desc}
-                        </textarea>
-                    </div>
-                </form>
+                <Form>
+                    <Form.Group>
+                        <Form.Label>Accommodation Name</Form.Label>
+                        <Form.Control
+                            type="text"
+                            placeholder="Update Accommodation Name"
+                            defaultValue={name}
+                            id='name'
+                        >
+                        </Form.Control>
+                    </Form.Group>
+                    <Form.Group>
+                        <Form.Label>Accommodation Description</Form.Label>
+                        <Form.Control
+                            as="textarea"
+                            type="text"
+                            placeholder="Enter accommodation description"
+                            defaultValue={desc}
+                            rows={5}
+                            id='desc'
+                        />
+                    </Form.Group>
+
+                    <Form.Group>
+                        <Form.Label>Price <span className="text-muted">/ Month </span></Form.Label>
+
+                        <Row>
+                            <Col>
+                                <InputGroup>
+                                    <InputGroup.Text id="price-low">Lowest Price</InputGroup.Text>
+                                    <Form.Control
+                                        type='number'
+                                        placeholder="Enter Lowest Price"
+                                        aria-describedby="price-low"
+                                        id="lowest-price"
+                                        defaultValue={price[0]}
+                                    />
+                                </InputGroup>
+                            </Col>
+                            <Col>
+                                <InputGroup>
+                                    <InputGroup.Text id="price-high">Highest Price</InputGroup.Text>
+                                    <Form.Control
+                                        type='number'
+                                        placeholder="Enter Highest Price"
+                                        aria-describedby="price-high"
+                                        id="highest-price"
+                                        defaultValue={price.length > 0 ? price[1] : null}
+                                    />
+                                </InputGroup>
+                            </Col>
+                        </Row>
+
+                    </Form.Group>
+
+                    <Form.Group>
+                        <Form.Label>Vicinity</Form.Label>
+                        <Form.Control
+                            type="text"
+                            placeholder="Enter Vicinity"
+                            defaultValue={location.vicinity}
+                            id='vicinity'
+                        />
+                    </Form.Group>
+
+                    <Form.Group>
+                        <Form.Label>Street</Form.Label>
+                        <Form.Control
+                            type="text"
+                            placeholder="Enter Street"
+                            defaultValue={location.street}
+                            id='street'
+                        />
+                    </Form.Group>
+
+                    <Form.Group>
+                        <Form.Label>Barangay</Form.Label>
+                        <Form.Control
+                            type="text"
+                            placeholder="Enter Barangay"
+                            defaultValue={location.barangay}
+                            id='barangay'
+                        />
+                    </Form.Group>
+
+                    <Form.Group>
+                        <Form.Label>Town</Form.Label>
+                        <Form.Control
+                            type="text"
+                            placeholder="Enter Town"
+                            defaultValue={location.town}
+                            id='town'
+                        />
+                    </Form.Group>
+
+                    <Form.Group>
+                        <Form.Label>Type</Form.Label>
+                        <Form.Control
+                            as="select"
+                            defaultValue={type}
+                            id='type'
+                        >
+                            <option value="" ></option>
+                            <option value="apartment">Apartment</option>
+                            <option value="condominium">Condominium</option>
+                            <option value="dormitory">Dormitory</option>
+                            <option value="transient">Transient</option>
+                            <option value="hotel">Hotel</option>
+                            <option value="hostel">Hostel</option>
+                            <option value="bedspace">Bedspace</option>
+                        </Form.Control>
+                    </Form.Group>
+
+
+                    <Form.Group>
+                        <Form.Label>Amenity (Separated by Comma e.g. "Kitchen,Parking Lot,Wifi")</Form.Label>
+                        <Form.Control
+                            type="text"
+                            placeholder="Enter amenity"
+                            defaultValue={
+                                amenity.map((item) => {
+                                    return item;
+                                })
+                            }
+                            id='amenity1'
+                        />
+                    </Form.Group>
+                </Form>
             </Modal.Body>
             <Modal.Footer>
-                <Button onClick={props.onHide} className='btn btn-danger'>Close</Button>
-                <Button onClick={() => update()} className='btn btn-success text-white'>Save</Button>
+                <Button onClick={props.onHide} className='btn btn-danger'>Cancel</Button>
+                <Button onClick={() => updateAccom()} className='btn btn-success text-white'>Update</Button>
+
+
             </Modal.Footer>
         </Modal>
     );
@@ -291,7 +424,7 @@ const Details = (data) => {
 
     const [isUser, setIsUser] = useState(true);
 
-    if(isLoggedIn){
+    if (isLoggedIn) {
         try {
             fetch(`/api/v1/auth-required-func/${id}`, {
                 headers: {
@@ -315,7 +448,7 @@ const Details = (data) => {
 
     return (
         <Container className="desc_accom border-bottom pb-4">
-            <h3 className='accomTitle'>{data.accomData.name}</h3>
+            <h3 className='accomTitle'>{data.accomData.name}  <span className='badge bg-light title-badge'> {data.accomData.type}</span></h3>
             <Row className="accomRating">
                 <Col className='' lg={1}>
                     <h5 className='ratingTitle'>Rating: </h5>
@@ -326,13 +459,6 @@ const Details = (data) => {
             </Row>
 
             <p id="accommDetail">{data.accomData.desc}</p>
-
-            {
-                isLoggedIn && !isUser ? <EditDetails data={data} /> : <></>
-            }
-
-            {/* <Button onClick={checkAccomIfMatched}>Test accom</Button> */}
-
             <Row id="amenity" className="detail">
                 <Col sm={1}>
                     <img src="../../assets/icons/amenities.jpg" alt="test4" />
@@ -340,7 +466,13 @@ const Details = (data) => {
                 <Col sm={11}>
                     <p>
                         {data.accomData.amenity.map((amenity) => {
-                            return amenity + ", ";
+                            if (amenity == data.accomData.amenity[data.accomData.amenity.length - 1]
+                                && amenity.length > 1) {
+                                return "and " + amenity;
+                            }
+                            else {
+                                return amenity + ", ";
+                            }
                         })}
                     </p>
                 </Col>
@@ -365,14 +497,17 @@ const Details = (data) => {
                     {
                         data.accomData.price.length === 1 ?
                             <p >Php {data.accomData.price[0]} per month</p>
-                        :
-                        data.accomData.price[0] > data.accomData.price[1] ?
-                            <p >Php {data.accomData.price[1]} - Php {data.accomData.price[0]} per month</p>
-                        :
-                            <p >Php {data.accomData.price[0]} - Php {data.accomData.price[1]} per month</p>
+                            :
+                            data.accomData.price[0] > data.accomData.price[1] ?
+                                <p >Php {data.accomData.price[1]} - Php {data.accomData.price[0]} per month</p>
+                                :
+                                <p >Php {data.accomData.price[0]} - Php {data.accomData.price[1]} per month</p>
                     }
                 </Col>
             </Row>
+            {
+                isLoggedIn && !isUser ? <EditDetails data={data} /> : <></>
+            }
             {/* <Row id="calendar" className="detail">
                 <Col sm={1}>
                     <img src="../../assets/icons/calendar.jpg" alt="test3" />
@@ -410,7 +545,10 @@ const CheckIfLoggedIn = ({ accommodationId }) => {
 
         const uId = localStorage.getItem("_id");
         const jwt = localStorage.getItem("token");
-
+        if (rating === '' || detail === '') {
+            alert('Please complete the rating and details before submitting the form.');
+            return;
+        }
         const formData = { rating, detail };
 
         // const params = { id, uId };
@@ -424,9 +562,15 @@ const CheckIfLoggedIn = ({ accommodationId }) => {
                 },
                 body: JSON.stringify(formData),
             });
+            // console.log(data.msg);
+
+            if (!res.ok) {
+                throw new Error('Failed to submit the review.'); // Throw an error if the request was not successful
+              }
+          
             const data = await res.json();
             console.log(data);
-            // console.log(data.msg);
+          
 
             fetch(`/api/v1/accommodation/${accommodationId}`)
                 .then((res) => res.json())
@@ -434,8 +578,8 @@ const CheckIfLoggedIn = ({ accommodationId }) => {
                     setAccomm(data);
                     console.log("DATA", data)
                 });
-                // closeModal();
-        } catch (err){
+            // closeModal();
+        } catch (err) {
             console.error("Review POST error.", err);
         }
         // navigate('/accommodation', {state: {accomm}});
@@ -457,7 +601,6 @@ const CheckIfLoggedIn = ({ accommodationId }) => {
                             </Col>
                             {/* <Col lg={4}></Col> */}
                         </Row>
-
                         <Form.Control as="textarea" className='reviewInput' rows={3} type="text" value={detail} onChange={(e) => setDetail(e.target.value)} />
                     </Form.Group>
                     <div className='text-center'>
@@ -482,7 +625,7 @@ const Review = (data) => {
                         <ReviewList data={data.reviewData} />
                         :
                         <Container className='text-center mt-5'>
-                            <h6>No Reviews Yet </h6>
+                            <p className='font-italic'>No Reviews Yet</p>
                         </Container>
 
 
@@ -507,19 +650,18 @@ function Accommodation(props) {
 
     useEffect(() => {
         fetch(`/api/v1/accommodation/${id}`)
-        .then(res =>res.json())
-        .then(data => {
-            setAccomData(data.accommodation);
-        })
+            .then(res => res.json())
+            .then(data => {
+                setAccomData(data.accommodation);
+            })
     }, []);
 
     // console.log(accomData);
     // console.log(location.state.data.pics);
 
     return (<>
-        <Slideshow pics={location.state.data.pics}/>
+        <Slideshow pics={location.state.data.pics} />
         <Details accomData={accomData} />
-
         <Review reviewData={location.state.data} />
     </>
     );
