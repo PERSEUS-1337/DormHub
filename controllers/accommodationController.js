@@ -28,15 +28,18 @@ const upload = multer({
 // GET ALL ACCOMMODATIONS
 const getAccommodation = async(req, res) => {
     // Filters
-    const { search, sort } = req.query;
+    const { search, sort, type } = req.query;
 
     // Object for the filters
     const queryObject = { archived: false };
 
     // Filter for the keyword
-    if (search) {
+    if (search) 
         queryObject.name = { $regex: search, $options: 'i' };
-    }
+    
+    // Filter for type
+    if (type)
+        queryObject.type = type;
 
     try {
         // Find the actual accommodations that fit the keyword
@@ -48,28 +51,17 @@ const getAccommodation = async(req, res) => {
         if (sort === 'price-high') accommodation = accommodation.sort('price');
         if (sort === 'price-low') accommodation = accommodation.sort('-price');
 
-        // Setting of pages of accomodation, this is the limiter
-        const page = Number(req.query.page) || 1;
-        const limit = Number(req.query.limit) || 5;
-        const skip = (page - 1) * limit;
-
-        // Filter returns to comply with paging style and limiters
-        accommodation = accommodation.skip(skip).limit(limit);
-
         const accommodations = await accommodation;
         const totalAccommodations = await Accommodation.countDocuments(queryObject);
-        const numOfPages = Math.ceil(totalAccommodations / limit);
     
         if (!totalAccommodations)
             throw { code: 404, msg: api.ACCOMMODATION_NOT_FOUND };
 
-        console.info(api.GET_ACCOMMODATION_SUCCESSFUL);
+        console.info(api.GET_ACCOMMODATION_SUCCESS);
         return res.status(200).json({
             accommodations,
             totalAccommodations
         })
-
-        
     } catch (err) {
         console.error(api.GET_ACCOMMODATION_ERROR, err.msg || err);
         return res.status(err.code || 500).json({ err: err.msg || api.INTERNAL_ERROR })
