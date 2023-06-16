@@ -153,6 +153,8 @@ const editUserData = async (req, res) => {
             });
         }
 
+        if (fieldsToUpdate['fname'].trim() == "" || fieldsToUpdate['lname'].trim() =="") throw {code: 400, msg: api.EMPTY_FIELD};
+
         if (fieldsToUpdate['email']){
             if (!validator.default.isEmail(email))
                 throw {code: 400, msg: api.INVALID_EMAIL};

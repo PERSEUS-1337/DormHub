@@ -186,7 +186,7 @@ const updateAccommodation = async (req, res) => {
 
         const nameExist = await Accommodation.findOne({name: name});
         
-        // if (nameExist) throw {code: 400, msg: api.ACCOMMODATION_ALREADY_EXISTS};
+        if (nameExist && nameExist._id != id) throw {code: 400, msg: api.ACCOMMODATION_ALREADY_EXISTS};
 
         if (amenity.length==0 || type.length==0 || price.length==0) throw {code:400, msg: api.EMPTY_ARRAY};
 
