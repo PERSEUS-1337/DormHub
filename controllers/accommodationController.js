@@ -46,8 +46,9 @@ const getAccommodation = async(req, res) => {
         let accommodation = Accommodation.find(queryObject)
 
         // Sorting of accommodations
-        if (sort === 'a-z') accommodation = accommodation.sort('name');
-        if (sort === 'z-a') accommodation = accommodation.sort('-name');
+        console.log(typeof(accommodation));
+        if (sort === 'a-z') accommodation = accommodation.collation({locale: 'en'}).sort('name');
+        if (sort === 'z-a') accommodation = accommodation.collation({locale: 'en'}).sort('-name');
         if (sort === 'price-high') accommodation = accommodation.sort('price');
         if (sort === 'price-low') accommodation = accommodation.sort('-price');
 
