@@ -244,7 +244,7 @@ const CheckIfOwner = () => {
   
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     setLoadingPostResult(true);
   
     const uId = localStorage.getItem('_id');
@@ -269,30 +269,35 @@ const CheckIfOwner = () => {
         },
         body: JSON.stringify(formData),
       });
-    
+  
       const data = await res.json();
-    
-     
-      if (res.status === 201) { 
+  
+      if (res.status === 201) {
         closeModal();
         window.location.reload();
+        toast.success(data.msg, {
+          autoClose: 3000,
+        });
       } else {
         let errorMessage = 'Creation failed.';
         if (data && data.error) {
           errorMessage += ' ' + data.error;
         }
         console.error(data);
-        toast.error(errorMessage);
+        toast.error(errorMessage, {
+          autoClose: 3000,
+        });
       }
-    
+  
       setLoadingPostResult(false);
     } catch (err) {
       console.error('Accommodation creation error.', err);
-      toast.error('An error occurred while creating the accommodation.');
+      toast.error('An error occurred while creating the accommodation.', {
+        autoClose: 3000,
+      });
     }
-    
   };
- 
+  
   
   return (
     <>

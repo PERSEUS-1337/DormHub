@@ -158,7 +158,7 @@ const createAccommodation = async (req, res) => {
       console.error(api.CREATE_ACCOMMODATION_ERROR, err.error || err);
       return res
         .status(err.code || 500)
-        .json({ error: err.error || api.INTERNAL_ERROR });
+        .json({ error: err.msg || api.INTERNAL_ERROR });
     }
   };
 
