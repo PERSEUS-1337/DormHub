@@ -101,7 +101,8 @@ const AccomStarRating = (data) => {
             <p className='ms-2 fs-4'>{rating}/5</p>    
         </div>
         ) : (
-        <p className='ms-2 fs-4'>No Ratings Yet</p>
+        // <p className='ms-2 fs-4'>No Ratings Yet</p>
+        <p className='ms-2 font-italic' style={{fontSize:'18px', marginTop: '25px'}}>No Ratings Yet</p>
         )}
         </>
     )

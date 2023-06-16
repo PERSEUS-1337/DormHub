@@ -123,3 +123,7 @@ h3{
     margin-top: 20px;
     text-align: center;
 }
+
+.form-label{
+    font-weight: 500 !important;
+}

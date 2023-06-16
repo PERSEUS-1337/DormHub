@@ -193,22 +193,22 @@ const updateAccommodation = async (req, res) => {
 
         const nameExist = await Accommodation.findOne({name: name});
         
-        if (nameExist) throw {code: 400, msg: api.ACCOMMODATION_ALREADY_EXISTS};
+        // if (nameExist) throw {code: 400, msg: api.ACCOMMODATION_ALREADY_EXISTS};
 
         if (amenity.length==0 || type.length==0 || price.length==0) throw {code:400, msg: api.EMPTY_ARRAY};
 
-        amenity.forEach((element) => {
-            if (element.trim() == "") throw {code: 400, msg: api.EMPTY_FIELD};
-        });
+        // amenity.forEach((element) => {
+        //     if (element.trim() == "") throw {code: 400, msg: api.EMPTY_FIELD};
+        // });
 
-        type.forEach((element) => {
-            if (element.trim() == "") throw {code: 400, msg: api.EMPTY_FIELD};
-        });
+        // type.forEach((element) => {
+        //     if (element.trim() == "") throw {code: 400, msg: api.EMPTY_FIELD};
+        // });
 
-        price.forEach((element) => {
-            if (typeof(element) != "number") throw {code: 400, msg: api.INVALID_PRICE};
-            if (element < 0) throw {code: 400, msg: api.INVALID_PRICE};
-        });
+        // price.forEach((element) => {
+        //     if (typeof(element) != "number") throw {code: 400, msg: api.INVALID_PRICE};
+        //     if (element < 0) throw {code: 400, msg: api.INVALID_PRICE};
+        // });
 
         if (location.vicinity.trim() == "" || location.street.trim() == "" || location.barangay.trim() == "" || location.town.trim() == "") {
             throw {code: 400, msg: api.EMPTY_FIELD};

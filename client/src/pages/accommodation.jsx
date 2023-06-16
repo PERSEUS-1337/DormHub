@@ -200,21 +200,44 @@ const EditDetails = (data) => {
 }
 
 function ModalEditDescription(props) {
-    // console.log(props.data.data.accomData);
 
-    // const [desc, setDesc] = useState(props.data.data.accomData.desc);
+    var name = props.data.data.accomData.name;
     var desc = props.data.data.accomData.desc;
+    var price = props.data.data.accomData.price;
+    var location = props.data.data.accomData.location;
+    var type = props.data.data.accomData.type;
+    var amenity = props.data.data.accomData.amenity;
+
+    // var isValidated = true;
 
     const handleSubmit = () => {
 
         const uId = localStorage.getItem("_id");
         const jwt = localStorage.getItem("token");
 
-        desc = document.getElementById("comment").value;
-        var update = { desc };
+        name = document.getElementById("name").value;
+        desc = document.getElementById("desc").value;
+        price = document.getElementById("price1").value;
+        location = {
+            "vicinity": `${document.getElementById("vicinity").value}`,
+            "street": `${document.getElementById("street").value}`,
+            "barangay": `${document.getElementById("barangay").value}`,
+            "town": `${document.getElementById("town").value}`,
+        }
+        type = document.getElementById("type").value;
+        amenity = document.getElementById("amenity1").value;
 
+        console.log(name);
         console.log(desc);
-        console.log(JSON.stringify(update));
+        console.log(price);
+        console.log(location);
+        console.log(type);
+        console.log(amenity);
+
+        var update = { name, price, desc, location, type, amenity };
+
+        // console.log(desc);
+        // console.log(JSON.stringify(update));
 
 
         try {
@@ -226,25 +249,50 @@ function ModalEditDescription(props) {
                 },
                 body: JSON.stringify(update),
             });
-            const data = res.json();
-            console.log(data);
+            // const data = res.json();
+            // console.log(data);
             // if (res.status === 200) {
-            //     // console.log(data.msg);
-                window.location.reload();
-                
+            // console.log(data.msg);
+            // window.location.reload();
+
             // }
         } catch (err) {
             console.error("Review POST error.", err);
         }
     };
 
-function update(){
-    // console.log(document.getElementById("comment").value);
-    // setDesc(document.getElementById("comment").value);
-    handleSubmit();
-    props.onHide();
-    window.location.reload();
-}
+    // const validateForm = () => {
+    //     var isValidated = true;
+
+    //     name = document.getElementById("name").value;
+    //     desc = document.getElementById("desc").value;
+    //     price = document.getElementById("price1").value;
+    //     location = {
+    //         "vicinity": `${document.getElementById("vicinity").value}`,
+    //         "street": `${document.getElementById("street").value}`,
+    //         "barangay": `${document.getElementById("barangay").value}`,
+    //         "town": `${document.getElementById("town").value}`,
+    //     }
+    //     type = document.getElementById("type").value;
+    //     amenity = document.getElementById("amenity1").value;
+
+    //     var update = { name, desc, price, location, type, amenity };
+
+    //     for (var item in update) {
+    //         if (item = '') {
+    //             isValidated = false;
+    //             break;
+    //         }
+    //     }
+
+    //     return isValidated;
+    // }
+
+    function update() {
+        handleSubmit();
+        props.onHide();
+        window.location.reload();
+    }
 
 
     return (
@@ -260,130 +308,123 @@ function update(){
                 </Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <form>
-                    <div class="form-group">
-                        {/* <label for="comment">Edit Description:</label> */}
-                        <textarea class="form-control" rows="5" id="comment">
-                            {desc}
-                        </textarea>
-                    </div>
-                </form>
-                {/* <Form onSubmit={handleSubmit}>
-            <Form.Group controlId="accommodationName">
-              <Form.Label>Accommodation Name</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Enter accommodation name"
-                value={name}
-                onChange={(e) => setAccommodationName(e.target.value)}
-              />
-            </Form.Group>
-            <Form.Group controlId="accommodationDesc">
-              <Form.Label>Accommodation Description</Form.Label>
-              <Form.Control
-                as="textarea"
-                type="text"
-                placeholder="Enter accommodation description"
-                value={desc}
-                onChange={(e) => setAccommodationDesc(e.target.value)}
-              />
-            </Form.Group>
+                <Form>
+                    <Form.Group>
+                        <Form.Label>Accommodation Name</Form.Label>
+                        <Form.Control
+                            type="text"
+                            placeholder="Update Accommodation Name"
+                            defaultValue={name}
+                            id='name'
+                        >
+                        </Form.Control>
+                    </Form.Group>
+                    <Form.Group>
+                        <Form.Label>Accommodation Description</Form.Label>
+                        <Form.Control
+                            as="textarea"
+                            type="text"
+                            placeholder="Enter accommodation description"
+                            defaultValue={desc}
+                            rows={5}
+                            id='desc'
+                        />
+                    </Form.Group>
 
-            <Form.Group controlId="accommodationPrice">
-              <Form.Label>Price <span className="text-muted">/month</span></Form.Label>
-              <Form.Control
-                type="number"
-                placeholder="Enter price"
-                value={price}
-                onChange={(e) => {
-                  const inputPrice = e.target.value;
-                  if (inputPrice >= 0) {
-                    setPrice(inputPrice);
-                  }
-                }}
-              />
-            </Form.Group>
+                    <Form.Group>
+                        <Form.Label>Price <span className="text-muted">/ Month </span>
+                            (eg. 4500 or 3920 - 5450)</Form.Label>
+                        <Form.Control
+                            type="number"
+                            placeholder="Enter price"
+                            // value={price}
+                            defaultValue={price}
+                            id="price1"
+                        />
+                    </Form.Group>
 
-            <Form.Group controlId="locationVicinity">
-              <Form.Label>Location</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Enter Vicinity"
-                value={vicinity}
-                onChange={(e) => setVicinity(e.target.value)}
-              />
-            </Form.Group>
-            <Form.Group controlId="locationStreet">
-              <Form.Control
-                type="text"
-                placeholder="Enter Street"
-                value={street}
-                onChange={(e) => setStreet(e.target.value)}
-              />
-            </Form.Group>
-            <Form.Group controlId="locationBarangay">
-              <Form.Control
-                type="text"
-                placeholder="Enter Barangay"
-                value={barangay}
-                onChange={(e) => setBarangay(e.target.value)}
-              />
-            </Form.Group>
-            <Form.Group controlId="locationTown">
-              <Form.Control
-                type="text"
-                placeholder="Enter Town"
-                value={town}
-                onChange={(e) => setTown(e.target.value)}
-              />
-            </Form.Group>
+                    <Form.Group>
+                        <Form.Label>Vicinity</Form.Label>
+                        <Form.Control
+                            type="text"
+                            placeholder="Enter Vicinity"
+                            defaultValue={location.vicinity}
+                            id='vicinity'
+                        />
+                    </Form.Group>
 
-            <Form.Group controlId="accommodationType">
-              <Form.Label>Type</Form.Label>
-              <Form.Control
-                as="select"
-                value={type}
-                onChange={(e) => setAccommodationType(e.target.value)}
-              >
-                <option value="" ></option>
-                <option value="apartment">Apartment</option>
-                <option value="condominium">Condominium</option>
-                <option value="dormitory">Dormitory</option>
-                <option value="transient">Transient</option>
-                <option value="hotel">Hotel</option>
-                <option value="hostel">Hostel</option>
-                <option value="bedspace">Bedspace</option>
-              </Form.Control>
-            </Form.Group>
+                    <Form.Group>
+                        <Form.Label>Street</Form.Label>
+                        <Form.Control
+                            type="text"
+                            placeholder="Enter Street"
+                            defaultValue={location.street}
+                            id='street'
+                        />
+                    </Form.Group>
+
+                    <Form.Group>
+                        <Form.Label>Barangay</Form.Label>
+                        <Form.Control
+                            type="text"
+                            placeholder="Enter Barangay"
+                            defaultValue={location.barangay}
+                            id='barangay'
+                        />
+                    </Form.Group>
+
+                    <Form.Group>
+                        <Form.Label>Town</Form.Label>
+                        <Form.Control
+                            type="text"
+                            placeholder="Enter Town"
+                            defaultValue={location.town}
+                            id='town'
+                        />
+                    </Form.Group>
+
+                    <Form.Group>
+                        <Form.Label>Type</Form.Label>
+                        <Form.Control
+                            as="select"
+                            defaultValue={type}
+                            id='type'
+                        >
+                            <option value="" ></option>
+                            <option value="apartment">Apartment</option>
+                            <option value="condominium">Condominium</option>
+                            <option value="dormitory">Dormitory</option>
+                            <option value="transient">Transient</option>
+                            <option value="hotel">Hotel</option>
+                            <option value="hostel">Hostel</option>
+                            <option value="bedspace">Bedspace</option>
+                        </Form.Control>
+                    </Form.Group>
 
 
-            <Form.Group controlId="accommodationAmenity">
-              <Form.Label>Amenity</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Enter amenity"
-                value={amenity}
-                onChange={(e) => setAccommodationAmenity(e.target.value)}
-              />
-            </Form.Group>
-            <Button className="" variant="secondary" type="submit" disabled={loadingPostResult}>
-              {
-                loadingPostResult ? (
-                  <Spinner animation="border" variant="primary" role="status" size="sm" disabled>
-                    <span className="visually-hidden">Loading...</span>
-                  </Spinner>
-
-                ) : (
-                  "Save"
-                )
-              }
-            </Button>
-
-          </Form> */}
+                    <Form.Group>
+                        <Form.Label>Amenity (eg. "Kitchen, Parking Lot, Wifi")</Form.Label>
+                        <Form.Control
+                            type="text"
+                            placeholder="Enter amenity"
+                            defaultValue={amenity}
+                            id='amenity1'
+                        />
+                    </Form.Group>
+                </Form>
             </Modal.Body>
             <Modal.Footer>
-                <Button onClick={props.onHide} className='btn btn-danger'>Close</Button>
-                <Button onClick={() => update()} className='btn btn-success text-white'>Save</Button>
+                <Button onClick={props.onHide} className='btn btn-danger'>Cancel</Button>
+                {/* {
+                    validateForm() ?
+                        <Button onClick={() => update()} className='btn btn-success text-white'>Update</Button>
+                        :
+                        <Button onClick={() => update()} className='btn btn-success text-white' disabled>Update</Button>
+
+                } */}
+                <Button onClick={() => update()} className='btn btn-success text-white'>Update</Button>
+
+
             </Modal.Footer>
         </Modal>
     );
@@ -403,7 +444,7 @@ const Details = (data) => {
 
     const [isUser, setIsUser] = useState(true);
 
-    if(isLoggedIn){
+    if (isLoggedIn) {
         try {
             fetch(`/api/v1/auth-required-func/${id}`, {
                 headers: {
@@ -427,7 +468,7 @@ const Details = (data) => {
 
     return (
         <Container className="desc_accom border-bottom pb-4">
-            <h3 className='accomTitle'>{data.accomData.name}</h3>
+            <h3 className='accomTitle'>{data.accomData.name}  <span className='badge bg-light'> {data.accomData.type}</span></h3>
             <Row className="accomRating">
                 <Col className='' lg={1}>
                     <h5 className='ratingTitle'>Rating: </h5>
@@ -539,8 +580,8 @@ const CheckIfLoggedIn = ({ accommodationId }) => {
                     setAccomm(data);
                     console.log("DATA", data)
                 });
-                // closeModal();
-        } catch (err){
+            // closeModal();
+        } catch (err) {
             console.error("Review POST error.", err);
         }
         // navigate('/accommodation', {state: {accomm}});
@@ -612,19 +653,18 @@ function Accommodation(props) {
 
     useEffect(() => {
         fetch(`/api/v1/accommodation/${id}`)
-        .then(res =>res.json())
-        .then(data => {
-            setAccomData(data.accommodation);
-        })
+            .then(res => res.json())
+            .then(data => {
+                setAccomData(data.accommodation);
+            })
     }, []);
 
     // console.log(accomData);
     // console.log(location.state.data.pics);
 
     return (<>
-        <Slideshow pics={location.state.data.pics}/>
+        <Slideshow pics={location.state.data.pics} />
         <Details accomData={accomData} />
-
         <Review reviewData={location.state.data} />
     </>
     );
