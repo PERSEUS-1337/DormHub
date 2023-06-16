@@ -117,6 +117,7 @@ const NavBar = () => {
         fetchData();
         
     }, []); 
+    console.log("USERDATA", userData?.user?.fname)
 
     // if (userData && userData) {
     //     url = "/user"
@@ -161,7 +162,7 @@ const NavBar = () => {
                      </Nav.Link> */}
                     
                     {/* {navList} */}
-                    <PopOver data={ userData.fname } />   
+                    <PopOver data={ userData?.user?.fname } />   
                 </Nav>
                 </Navbar.Collapse>
             </Container>
