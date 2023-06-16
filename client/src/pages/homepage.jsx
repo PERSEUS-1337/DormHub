@@ -117,14 +117,12 @@ const HomePage = () => {
             .then(data => {
                 setAccommData(data);
                 setIsLoading(false);
-                // console.log(data);
-                // console.log(data["accommodations"][2]);
             })
     }, []);
 
     return (
         <>
-            <Container fuild className="art-container"></Container>
+            <Container fluid className="art-container"></Container>
             <Container fluid className="background-container">
 
                 {
