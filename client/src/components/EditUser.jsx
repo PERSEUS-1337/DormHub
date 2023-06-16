@@ -52,9 +52,10 @@ const EditUserProfile = ({data}) => {
             },
                 body: JSON.stringify(details),
         })
-            .then((response) => response.json())
+            .then((response) => {response.json(); console.log(response)})
             .then((body) => {
                 console.log(body);
+
         });
 
         const image = new Image();
@@ -89,7 +90,7 @@ const EditUserProfile = ({data}) => {
         } catch(error) {
           console.error(error);
         }
-      window.location.reload();
+      // window.location.reload();
     };
 
     return (

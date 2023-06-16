@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import AddAccommodationPicButton from "../components/addAccomodationPicButton";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import './userpage.css'
 
 const AccommTileList = () => {
   const [accommData, setAccommData] = useState(null);
@@ -501,6 +502,7 @@ const UserPage = () => {
   }
   return (
     <>
+      <span className="bg">
       <Container className="mt-5 mb-3 pb-4 d-flex flex-column align-items-left border-bottom">
         <>
           {
@@ -535,7 +537,7 @@ const UserPage = () => {
                   )}
                 </Col>
                 <Col xs={7}>
-                  <h2>{`${userData.user.fname} ${userData.user.lname}`}</h2>
+                  <h2 className="name">{`${userData.user.fname} ${userData.user.lname}`}</h2>
                   {/* TO ADD: USER TYPE */}
                   <h5 className="lead">{`${userData.user.userType}`}</h5>
                   <h5 className="lead">Email: {`${userData.user.email}`}</h5>
@@ -556,6 +558,8 @@ const UserPage = () => {
 
         </>
       </Container>
+      </span>
+      
       <Container>
         {
           userData.user && userData.user.userType === "Owner" ? (
