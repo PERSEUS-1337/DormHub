@@ -87,7 +87,7 @@ const Signup = () => {
 
   return (
     <>
-      <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
+      <ToastContainer position="top-right" autoClose={3000} />
       <div className="signup-container">
         <h2>
           Create an <span style={{ color: '#ffd041' }}>Account</span>
