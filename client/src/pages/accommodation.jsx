@@ -511,7 +511,10 @@ const Details = (data) => {
                     {
                         data.accomData.price.length === 1 ?
                             <p >Php {data.accomData.price[0]} per month</p>
-                            :
+                        :
+                        data.accomData.price[0] > data.accomData.price[1] ?
+                            <p >Php {data.accomData.price[1]} - Php {data.accomData.price[0]} per month</p>
+                        :
                             <p >Php {data.accomData.price[0]} - Php {data.accomData.price[1]} per month</p>
                     }
                 </Col>

@@ -9,7 +9,7 @@ const LodgingTileItem = ({ data }) => {
     const navigate = useNavigate();
 
     const navigateToLodge = (data) => {
-        console.log("STATE",{state: {data}})
+        console.log("NAVIGATE TO LODGE DATA", data)
         navigate('/accommodation', {state: {data}})
     }
     
@@ -55,6 +55,9 @@ const LodgingTileItem = ({ data }) => {
                             {
                                 data.price.length ==1? 
                                 <h3 className='my-4'>PHP {data.price[0]}</h3>
+                                :
+                                data.price[0] > data.price[1] ?
+                                <h3 className='my-4'>PHP {data.price[1]} - {data.price[0]}</h3>
                                 :
                                 <h3 className='my-4'>PHP {data.price[0]} - {data.price[1]}</h3>
                             }

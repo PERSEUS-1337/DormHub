@@ -20,7 +20,7 @@ const FaveTileItem = ({ data }) => {
         const id = localStorage.getItem('_id');
             const jwt = localStorage.getItem('token');
         
-            fetch(`api/v1/auth-required-func/${type}/bookmark/${bId}/${id}`, {
+            fetch(`api/v1/auth-required-func/bookmark/${bId}/${id}`, {
               method: 'DELETE',
               headers: {
                 'Content-Type': 'application/json',
@@ -65,6 +65,9 @@ const FaveTileItem = ({ data }) => {
                         {
                             data.price.length === 1? 
                             <h3 className='my-4'>PHP {data.price[0]}</h3>
+                            :
+                            data.price[0] > data.price[1] ?
+                            <h3 className='my-4'>PHP {data.price[1]} - {data.price[0]}</h3>
                             :
                             <h3 className='my-4'>PHP {data.price[0]} - {data.price[1]}</h3>
                         }
