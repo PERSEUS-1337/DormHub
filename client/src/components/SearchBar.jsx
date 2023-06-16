@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Container, Col, Row, Form, Button, Alert, Spinner, Pagination} from 'react-bootstrap';
+import { Container, Col, Row, Form, Button, Alert, Spinner, Pagination, Dropdown, DropdownButton} from 'react-bootstrap';
 import LodgingTileItem from './LodgingTileItem';
 
 const SearchBar = ({ data }) => {
@@ -13,19 +13,58 @@ const SearchBar = ({ data }) => {
     const [alphaBtnText, setAlphaBtnIndex] = useState("A-Z")
     const [queryAlpha, setQueryAlpha] = useState('a-z')
     const [priceIndex, setPriceIndex] = useState(0)
-    const [priceBtnText, setPriceBtnIndex] = useState("HIGHEST PRICE")
+    const [priceBtnText, setPriceBtnIndex] = useState("LOWEST PRICE")
     const [queryPrice, setQueryPrice] = useState('price-high')
+    const [selectedType, setSelectedType] = useState('Type');
+    const [queryType, setQueryType] = useState(null);
     const itemsPerPage = 3
     
+    const handleTypeSelection = (type) => {
+        setSelectedType(type);
+        switch (type) {
+          case 'Apartment':
+            setQueryType('apartment');
+            break;
+          case 'Condominium':
+            setQueryType('condominium');
+            break;
+          case 'Dormitory':
+            setQueryType('dormitory');
+            break;
+          case 'Transient':
+            setQueryType('transient');
+            break;
+          case 'Hotel':
+            setQueryType('hotel');
+            break;
+          case 'Hostel':
+            setQueryType('hostel');
+            break;
+          case 'Bedspace':
+            setQueryType('bedspace');
+            break;
+          default:
+            setQueryType(null);
+        }
+        if (queryType) {
+          handleSortType();
+        }
+      };
+
     useEffect(() => {
         let timeout
-
         if (showNoresults) {
             timeout = setTimeout(() => {
                 setShowNoresults(false)
             }, 3000)
         }
     })
+
+    useEffect(()=>{
+        if (queryType) {
+          handleSortType();
+        }
+      }, [queryType]);
 
     const clearInput = () => {
         setFilteredData([])
@@ -98,7 +137,6 @@ const SearchBar = ({ data }) => {
         fetch(`/api/v1/accommodation/all?limit=100&sort=${queryAlpha}`)
       .then((res) => res.json())
       .then((data) => {
-        console.log('SORT', data);
         setFilteredData(data.accommodations)
         setCurrentPage(1);
       })
@@ -109,24 +147,39 @@ const SearchBar = ({ data }) => {
 
     const handleSortPrice = () => {
         if (priceIndex === 1) {
-            setQueryPrice('price-low')
-            setPriceIndex(0)
-            setPriceBtnIndex('HIGHEST PRICE')
-        } else {
             setQueryPrice('price-high')
-            setPriceIndex(1)
+            setPriceIndex(0)
             setPriceBtnIndex('LOWEST PRICE')
+        } else {
+            setQueryPrice('price-low')
+            setPriceIndex(1)
+            setPriceBtnIndex('HIGEST PRICE')
         }
         fetch(`/api/v1/accommodation/all?limit=100&sort=${queryPrice}`)
       .then((res) => res.json())
       .then((data) => {
-        console.log('SORT', data);
         setFilteredData(data.accommodations)
         setCurrentPage(1);
       })
       .catch((error) => {
         console.error('Error sorting accommodations:', error);
       });
+    }
+
+    const handleSortType = () => {
+        if (queryType) {
+            fetch(`/api/v1/accommodation/all?limit=100&type=${queryType}`)
+                .then((res) => res.json())
+                .then((data) => {
+                    console.log(queryType, data);
+                    setFilteredData(data.accommodations)
+                    setCurrentPage(1);
+                })
+                .catch((error) => {
+                    console.error('Error sorting accommodations:', error);
+                });
+        }
+        
     }
 
     const handleSuggestion = () => {
@@ -158,18 +211,6 @@ const SearchBar = ({ data }) => {
                             <Form.Group controlId="filterAccomms" className='d-flex align-items-center mx-2'>
                                 <Col className='mx-4 mt-3'>
                                     <Form.Control type="search" placeholder="Search for an accommodation..." onChange={(e) => { setWordEntered(e.target.value); if (e.target.value == "") setFilteredData([]); }} onKeyUp={handleSuggestion} />
-                                    {/* <Container style={{ background: "red", marginTop: "-1.3rem", marginLeft: "2rem", maxWidth: "60.5rem"}}>
-                                        {showSuggestions.length != 0 && filteredData.length == 0 && (
-                                            <Row>
-                                                {showSuggestions.slice(0, 10).map((value) => {
-                                                    console.log(value)
-                                                    return (
-                                                        <p>{ value.name }</p>
-                                                    )
-                                                })}
-                                            </Row>
-                                        )}
-                                    </Container> */}
                                 </Col>
                                 <Col md="auto"><Button className="rounded-1 mx-2" variant="secondary" onClick={handleSearch}>Search</Button></Col>
                                 <Col xs lg={2}><Button className="rounded-1 mx-2 text-nowrap" variant="secondary" onClick={handleViewAll}>View All</Button></Col>
@@ -187,6 +228,23 @@ const SearchBar = ({ data }) => {
                             <Col><h4>ACCOMMODATIONS: <span>{ filteredData.length }</span></h4></Col>
                             <Col className='d-flex justify-content-end'><Button variant='secondary' onClick={handleSortAlpha}>{alphaBtnText}</Button></Col>
                             <Col className='d-flex justify-content-end'><Button variant='secondary' onClick={handleSortPrice}>{priceBtnText}</Button></Col>
+                            <Col className='d-flex justify-content-end'>
+                                <DropdownButton
+                                    title={selectedType}
+                                    variant="success"
+                                    id="dropdown-basic"
+                                >
+                                    <Dropdown.Menu>
+                                        <Dropdown.Item onClick={() => handleTypeSelection('Apartment')}>Apartment</Dropdown.Item>
+                                        <Dropdown.Item onClick={() => handleTypeSelection('Condominium')}>Condominium</Dropdown.Item>
+                                        <Dropdown.Item onClick={() => handleTypeSelection('Dormitory')}>Dormitory</Dropdown.Item>
+                                        <Dropdown.Item onClick={() => handleTypeSelection('Transient')}>Transient</Dropdown.Item>
+                                        <Dropdown.Item onClick={() => handleTypeSelection('Hotel')}>Hotel</Dropdown.Item>
+                                        <Dropdown.Item onClick={() => handleTypeSelection('Hostel')}>Hostel</Dropdown.Item>
+                                        <Dropdown.Item onClick={() => handleTypeSelection('Bedspace')}>Bedspace</Dropdown.Item>
+                                    </Dropdown.Menu>
+                                </DropdownButton>
+                            </Col>
                             <Col className='d-flex justify-content-end'><Button variant='secondary'>Generate PDF</Button></Col>
                         </Row>
                         
