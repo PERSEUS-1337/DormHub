@@ -120,6 +120,18 @@ h3{
 }
 
 .editAccomButton{
-    margin-bottom: 20px;
+    margin-top: 20px;
     text-align: center;
+}
+
+.form-label{
+    font-weight: 500 !important;
+}
+
+#price-low, #price-high{
+    height: 100%;
+}
+
+.title-badge{
+    margin-left: 20px;
 }

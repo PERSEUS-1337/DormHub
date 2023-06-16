@@ -17,8 +17,7 @@ const SearchBar = ({ data }) => {
     const [queryPrice, setQueryPrice] = useState('price-high')
     const [selectedType, setSelectedType] = useState('Type');
     const [queryType, setQueryType] = useState(null);
-    const itemsPerPage = 3
-    
+    const itemsPerPage = 3    
     const handleTypeSelection = (type) => {
         setSelectedType(type);
         switch (type) {
@@ -166,6 +165,7 @@ const SearchBar = ({ data }) => {
       });
     }
 
+
     const handleSortType = () => {
         if (queryType) {
             fetch(`/api/v1/accommodation/all?limit=100&type=${queryType}`)
@@ -203,6 +203,8 @@ const SearchBar = ({ data }) => {
                 </Alert>
             )
         }
+
+
         return (
             <Container className='mt-4'>
                 <Row>
