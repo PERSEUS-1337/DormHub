@@ -243,7 +243,7 @@ function ModalEditDescription(props) {
                     body: JSON.stringify(update),
                 })
                 props.onHide();
-                window.location.reload();
+                // window.location.reload();
             } catch (err) {
                 alert("Update Accommodation Error: ", err);
             }
@@ -252,6 +252,11 @@ function ModalEditDescription(props) {
         }
 
     };
+
+    function updateAccom(){
+        handleSubmit();
+        window.location.reload();
+    }
 
     return (
         <Modal
@@ -397,7 +402,7 @@ function ModalEditDescription(props) {
             </Modal.Body>
             <Modal.Footer>
                 <Button onClick={props.onHide} className='btn btn-danger'>Cancel</Button>
-                <Button onClick={() => handleSubmit()} className='btn btn-success text-white'>Update</Button>
+                <Button onClick={() => updateAccom()} className='btn btn-success text-white'>Update</Button>
 
 
             </Modal.Footer>
