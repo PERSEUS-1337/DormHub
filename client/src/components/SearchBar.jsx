@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { Container, Col, Row, Form, Button, Alert, Spinner, Pagination, Dropdown, DropdownButton} from 'react-bootstrap';
 import LodgingTileItem from './LodgingTileItem';
+import ReactDOM from 'react-dom';
+import { useReactToPrint } from 'react-to-print';
 
 const SearchBar = ({ data }) => {
     const [filteredData, setFilteredData] = useState([])
@@ -52,14 +54,42 @@ const SearchBar = ({ data }) => {
         }
       };
 
-    // useEffect(() => {
-    //     let timeout
-    //     if (showNoresults) {
-    //         timeout = setTimeout(() => {
-    //             setShowNoresults(false)
-    //         }, 5000)
-    //     }
-    // })
+    const GeneratePDF = () => {
+        const componentRef = useRef();
+        const handlePrint = useReactToPrint({
+          content: () => componentRef.current,
+        });
+      
+        return (
+          <div>
+            <ComponentToPrint ref={componentRef} />
+            <Button variant='secondary' onClick={handlePrint}>Generate PDF</Button>
+          </div>
+        );
+    };
+    
+    const ComponentToPrint = React.forwardRef((props, ref) => {
+        return (
+            <div ref={ref}> 
+            {currentItems.map((value, key) => {
+                            return (
+                                <LodgingTileItem key={key} data={value} />
+                           
+                            )
+                        })
+                        }
+            </div>
+            )
+        })
+
+    useEffect(() => {
+        let timeout
+        if (showNoresults) {
+            timeout = setTimeout(() => {
+                setShowNoresults(false)
+            }, 3000)
+        }
+    })
 
     useEffect(()=>{
         if (queryType) {
@@ -294,7 +324,7 @@ const SearchBar = ({ data }) => {
                                     </Dropdown.Menu>
                                 </Dropdown>
                             </Col>
-                            <Col className='d-flex justify-content-end'><Button variant='secondary'>Generate PDF</Button></Col>
+                            <Col className='d-flex justify-content-end'></Col>
                         </Row>
                         
                         <br />
@@ -314,6 +344,7 @@ const SearchBar = ({ data }) => {
                             
                         }
                         
+                        <GeneratePDF/>
                         <Pagination className='d-flex justify-content-center'>
                             <Pagination.First onClick={() => setCurrentPage(1)} disabled={currentPage === 1} />
                             <Pagination.Prev onClick={handlePreviousPage} disabled={currentPage === 1} />

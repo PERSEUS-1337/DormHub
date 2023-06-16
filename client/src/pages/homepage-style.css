@@ -19,12 +19,12 @@
 }
 
 #col-1 {
-    background-color: green;
+    /* background-color: green; */
     padding-right:0%;
 }
 
 #col-2 {
-    background-color: green;
+    /* background-color: green; */
     padding-left:0%;
     padding-right:0%;
 }
