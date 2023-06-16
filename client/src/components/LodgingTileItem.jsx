@@ -40,14 +40,7 @@ const LodgingTileItem = ({ data }) => {
                             <h2 className='my-4'>{data.name}</h2>
                         )
                     }
-                    
-                    {/* {
-                        data.rating > 1 ?
-                            <p><b><span className='h4'>{data.rating}</span></b> STARS</p>
-                            :
-                            <p><b><span className='h4'>{data.rating}</span></b> STAR</p>
-                    } */}
-                    
+                       
                 </Col>
                 <Col>
                     <Row>
